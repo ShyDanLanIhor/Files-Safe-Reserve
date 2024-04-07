@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="Mappers Group">
+    <Position X="6.25" Y="10.5" Height="0.407" Width="1.128" />
+  </Comment>
+  <Comment CommentText="Models Group">
+    <Position X="3.259" Y="1.742" Height="0.407" Width="1.128" />
+  </Comment>
+  <Comment CommentText="IServices Group">
+    <Position X="7.621" Y="7.239" Height="0.407" Width="1.293" />
+  </Comment>
+  <Comment CommentText="Interfaces Group">
+    <Position X="9.75" Y="7.25" Height="0.407" Width="1.448" />
+  </Comment>
+  <Comment CommentText="Exceptions Group">
+    <Position X="6.076" Y="12.956" Height="0.407" Width="1.242" />
+  </Comment>
+  <Comment CommentText="Params Group">
+    <Position X="8.661" Y="1.5" Height="0.407" Width="1.128" />
+  </Comment>
+  <Comment CommentText="Results Group">
+    <Position X="8.75" Y="4" Height="0.407" Width="1.128" />
+  </Comment>
+  <Class Name="ShyryiFileSystemLibrary.Models.FileModel">
+    <Position X="4.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAACgAIgAAAAAAQAAAAAAQAAAAAAAAEAAAA=</HashCode>
+      <FileName>Models\FileModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="1.3" />
+  </Class>
+  <Class Name="ShyryiFileSystemLibrary.Models.DirectoryModel">
+    <Position X="2.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQgAAAAACAAIAAAAAAAQAAAAAAAAAAAAAAAGAEIA=</HashCode>
+      <FileName>Models\DirectoryModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="1.3" />
+  </Class>
+  <Class Name="ShyryiFileSystemLibrary.Models.FileSystemItemModel">
+    <Position X="3.25" Y="2.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAAAAAIAgAAAAAQAAAAAAIIAgAAAAAAAAiA=</HashCode>
+      <FileName>Models\FileSystemItemModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="1.3" />
+  </Class>
+  <Class Name="ShyryiFileSystemLibrary.Mappers.DirectoryMapper">
+    <Position X="4.25" Y="11" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Mappers\DirectoryMapper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ShyryiFileSystemLibrary.Mappers.FileMapper">
+    <Position X="6" Y="11" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Mappers\FileMapper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ShyryiFileSystemLibrary.Mappers.PathableMapper">
+    <Position X="7.75" Y="11" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAAAAAAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Mappers\PathableMapper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ShyryiFileSystemLibrary.Exceptions.FileSystemItemRenamingException">
+    <Position X="4" Y="13.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Exceptions\FileSystemItemRenamingException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ShyryiFileSystemLibrary.Exceptions.InvalidPathFormatException">
+    <Position X="7.25" Y="13.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Exceptions\InvalidPathFormatException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ShyryiFileSystemLibrary.Entities.Params.IFileSystemService.TransferParams">
+    <Position X="8.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAgAAAAAAAAA=</HashCode>
+      <FileName>Entities\Params\IFileSystemService\TransferParams.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ShyryiFileSystemLibrary.Entities.Results.IFileSystemService.TransferResult">
+    <Position X="7.5" Y="4.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAIAAAAQAAAAAAQIAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Results\IFileSystemService\TransferResult.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ShyryiFileSystemLibrary.Entities.Results.IFileSystemService.DeleteResult">
+    <Position X="9.5" Y="4.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAQAAAQAAAAAAAIAAAAAAAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>Entities\Results\IFileSystemService\DeleteResult.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="ShyryiFileSystemLibrary.Services.IServices.IFileSystemServices">
+    <Position X="7.5" Y="7.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAgAAAAAAAAA=</HashCode>
+      <FileName>Services\IServices\IFileSystemServices.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ShyryiFileSystemLibrary.Interfaces.IPathable">
+    <Position X="9.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAAAAAIAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\IPathable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
