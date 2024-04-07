@@ -1,0 +1,27 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: .NET
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Restore dependencies
+      run: dotnet restore ./FilesSafeReserve/FilesSafeReserve.sln
+    - name: Build
+      run: dotnet build ./FilesSafeReserve/FilesSafeReserve.sln --no-restore
+    - name: Test SFS Library
+      run: dotnet test ./FilesSafeReserve/ShyryiFileSystemLibrary.Tests/ShyryiFileSystemLibrary.Tests.csproj --no-build --verbosity normal
+    - name: Test FSR
+      run: dotnet test ./FilesSafeReserve/FilesSafeReserve.Tests/FilesSafeReserve.Tests.csproj --no-build --verbosity normal
