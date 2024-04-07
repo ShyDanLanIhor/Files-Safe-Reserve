@@ -17,8 +17,10 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
-    - name: Install MAUI workload
+    - name: Install MAUI Android workload
       run: dotnet workload install maui-android
+    - name: Install MAUI IOS workload
+      run: dotnet workload install Microsoft.ios.Sdk.net8
     - name: Restore dependencies
       run: dotnet restore ./FilesSafeReserve/FilesSafeReserve.sln
     - name: Build
