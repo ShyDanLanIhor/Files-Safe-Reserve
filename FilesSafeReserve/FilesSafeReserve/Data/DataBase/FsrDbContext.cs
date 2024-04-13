@@ -9,7 +9,7 @@ namespace FilesSafeReserve.Data.DataBase;
 /// <summary>
 /// Represents the database context for managing file safe reserves.
 /// </summary>
-public class FilesSafeReserveDBContext : DbContext
+public class FsrDbContext : DbContext
 {
     private readonly DbService service = new();
     private readonly IConfiguration _configuration;
@@ -24,7 +24,7 @@ public class FilesSafeReserveDBContext : DbContext
     /// </summary>
     /// <param name="options">The DbContextOptions.</param>
     /// <param name="configuration">The configuration for the application.</param>
-    public FilesSafeReserveDBContext(DbContextOptions<FilesSafeReserveDBContext> options, IConfiguration configuration)
+    public FsrDbContext(DbContextOptions<FsrDbContext> options, IConfiguration configuration)
         : base(options)
     {
         _configuration = configuration;
@@ -36,16 +36,19 @@ public class FilesSafeReserveDBContext : DbContext
     /// <param name="optionsBuilder">The options builder for configuring the database.</param>
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        var AppDataConfigs = _configuration.GetSection("AppData").Get<AppDataConfig>();
+        if (!optionsBuilder.IsConfigured)
+        {
+            var AppDataConfigs = _configuration.GetSection("AppData").Get<AppDataConfig>();
 
-        var connectionDb = $"Filename={service.GetDbPath(
-                new()
-                {
-                    AppName = AppDataConfigs.AppName,
-                    DataBaseName = AppDataConfigs.AppName
-                })}";
+            var connectionDb = $"Filename={service.GetDbPath(
+                    new()
+                    {
+                        AppName = AppDataConfigs.AppName,
+                        DataBaseName = AppDataConfigs.AppName
+                    })}";
 
-        optionsBuilder.UseSqlite(connectionDb);
+            optionsBuilder.UseSqlite(connectionDb);
+        }
     }
 }
 
