@@ -1,5 +1,7 @@
 ﻿using FilesSafeReserve.Data.Configs;
 using FilesSafeReserve.Data.DataBase;
+using FilesSafeReserve.Data.Repositories;
+using FilesSafeReserve.Data.Repositories.IRepositories;
 using FilesSafeReserve.Data.Services;
 using FilesSafeReserve.Data.Services.IServices;
 using Microsoft.Extensions.Configuration;
@@ -36,6 +38,7 @@ public static class MauiProgram
 
         builder.Services.AddSingleton<IDbService, DbService>();
         builder.Services.AddSingleton<IAppService, AppService>();
+        builder.Services.AddSingleton<IVirtualSafeRepo, VirtualSafeRepo>();
 
         builder.Services.AddDbContext<FsrDbContext>();
         builder.Services.AddTransient<MainPage>();
@@ -48,8 +51,8 @@ public static class MauiProgram
         dbContext.Dispose();
 
 #if DEBUG
-		builder.Services.AddBlazorWebViewDeveloperTools();
-		builder.Logging.AddDebug();
+        builder.Services.AddBlazorWebViewDeveloperTools();
+        builder.Logging.AddDebug();
 #endif
 
         return builder.Build();

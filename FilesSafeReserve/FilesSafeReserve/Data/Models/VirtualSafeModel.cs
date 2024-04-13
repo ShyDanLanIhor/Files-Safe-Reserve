@@ -32,6 +32,21 @@ public class VirtualSafeModel
     public string Path { get; set; } = string.Empty;
 
     /// <summary>
+    /// Gets or sets the creation date.
+    /// </summary>
+    public DateTime CreatedTimestamp { get; set; } = DateTime.Now;
+
+    /// <summary>
+    /// Gets or sets when was last update by user.
+    /// </summary>
+    public DateTime LastUpdatedTimestamp { get; set; } = DateTime.Now;
+
+    /// <summary>
+    /// Gets or sets when was last data reservation.
+    /// </summary>
+    public DateTime LastReservationTimestamp { get; set; } = DateTime.Now;
+
+    /// <summary>
     /// Gets the directory model associated with the virtual safe.
     /// </summary>
     [NotMapped]
