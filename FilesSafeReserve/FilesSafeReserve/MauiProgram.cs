@@ -37,13 +37,13 @@ public static class MauiProgram
         builder.Services.AddSingleton<IDbService, DbService>();
         builder.Services.AddSingleton<IAppService, AppService>();
 
-        builder.Services.AddDbContext<FilesSafeReserveDBContext>();
+        builder.Services.AddDbContext<FsrDbContext>();
         builder.Services.AddTransient<MainPage>();
 
         var appService = new AppService();
         appService.EnsureCreatedDocumentsDirectory(appDataConfig.AppName);
 
-        var dbContext = new FilesSafeReserveDBContext(new(),config);
+        var dbContext = new FsrDbContext(new(),config);
         dbContext.Database.EnsureCreated();
         dbContext.Dispose();
 

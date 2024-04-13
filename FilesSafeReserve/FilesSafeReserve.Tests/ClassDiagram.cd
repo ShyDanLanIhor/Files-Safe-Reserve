@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="Factories Group">
+    <Position X="1.386" Y="0.75" Height="0.338" Width="1.135" />
+  </Comment>
+  <Comment CommentText="Tests Group">
+    <Position X="5.21" Y="0.949" Height="0.338" Width="0.944" />
+  </Comment>
+  <Class Name="FilesSafeReserve.Tests.Factories.TestFsrDbContextFactory">
+    <Position X="1" Y="1.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Factories\TestFsrDbContextFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FilesSafeReserve.Tests.Repositories.VirtualSafeRepoTests">
+    <Position X="4.25" Y="1.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACYAEAAAAAAAAAAABAAAAAAAAAAAAAABAAAA=</HashCode>
+      <FileName>Repositories\VirtualSafeRepoTests.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
