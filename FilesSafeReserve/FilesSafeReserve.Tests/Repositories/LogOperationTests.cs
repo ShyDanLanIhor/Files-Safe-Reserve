@@ -7,14 +7,14 @@ using FluentAssertions;
 
 namespace FilesSafeReserve.Tests.Repositories;
 
-public class VirtualSafeRepoTests
+public class LogOperationTests
 {
     private async Task<FsrDbContext> GetDbContextAsync()
     {
         var dbContext = TestFsrDbContextFactory.Create();
 
-        // Adding predefined virtual safe models
-        dbContext.VirtualSafes.AddRange(TestVirtualSafeFactory.CreateList());
+        // Adding predefined logs models
+        dbContext.LogOperations.AddRange(TestLogOperationFactory.CreateList());
 
         await dbContext.SaveChangesAsync();
 
@@ -25,8 +25,8 @@ public class VirtualSafeRepoTests
     {
         var dbContext = TestFsrDbContextFactory.Create();
 
-        // Adding predefined virtual safe models
-        dbContext.VirtualSafes.AddRange(TestVirtualSafeFactory.CreateList());
+        // Adding predefined logs models
+        dbContext.LogOperations.AddRange(TestLogOperationFactory.CreateList());
 
         dbContext.SaveChanges();
 
@@ -34,24 +34,24 @@ public class VirtualSafeRepoTests
     }
 
     [Fact]
-    public async void ToListAsync_ReturnsListOfVirtualSafeModels()
+    public async void ToListAsync_ReturnsListOfLogOperationModels()
     {
         // Arrange
-        IVirtualSafeRepo repo = new VirtualSafeRepo(await GetDbContextAsync());
+        ILogOperationRepo repo = new LogOperationRepo(await GetDbContextAsync());
 
         // Act
         var models = await repo.ToListAsync();
 
         // Assert
         models.Should().NotBeNull();
-        models.Should().BeOfType<List<VirtualSafeModel>>();
+        models.Should().BeOfType<List<LogOperationModel>>();
     }
 
     [Fact]
-    public async void GetByIdAsync_ReturnsVirtualSafeModel()
+    public async void GetByIdAsync_ReturnsLogOperationModel()
     {
         // Arrange
-        IVirtualSafeRepo repo = new VirtualSafeRepo(await GetDbContextAsync());
+        ILogOperationRepo repo = new LogOperationRepo(await GetDbContextAsync());
         var models = await repo.ToListAsync();
 
         // Act
@@ -63,16 +63,19 @@ public class VirtualSafeRepoTests
     }
 
     [Fact]
-    public async void UpdateAsync_UpdatesVirtualSafeModel()
+    public async void UpdateAsync_UpdatesLogOperationModel()
     {
         // Arrange
-        IVirtualSafeRepo repo = new VirtualSafeRepo(await GetDbContextAsync());
+        ILogOperationRepo repo = new LogOperationRepo(await GetDbContextAsync());
         var models = await repo.ToListAsync();
 
         var modelToChange = models.First();
-        modelToChange.Name = "Changed";
-        modelToChange.Description = "Changed";
-        modelToChange.Path = "Changed";
+        modelToChange.IsSucceeded = false;
+        modelToChange.Type = LogOperationModel.OperationsTypes.DeleteFile;
+        modelToChange.VirtualSafeFilePath = "Changed";
+        modelToChange.ExternalFilePath = "Changed";
+        modelToChange.PerformTimestamp = DateTime.Now;
+
 
         // Act
         await repo.UpdateAsync(modelToChange);
@@ -84,16 +87,18 @@ public class VirtualSafeRepoTests
     }
 
     [Fact]
-    public async void AddAsync_AddsVirtualSafeModel()
+    public async void AddAsync_AddsLogOperationModel()
     {
         // Arrange
-        IVirtualSafeRepo repo = new VirtualSafeRepo(await GetDbContextAsync());
-        VirtualSafeModel modelToAdd =
+        ILogOperationRepo repo = new LogOperationRepo(await GetDbContextAsync());
+        LogOperationModel modelToAdd =
             new()
             {
-                Name = "New Test Name",
-                Description = "New Test Description",
-                Path = @"C:\Users\username\Documents"
+                IsSucceeded = false,
+                Type = LogOperationModel.OperationsTypes.DeleteFile,
+                VirtualSafeFilePath = "Changed",
+                ExternalFilePath = "Changed",
+                PerformTimestamp = DateTime.Now
             };
 
         // Act
@@ -106,10 +111,10 @@ public class VirtualSafeRepoTests
     }
 
     [Fact]
-    public async void DeleteByIdAsync_DeletesVirtualSafeModel()
+    public async void DeleteByIdAsync_DeletesLogOperationModel()
     {
         // Arrange
-        IVirtualSafeRepo repo = new VirtualSafeRepo(await GetDbContextAsync());
+        ILogOperationRepo repo = new LogOperationRepo(await GetDbContextAsync());
         var firstModelIdToDelete = (await repo.ToListAsync()).First().Id;
 
         // Act
@@ -120,10 +125,10 @@ public class VirtualSafeRepoTests
     }
 
     [Fact]
-    public async void DeleteAsync_DeletesVirtualSafeModel()
+    public async void DeleteAsync_DeletesLogOperationModel()
     {
         // Arrange
-        IVirtualSafeRepo repo = new VirtualSafeRepo(await GetDbContextAsync());
+        ILogOperationRepo repo = new LogOperationRepo(await GetDbContextAsync());
         var modelToDelete = (await repo.ToListAsync()).First();
 
         // Act
@@ -134,24 +139,24 @@ public class VirtualSafeRepoTests
     }
 
     [Fact]
-    public void ToList_ReturnsListOfVirtualSafeModels()
+    public void ToList_ReturnsListOfLogOperationModels()
     {
         // Arrange
-        IVirtualSafeRepo repo = new VirtualSafeRepo(GetDbContext());
+        ILogOperationRepo repo = new LogOperationRepo(GetDbContext());
 
         // Act
         var models = repo.ToList();
 
         // Assert
         models.Should().NotBeNull();
-        models.Should().BeOfType<List<VirtualSafeModel>>();
+        models.Should().BeOfType<List<LogOperationModel>>();
     }
 
     [Fact]
-    public void GetById_ReturnsVirtualSafeModel()
+    public void GetById_ReturnsLogOperationModel()
     {
         // Arrange
-        IVirtualSafeRepo repo = new VirtualSafeRepo(GetDbContext());
+        ILogOperationRepo repo = new LogOperationRepo(GetDbContext());
         var models = repo.ToList();
 
         // Act
@@ -163,16 +168,18 @@ public class VirtualSafeRepoTests
     }
 
     [Fact]
-    public void Update_UpdatesVirtualSafeModel()
+    public void Update_UpdatesLogOperationModel()
     {
         // Arrange
-        IVirtualSafeRepo repo = new VirtualSafeRepo(GetDbContext());
+        ILogOperationRepo repo = new LogOperationRepo(GetDbContext());
         var models = repo.ToList();
 
         var modelToChange = models.First();
-        modelToChange.Name = "Changed";
-        modelToChange.Description = "Changed";
-        modelToChange.Path = "Changed";
+        modelToChange.IsSucceeded = false;
+        modelToChange.Type = LogOperationModel.OperationsTypes.DeleteFile;
+        modelToChange.VirtualSafeFilePath = "Changed";
+        modelToChange.ExternalFilePath = "Changed";
+        modelToChange.PerformTimestamp = DateTime.Now;
 
         // Act
         repo.Update(modelToChange);
@@ -184,16 +191,18 @@ public class VirtualSafeRepoTests
     }
 
     [Fact]
-    public void Add_AddsVirtualSafeModel()
+    public void Add_AddsLogOperationModel()
     {
         // Arrange
-        IVirtualSafeRepo repo = new VirtualSafeRepo(GetDbContext());
-        VirtualSafeModel modelToAdd =
+        ILogOperationRepo repo = new LogOperationRepo(GetDbContext());
+        LogOperationModel modelToAdd =
             new()
             {
-                Name = "New Test Name",
-                Description = "New Test Description",
-                Path = @"C:\Users\username\Documents"
+                IsSucceeded = false,
+                Type = LogOperationModel.OperationsTypes.DeleteFile,
+                VirtualSafeFilePath = "Changed",
+                ExternalFilePath = "Changed",
+                PerformTimestamp = DateTime.Now
             };
 
         // Act
@@ -206,10 +215,10 @@ public class VirtualSafeRepoTests
     }
 
     [Fact]
-    public void DeleteById_DeletesVirtualSafeModel()
+    public void DeleteById_DeletesLogOperationModel()
     {
         // Arrange
-        IVirtualSafeRepo repo = new VirtualSafeRepo(GetDbContext());
+        ILogOperationRepo repo = new LogOperationRepo(GetDbContext());
         var firstModelIdToDelete = repo.ToList().First().Id;
 
         // Act
@@ -220,10 +229,10 @@ public class VirtualSafeRepoTests
     }
 
     [Fact]
-    public void Delete_DeletesVirtualSafeModel()
+    public void Delete_DeletesLogOperationModel()
     {
         // Arrange
-        IVirtualSafeRepo repo = new VirtualSafeRepo(GetDbContext());
+        ILogOperationRepo repo = new LogOperationRepo(GetDbContext());
         var modelToDelete = repo.ToList().First();
 
         // Act
@@ -233,4 +242,3 @@ public class VirtualSafeRepoTests
         result.IsSucceeded.Should().BeTrue();
     }
 }
-

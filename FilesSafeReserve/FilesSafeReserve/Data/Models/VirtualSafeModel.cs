@@ -8,14 +8,8 @@ namespace FilesSafeReserve.Data.Models;
 /// <summary>
 /// Represents a virtual safe model.
 /// </summary>
-public class VirtualSafeModel
+public class VirtualSafeModel : ModelBase<Guid>
 {
-    /// <summary>
-    /// Gets or sets the unique identifier of the virtual safe.
-    /// </summary>
-    [Key]
-    public Guid Id { get; set; } = Guid.Empty;
-
     /// <summary>
     /// Gets or sets the name of the virtual safe.
     /// </summary>
@@ -45,6 +39,8 @@ public class VirtualSafeModel
     /// Gets or sets when was last data reservation.
     /// </summary>
     public DateTime LastReservationTimestamp { get; set; } = DateTime.Now;
+
+    public List<LogModel> AssociatedLogs { get; set; } = new();
 
     /// <summary>
     /// Gets the directory model associated with the virtual safe.

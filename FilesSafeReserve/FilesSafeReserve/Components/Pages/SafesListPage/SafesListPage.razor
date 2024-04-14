@@ -51,6 +51,6 @@
 @code{
     protected override async void OnInitialized()
     {
-        ViewModel.VirtualSafes = await VirtualSafeRepo.GetAll();
+        ViewModel.VirtualSafes = await VirtualSafeRepo.ToListAsync();
     }
 }
