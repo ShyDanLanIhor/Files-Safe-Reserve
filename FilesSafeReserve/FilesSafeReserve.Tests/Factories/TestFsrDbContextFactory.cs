@@ -7,7 +7,7 @@ namespace FilesSafeReserve.Tests.Factories;
 /// <summary>
 /// Factory class for creating instances of <see cref="FsrDbContext"/> for testing purposes.
 /// </summary>
-public class TestFsrDbContextFactory
+public static class TestFsrDbContextFactory
 {
     /// <summary>
     /// Creates a new instance of <see cref="FsrDbContext"/> using an in-memory database.

@@ -1,34 +1,64 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Comment CommentText="Models Group&#xD;&#xA;">
-    <Position X="2.117" Y="0.871" Height="0.397" Width="1.204" />
+  <Comment CommentText="IRepositories Group">
+    <Position X="5.718" Y="4" Height="0.386" Width="1.347" />
   </Comment>
-  <Comment CommentText="IRepositories Group&#xD;&#xA;">
-    <Position X="2.017" Y="4.488" Height="0.397" Width="1.335" />
+  <Comment CommentText="Repositories Group">
+    <Position X="3" Y="6.75" Height="0.386" Width="1.347" />
   </Comment>
-  <Comment CommentText="IServices Group&#xD;&#xA;">
-    <Position X="7.146" Y="0.794" Height="0.397" Width="1.189" />
+  <Comment CommentText="Repositories Interfaces Group">
+    <Position X="5.383" Y="0.5" Height="0.386" Width="1.976" />
   </Comment>
-  <Comment CommentText="Services Group&#xD;&#xA;">
-    <Position X="8" Y="6" Height="0.397" Width="1.204" />
+  <Comment CommentText="IServices Group">
+    <Position X="14.725" Y="0.5" Height="0.386" Width="1.081" />
   </Comment>
-  <Comment CommentText="Configs Group&#xD;&#xA;">
-    <Position X="5.25" Y="6" Height="0.397" Width="1.204" />
+  <Comment CommentText="Services Group">
+    <Position X="14.722" Y="2.74" Height="0.386" Width="1.081" />
   </Comment>
-  <Comment CommentText="Params Group&#xD;&#xA;">
-    <Position X="7.25" Y="3.75" Height="0.397" Width="1.204" />
+  <Comment CommentText="Configs Group">
+    <Position X="9.943" Y="6.886" Height="0.386" Width="1.056" />
   </Comment>
-  <Comment CommentText="DbContext Group&#xD;&#xA;">
-    <Position X="2" Y="11.5" Height="0.397" Width="1.306" />
+  <Comment CommentText="DbContext Group">
+    <Position X="7.61" Y="7.009" Height="0.386" Width="1.297" />
   </Comment>
-  <Comment CommentText="Results Group&#xD;&#xA;">
-    <Position X="7" Y="8.5" Height="0.397" Width="1.204" />
+  <Comment CommentText="Models Group">
+    <Position X="14.826" Y="5.237" Height="0.386" Width="1.081" />
   </Comment>
-  <Comment CommentText="Repositories Group&#xD;&#xA;">
-    <Position X="2.064" Y="7.4" Height="0.397" Width="1.335" />
+  <Comment CommentText="Params Group">
+    <Position X="10" Y="9.5" Height="0.386" Width="1.081" />
   </Comment>
+  <Comment CommentText="Results Group">
+    <Position X="15.427" Y="11.331" Height="0.386" Width="1.081" />
+  </Comment>
+  <Comment CommentText="ViewModels Group">
+    <Position X="1.111" Y="11.225" Height="0.357" Width="1.345" />
+  </Comment>
+  <Class Name="FilesSafeReserve.Data.Repositories.LogOperationRepo">
+    <Position X="0.5" Y="7.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\Repositories\LogOperationRepo.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FilesSafeReserve.Data.Repositories.LogRepo">
+    <Position X="3" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\Repositories\LogRepo.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FilesSafeReserve.Data.Repositories.VirtualSafeRepo">
+    <Position X="5" Y="7.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\Repositories\VirtualSafeRepo.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
   <Class Name="FilesSafeReserve.Data.Services.AppService">
-    <Position X="7" Y="6.75" Width="1.5" />
+    <Position X="13" Y="3.5" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Data\Services\AppService.cs</FileName>
@@ -36,7 +66,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="FilesSafeReserve.Data.Services.DbService">
-    <Position X="8.75" Y="6.75" Width="1.5" />
+    <Position X="16" Y="3.5" Width="1.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Data\Services\DbService.cs</FileName>
@@ -44,116 +74,174 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="FilesSafeReserve.Data.Configs.AppDataConfig">
-    <Position X="5" Y="6.5" Width="1.5" />
+    <Position X="9.75" Y="7.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>ACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
       <FileName>Data\Configs\AppDataConfig.cs</FileName>
     </TypeIdentifier>
   </Class>
+  <Class Name="FilesSafeReserve.Data.DataBase.FsrDbContext">
+    <Position X="7.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAQAAAAAAAAAEAAAAAAAAAAAAAEEAAAAAAAA=</HashCode>
+      <FileName>Data\DataBase\FsrDbContext.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FilesSafeReserve.Data.Models.ModelBase&lt;IdType&gt;">
+    <Position X="14.5" Y="5.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\Models\ModelBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FilesSafeReserve.Data.Models.LogModel">
+    <Position X="14.5" Y="7.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAEAACAAAAAAAAAAAIAIAAAABA=</HashCode>
+      <FileName>Data\Models\LogModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FilesSafeReserve.Data.Models.LogOperationModel">
+    <Position X="12.25" Y="7.5" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="FilesSafeReserve.Data.Models.LogOperationModel.OperationsTypes">
+        <TypeIdentifier>
+          <NewMemberFileName>Data\Models\LogOperationModel.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAIAAABAAAAAAIAAACAAAAAAAAAAAAAQAAIAAEAAQ=</HashCode>
+      <FileName>Data\Models\LogOperationModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FilesSafeReserve.Data.Models.VirtualSafeModel">
+    <Position X="16.75" Y="7.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAABAAAAAgCgIAAAAAAAQAABAAAAgAAAAAgAAAAAA=</HashCode>
+      <FileName>Data\Models\VirtualSafeModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
   <Class Name="FilesSafeReserve.Data.Entities.Params.IDataBaseService.GetDbPathParams">
-    <Position X="5" Y="4.25" Width="1.5" />
+    <Position X="9.75" Y="10" Width="1.5" />
     <TypeIdentifier>
       <HashCode>ACAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Data\Entities\Params\IDataBaseService\GetDbPathParams.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="FilesSafeReserve.Data.Entities.Params.ILoggerService.LogDeleteActionParams">
-    <Position X="6.75" Y="4.25" Width="2" />
+  <Class Name="FilesSafeReserve.Data.Entities.Results.Basic.ObjResult">
+    <Position X="13.25" Y="15" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAEAAAAAAAA=</HashCode>
-      <FileName>Data\Entities\Params\ILoggerService\LogDeleteActionParams.cs</FileName>
+      <HashCode>AAAAIAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\Entities\Results\Basic\ObjResult.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="FilesSafeReserve.Data.Entities.Params.ILoggerService.LogTransferActionParams">
-    <Position X="9" Y="4.25" Width="2" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAEAAAAAAAA=</HashCode>
-      <FileName>Data\Entities\Params\ILoggerService\LogTransferActionParams.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="FilesSafeReserve.Data.DataBase.FsrDbContext">
-    <Position X="1.5" Y="12" Width="2.25" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAQAAAAAEAAAAAAAAAAAAAAAAAEEAAAAAAAA=</HashCode>
-      <FileName>Data\DataBase\FsrDbContext.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="FilesSafeReserve.Data.Entities.Results.ILoggerService.LogActionResult">
-    <Position X="5.75" Y="9.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAACAAAAgAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Data\Entities\Results\ILoggerService\LogActionResult.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="FilesSafeReserve.Data.Models.VirtualSafeModel">
-    <Position X="2" Y="1.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAACABAAAAAgCAIAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Data\Models\VirtualSafeModel.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="FilesSafeReserve.Data.Repositories.VirtualSafeRepo">
-    <Position X="1.75" Y="8.25" Width="2" />
-    <TypeIdentifier>
-      <HashCode>AAYAAAAAAAAABAAAAAAAAAAAACEAAAAAAgAAAAAAAIA=</HashCode>
-      <FileName>Data\Repositories\VirtualSafeRepo.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
   </Class>
   <Class Name="FilesSafeReserve.Data.Entities.Results.Basic.ResultEntity">
-    <Position X="7.75" Y="9.25" Width="1.5" />
+    <Position X="15.25" Y="12" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAgAIAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAiA=</HashCode>
       <FileName>Data\Entities\Results\Basic\ResultEntity.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="FilesSafeReserve.Data.Entities.Results.Basic.ValueResult">
-    <Position X="7.75" Y="12.75" Width="1.5" />
+    <Position X="17.25" Y="15" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
       <FileName>Data\Entities\Results\Basic\ValueResult.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="FilesSafeReserve.Data.Entities.Results.Basic.ValueResult&lt;ValueType&gt;">
-    <Position X="9.75" Y="12.75" Width="2" />
+    <Position X="15" Y="15" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgDAAAAiA=</HashCode>
       <FileName>Data\Entities\Results\Basic\ValueResult.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="FilesSafeReserve.Data.Entities.Results.Basic.ObjResult">
-    <Position X="5.75" Y="12.75" Width="1.5" />
+  <Class Name="FilesSafeReserve.Data.ViewModels.SafesListViewModel">
+    <Position X="1" Y="11.75" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAIAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Data\Entities\Results\Basic\ObjResult.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>Data\ViewModels\SafesListViewModel.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Interface Name="FilesSafeReserve.Data.Repositories.IRepositories.IVirtualSafeRepo">
-    <Position X="1.75" Y="5" Width="2" />
+  <Interface Name="FilesSafeReserve.Data.Repositories.IRepositories.ILogOperationRepo">
+    <Position X="0.5" Y="4.5" Width="3.75" />
     <TypeIdentifier>
-      <HashCode>AAYAAAAAAAAAAAAAAAAAAAAAACEAAAAAAgAAAAAAAIA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\Repositories\IRepositories\ILogOperationRepo.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FilesSafeReserve.Data.Repositories.IRepositories.ILogRepo">
+    <Position X="4.75" Y="4.5" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\Repositories\IRepositories\ILogRepo.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FilesSafeReserve.Data.Repositories.IRepositories.IVirtualSafeRepo">
+    <Position X="8.5" Y="4.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Data\Repositories\IRepositories\IVirtualSafeRepo.cs</FileName>
     </TypeIdentifier>
   </Interface>
+  <Interface Name="FilesSafeReserve.Data.Interfaces.Repositories.IAddRepoBase&lt;DbContextType, RepoType, IdType&gt;">
+    <Position X="1.25" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\Interfaces\Repositories\IAddRepoBase.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FilesSafeReserve.Data.Interfaces.Repositories.IDeleteByIdRepoBase&lt;DbContextType, RepoType, IdType&gt;">
+    <Position X="3" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAEAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\Interfaces\Repositories\IDeleteByIdRepoBase.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FilesSafeReserve.Data.Interfaces.Repositories.IDeleteRepoBase&lt;DbContextType, RepoType, IdType&gt;">
+    <Position X="4.75" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAEAAAEAAAAAAAAAAAAAAIA=</HashCode>
+      <FileName>Data\Interfaces\Repositories\IDeleteRepoBase.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FilesSafeReserve.Data.Interfaces.Repositories.IGetByIdRepoBase&lt;DbContextType, RepoType, IdType&gt;">
+    <Position X="6.5" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAIIA=</HashCode>
+      <FileName>Data\Interfaces\Repositories\IGetByIdRepoBase.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FilesSafeReserve.Data.Interfaces.Repositories.IToListRepoBase&lt;DbContextType, RepoType, IdType&gt;">
+    <Position X="8.25" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>Data\Interfaces\Repositories\IToListRepoBase.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FilesSafeReserve.Data.Interfaces.Repositories.IUpdateRepoBase&lt;DbContextType, RepoType, IdType&gt;">
+    <Position X="10" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAEAAAAAAAgAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\Interfaces\Repositories\IUpdateRepoBase.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
   <Interface Name="FilesSafeReserve.Data.Services.IServices.IAppService">
-    <Position X="5.25" Y="1.5" Width="1.5" />
+    <Position X="13" Y="1" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Data\Services\IServices\IAppService.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="FilesSafeReserve.Data.Services.IServices.IDbService">
-    <Position X="7" Y="1.5" Width="1.5" />
+    <Position X="16" Y="1" Width="1.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Data\Services\IServices\IDbService.cs</FileName>
-    </TypeIdentifier>
-  </Interface>
-  <Interface Name="FilesSafeReserve.Data.Services.IServices.ILoggerService">
-    <Position X="8.75" Y="1.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAQAAAAAAAAAAAAAAAAAAAAAAAgAAAAABAAAAAAAA=</HashCode>
-      <FileName>Data\Services\IServices\ILoggerService.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Font Name="Segoe UI" Size="9" />

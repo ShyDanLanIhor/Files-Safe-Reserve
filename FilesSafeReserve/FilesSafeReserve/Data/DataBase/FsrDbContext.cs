@@ -17,10 +17,20 @@ public class FsrDbContext : DbContext
     /// <summary>
     /// Gets or sets the virtual safe models DbSet.
     /// </summary>
-    public DbSet<VirtualSafeModel> VirtualSafeModels { get; set; }
+    public DbSet<VirtualSafeModel> VirtualSafes { get; set; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="FilesSafeReserveDBContext"/> class.
+    /// Gets or sets the log models DbSet.
+    /// </summary>
+    public DbSet<LogModel> Logs { get; set; }
+
+    /// <summary>
+    /// Gets or sets the log operations models DbSet.
+    /// </summary>
+    public DbSet<LogOperationModel> LogOperations { get; set; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FsrDbContext"/> class.
     /// </summary>
     /// <param name="options">The DbContextOptions.</param>
     /// <param name="configuration">The configuration for the application.</param>
