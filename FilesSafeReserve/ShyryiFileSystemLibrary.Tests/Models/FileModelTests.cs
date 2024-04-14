@@ -93,7 +93,7 @@ public class FileModelTests
     public void NameProperty_SetsFileName(string prevPath, string newPath)
     {
         // Arrange
-        FileModel file = new() { Path = prevPath };
+        FileModel file = prevPath;
 
         // Act
         file.Name = "new";
@@ -252,7 +252,7 @@ public class FileModelTests
     public void ExtensionProperty_SetsFileExtension(string prevPath, string newPath)
     {
         // Arrange
-        FileModel file = new() { Path = prevPath };
+        FileModel file = prevPath;
 
         // Act
         file.Extension = "NewExtension";

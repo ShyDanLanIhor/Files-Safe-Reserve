@@ -6,9 +6,9 @@ using SysPath = System.IO.Path;
 namespace ShyryiFileSystemLibrary.Models;
 
 /// <summary>
-/// Represents a model for a file in the file system.
+/// Represents a file in the file system.
 /// </summary>
-public class FileModel : FileSystemItemModel, IPathable
+public partial class FileModel : FileSystemItemModel, IPathed
 {
     private string _path = string.Empty;
 
@@ -21,8 +21,8 @@ public class FileModel : FileSystemItemModel, IPathable
         get => _path;
         set
         {
-            if (Regex.Match(value, $@"^([a-zA-Z]:\\)([{ProhibitedSymbols}]+\\)*[{ProhibitedSymbols}]*[.][{ProhibitedSymbols}.]*$").Success is false
-                && Regex.Match(value, $@"/([{ProhibitedSymbols}]+/)*[{ProhibitedSymbols}.]*[.][{ProhibitedSymbols}.]*$").Success is false)
+            if (WinUiPathRegex().Match(value).Success is false
+                && OtherPathRegex().Match(value).Success is false)
                 throw new InvalidPathFormatException("File path does not match format");
 
             _path = value;
@@ -30,9 +30,9 @@ public class FileModel : FileSystemItemModel, IPathable
     }
 
     /// <summary>
-    /// Gets or sets the name of the file.
+    /// Gets or sets the name of the file without extension.
     /// </summary>
-    /// <exception cref="FileSystemItemRenamingException">Thrown when the provided file name contains forbidden characters.</exception>
+    /// <exception cref="FileSystemItemRenamingException">Thrown when the file name contains forbidden characters.</exception>
     public override string Name
     {
         get
@@ -49,8 +49,9 @@ public class FileModel : FileSystemItemModel, IPathable
     }
 
     /// <summary>
-    /// Gets or sets the name of the file with its extension.
+    /// Gets or sets the name of the file with extension.
     /// </summary>
+    /// <exception cref="FileSystemItemRenamingException">Thrown when the file name with extension does not match the expected pattern.</exception>
     public string NameWithExtension
     {
         get
@@ -69,6 +70,7 @@ public class FileModel : FileSystemItemModel, IPathable
     /// <summary>
     /// Gets or sets the extension of the file.
     /// </summary>
+    /// <exception cref="FileSystemItemRenamingException">Thrown when the file extension contains forbidden characters.</exception>
     public string Extension
     {
         get
@@ -85,7 +87,7 @@ public class FileModel : FileSystemItemModel, IPathable
     }
 
     /// <summary>
-    /// Gets the previous directory of the file.
+    /// Gets the parent directory of the current file.
     /// </summary>
     public override DirectoryModel PrevDirectory
     {
@@ -93,7 +95,7 @@ public class FileModel : FileSystemItemModel, IPathable
     }
 
     /// <summary>
-    /// Gets a value indicating whether the file exists.
+    /// Checks whether the file exists.
     /// </summary>
     public bool Exist
     {
@@ -101,11 +103,23 @@ public class FileModel : FileSystemItemModel, IPathable
     }
 
     /// <summary>
-    /// Implicitly converts a string to a <see cref="FileModel"/> representing the file at the specified path.
+    /// Implicitly converts a string to a FileModel.
     /// </summary>
-    /// <param name="path">The path of the file.</param>
-    /// <returns>A <see cref="FileModel"/> representing the file at the specified path.</returns>
+    /// <param name="path">The path to the file.</param>
     public static implicit operator FileModel(string path)
-        => new FileModel() { Path = path };
+        => new() { Path = path };
+
+    /// <summary>
+    /// Regular expression for validating Windows UI file paths.
+    /// </summary>
+    [GeneratedRegexAttribute($@"^([a-zA-Z]:\\)([{ProhibitedSymbols}]+\\)*[{ProhibitedSymbols}]*[.][{ProhibitedSymbols}.]*$")]
+    public static partial Regex WinUiPathRegex();
+
+    /// <summary>
+    /// Regular expression for validating other file paths.
+    /// </summary>
+    [GeneratedRegexAttribute($@"/([{ProhibitedSymbols}]+/)*[{ProhibitedSymbols}.]*[.][{ProhibitedSymbols}.]*$")]
+    public static partial Regex OtherPathRegex();
 }
+
 

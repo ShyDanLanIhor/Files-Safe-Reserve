@@ -53,7 +53,7 @@ public class FsrDbContext : DbContext
             var connectionDb = $"Filename={service.GetDbPath(
                     new()
                     {
-                        AppName = AppDataConfigs.AppName,
+                        AppName = AppDataConfigs!.AppName,
                         DataBaseName = AppDataConfigs.AppName
                     })}";
 

@@ -5,12 +5,12 @@ namespace ShyryiFileSystemLibrary.Models;
 /// <summary>
 /// Represents an abstract base class for file system item models.
 /// </summary>
-public abstract class FileSystemItemModel : IPathable
+public abstract class FileSystemItemModel : IPathed
 {
     /// <summary>
     /// Specifies a string containing characters that are prohibited in file or directory names.
     /// </summary>
-    public static string ProhibitedSymbols = @"^\\/:*?""<>|\r\n";
+    public const string ProhibitedSymbols = @"^\\/:*?""<>|\r\n";
 
     /// <summary>
     /// Gets or sets the name of the file system item.
@@ -48,7 +48,8 @@ public abstract class FileSystemItemModel : IPathable
     /// <summary>
     /// Determines whether the specified object is equal to the current file system item.
     /// </summary>
-    public override bool Equals(object obj) => obj is FileSystemItemModel && Equals(this, obj);
+    public override bool Equals(object obj)
+        => obj is FileSystemItemModel && Equals(this, obj);
 
     /// <summary>
     /// Returns the hash code for the current file system item.

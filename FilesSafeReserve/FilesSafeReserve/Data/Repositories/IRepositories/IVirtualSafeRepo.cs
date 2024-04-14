@@ -8,12 +8,12 @@ namespace FilesSafeReserve.Data.Repositories.IRepositories;
 /// Represents a repository interface for managing virtual safes.
 /// </summary>
 public interface IVirtualSafeRepo :
-    IToListRepoBase<FsrDbContext, VirtualSafeModel, Guid>,
-    IGetByIdRepoBase<FsrDbContext, VirtualSafeModel, Guid>,
-    IAddRepoBase<FsrDbContext, VirtualSafeModel, Guid>,
-    IUpdateRepoBase<FsrDbContext, VirtualSafeModel, Guid>,
-    IDeleteRepoBase<FsrDbContext, VirtualSafeModel, Guid>,
-    IDeleteByIdRepoBase<FsrDbContext, VirtualSafeModel, Guid>
+    IRepoToList<FsrDbContext, VirtualSafeModel, Guid>,
+    IRepoGetterById<FsrDbContext, VirtualSafeModel, Guid>,
+    IRepoAdder<FsrDbContext, VirtualSafeModel, Guid>,
+    IRepoUpdater<FsrDbContext, VirtualSafeModel, Guid>,
+    IRepoRemover<FsrDbContext, VirtualSafeModel, Guid>,
+    IRepoRemoverById<FsrDbContext, VirtualSafeModel, Guid>
 {
 
 }

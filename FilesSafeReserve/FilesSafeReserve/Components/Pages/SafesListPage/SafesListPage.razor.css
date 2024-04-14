@@ -31,12 +31,14 @@
 }
 
 .item-container {
+    display: flex;
+    flex-direction: column;
     background-color: ghostwhite;
     border-radius: 10px;
     margin: 10px;
     padding: 10px;
     text-align: left;
-
+    width: 90%;
 }
 
 .name-part {
@@ -54,15 +56,6 @@
 .alert-container{
     width: 90%;
     margin: 20px;
-}
-
-.btn-create {
-    margin: 20px;
-}
-
-.btn-part {
-    margin: 0 auto;
-    display: block;
 }
 
 @keyframes GradientAnim {

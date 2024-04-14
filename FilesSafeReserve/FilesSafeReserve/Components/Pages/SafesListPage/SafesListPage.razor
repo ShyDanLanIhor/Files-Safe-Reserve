@@ -18,34 +18,28 @@
                     <div class="name-part">@safe.Name</div>
                     <p>@safe.Description</p>
                     <p>Last Reservation: @safe.LastReservationTimestamp.ToString("dd/MM/yyyy HH:mm:ss")</p>
-                    <button class="btn btn-primary btn-part"
-                            @onclick='() =>
-                    {
-                        Navigation.NavigateTo($"/virtual-safe/details/{safe.Id.ToString()}");
-                    }'>
-                        Details
-                    </button>
-                    <div class="alert alert-danger alert-container">
-                        <strong>Danger!</strong> Virtual safe directory does not exist in the file system.
+                    <div style="text-align: center;">
+                        <Button @onclick='() => Navigation.NavigateTo($"/virtual-safe/details/{safe.Id.ToString()}")' Color="ButtonColor.Primary"> Details </Button>
                     </div>
+                    @if (safe.Directory.Exist is false)
+                    {
+                        <div class="alert-container">
+                            <Alert Color="AlertColor.Danger"> <Icon Name="IconName.ExclamationTriangleFill" class="me-2"></Icon> Virtual safe directory does not exist in the file system. </Alert>
+                        </div>
+                    }
                 </div>
             }
         }
         else
         {
-            <div class="alert alert-info alert-container">
-                <strong>Info!</strong> Not a single virtual safe was found.
+            <div class="alert-container">
+                <Alert Color="AlertColor.Info"> <Icon Name="IconName.InfoCircleFill" class="me-2"></Icon> Not a single virtual safe was found. </Alert>
             </div>
         }
-        <button class="btn btn-primary btn-create"
-                @onclick='() =>
-                    {
-                        Navigation.NavigateTo($"/virtual-safe/create");
-                    }'>
-            Create New
-        </button>
+        <Button @onclick='() => Navigation.NavigateTo($"/virtual-safe/create")' Color="ButtonColor.Primary" Style="margin: 20px;"> Create New </Button>
     </div>
 </div>
+
 
 
 @code{

@@ -5,7 +5,7 @@ namespace ShyryiFileSystemLibrary.Interfaces;
 /// <summary>
 /// Represents an interface for objects that have a name, path, and previous directory information.
 /// </summary>
-public interface IPathable
+public interface IPathed
 {
     /// <summary>
     /// Gets or sets the name of the pathable object.
@@ -22,5 +22,7 @@ public interface IPathable
     /// </summary>
     /// <remarks>This property is read-only.</remarks>
     public DirectoryModel PrevDirectory { get; }
+
+    bool Equals(object obj);
 }
 

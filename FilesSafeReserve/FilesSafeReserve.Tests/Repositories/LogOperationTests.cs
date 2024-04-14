@@ -7,9 +7,16 @@ using FluentAssertions;
 
 namespace FilesSafeReserve.Tests.Repositories;
 
+/// <summary>
+/// Test suite for the LogOperationRepo class.
+/// </summary>
 public class LogOperationTests
 {
-    private async Task<FsrDbContext> GetDbContextAsync()
+    /// <summary>
+    /// Asynchronously retrieves a test database context.
+    /// </summary>
+    /// <returns>The test database context.</returns>
+    private static async Task<FsrDbContext> GetDbContextAsync()
     {
         var dbContext = TestFsrDbContextFactory.Create();
 
@@ -21,7 +28,11 @@ public class LogOperationTests
         return dbContext;
     }
 
-    private FsrDbContext GetDbContext()
+    /// <summary>
+    /// Retrieves a test database context.
+    /// </summary>
+    /// <returns>The test database context.</returns>
+    private static FsrDbContext GetDbContext()
     {
         var dbContext = TestFsrDbContextFactory.Create();
 
@@ -33,6 +44,9 @@ public class LogOperationTests
         return dbContext;
     }
 
+    /// <summary>
+    /// Tests the ToListAsync method of the LogOperationRepo class.
+    /// </summary>
     [Fact]
     public async void ToListAsync_ReturnsListOfLogOperationModels()
     {
@@ -47,6 +61,9 @@ public class LogOperationTests
         models.Should().BeOfType<List<LogOperationModel>>();
     }
 
+    /// <summary>
+    /// Tests the GetByIdAsync method of the LogOperationRepo class.
+    /// </summary>
     [Fact]
     public async void GetByIdAsync_ReturnsLogOperationModel()
     {
@@ -62,6 +79,9 @@ public class LogOperationTests
         modelGuid.Value.Should().Be(models.First());
     }
 
+    /// <summary>
+    /// Tests the UpdateAsync method of the LogOperationRepo class.
+    /// </summary>
     [Fact]
     public async void UpdateAsync_UpdatesLogOperationModel()
     {
@@ -86,6 +106,9 @@ public class LogOperationTests
         changedModel.Should().Be(modelToChange);
     }
 
+    /// <summary>
+    /// Tests the AddAsync method of the LogOperationRepo class.
+    /// </summary>
     [Fact]
     public async void AddAsync_AddsLogOperationModel()
     {
@@ -98,7 +121,8 @@ public class LogOperationTests
                 Type = LogOperationModel.OperationsTypes.DeleteFile,
                 VirtualSafeFilePath = "Changed",
                 ExternalFilePath = "Changed",
-                PerformTimestamp = DateTime.Now
+                PerformTimestamp = DateTime.Now,
+                Log = new() { VirtualSafe = new() }
             };
 
         // Act
@@ -110,34 +134,43 @@ public class LogOperationTests
         addedModel.Should().Be(modelToAdd);
     }
 
+    /// <summary>
+    /// Tests the RemoveByIdAsync method of the LogOperationRepo class.
+    /// </summary>
     [Fact]
-    public async void DeleteByIdAsync_DeletesLogOperationModel()
+    public async void RemoveByIdAsync_RemovesLogOperationModel()
     {
         // Arrange
         ILogOperationRepo repo = new LogOperationRepo(await GetDbContextAsync());
-        var firstModelIdToDelete = (await repo.ToListAsync()).First().Id;
+        var firstModelIdToRemove = (await repo.ToListAsync()).First().Id;
 
         // Act
-        var guidDeleteResult = await repo.DeleteByIdAsync(firstModelIdToDelete);
+        var guidRemoveResult = await repo.RemoveByIdAsync(firstModelIdToRemove);
 
         // Assert
-        guidDeleteResult.IsSucceeded.Should().BeTrue();
+        guidRemoveResult.IsSucceeded.Should().BeTrue();
     }
 
+    /// <summary>
+    /// Tests the RemoveAsync method of the LogOperationRepo class.
+    /// </summary>
     [Fact]
-    public async void DeleteAsync_DeletesLogOperationModel()
+    public async void RemoveAsync_RemovesLogOperationModel()
     {
         // Arrange
         ILogOperationRepo repo = new LogOperationRepo(await GetDbContextAsync());
-        var modelToDelete = (await repo.ToListAsync()).First();
+        var modelToRemove = (await repo.ToListAsync()).First();
 
         // Act
-        var result = await repo.DeleteAsync(modelToDelete);
+        var result = await repo.RemoveAsync(modelToRemove);
 
         // Assert
         result.IsSucceeded.Should().BeTrue();
     }
 
+    /// <summary>
+    /// Tests the ToList method of the LogOperationRepo class.
+    /// </summary>
     [Fact]
     public void ToList_ReturnsListOfLogOperationModels()
     {
@@ -152,6 +185,9 @@ public class LogOperationTests
         models.Should().BeOfType<List<LogOperationModel>>();
     }
 
+    /// <summary>
+    /// Tests the GetById method of the LogOperationRepo class.
+    /// </summary>
     [Fact]
     public void GetById_ReturnsLogOperationModel()
     {
@@ -167,6 +203,9 @@ public class LogOperationTests
         modelGuid.Value.Should().Be(models.First());
     }
 
+    /// <summary>
+    /// Tests the Update method of the LogOperationRepo class.
+    /// </summary>
     [Fact]
     public void Update_UpdatesLogOperationModel()
     {
@@ -190,6 +229,9 @@ public class LogOperationTests
         changedModel.Should().Be(modelToChange);
     }
 
+    /// <summary>
+    /// Tests the Add method of the LogOperationRepo class.
+    /// </summary>
     [Fact]
     public void Add_AddsLogOperationModel()
     {
@@ -202,7 +244,8 @@ public class LogOperationTests
                 Type = LogOperationModel.OperationsTypes.DeleteFile,
                 VirtualSafeFilePath = "Changed",
                 ExternalFilePath = "Changed",
-                PerformTimestamp = DateTime.Now
+                PerformTimestamp = DateTime.Now,
+                Log = new() { VirtualSafe = new() }
             };
 
         // Act
@@ -214,29 +257,35 @@ public class LogOperationTests
         addedModel.Should().Be(modelToAdd);
     }
 
+    /// <summary>
+    /// Tests the RemoveById method of the LogOperationRepo class.
+    /// </summary>
     [Fact]
-    public void DeleteById_DeletesLogOperationModel()
+    public void RemoveById_RemovesLogOperationModel()
     {
         // Arrange
         ILogOperationRepo repo = new LogOperationRepo(GetDbContext());
-        var firstModelIdToDelete = repo.ToList().First().Id;
+        var firstModelIdToRemove = repo.ToList().First().Id;
 
         // Act
-        var guidDeleteResult = repo.DeleteById(firstModelIdToDelete);
+        var guidRemoveResult = repo.RemoveById(firstModelIdToRemove);
 
         // Assert
-        guidDeleteResult.IsSucceeded.Should().BeTrue();
+        guidRemoveResult.IsSucceeded.Should().BeTrue();
     }
 
+    /// <summary>
+    /// Tests the Remove method of the LogOperationRepo class.
+    /// </summary>
     [Fact]
-    public void Delete_DeletesLogOperationModel()
+    public void Remove_RemovesLogOperationModel()
     {
         // Arrange
         ILogOperationRepo repo = new LogOperationRepo(GetDbContext());
-        var modelToDelete = repo.ToList().First();
+        var modelToRemove = repo.ToList().First();
 
         // Act
-        var result = repo.Delete(modelToDelete);
+        var result = repo.Remove(modelToRemove);
 
         // Assert
         result.IsSucceeded.Should().BeTrue();
