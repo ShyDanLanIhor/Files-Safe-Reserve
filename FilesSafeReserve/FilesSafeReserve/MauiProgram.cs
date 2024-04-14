@@ -1,9 +1,11 @@
-﻿using FilesSafeReserve.Data.Configs;
+﻿using CommunityToolkit.Maui.Core;
+using FilesSafeReserve.Data.Configs;
 using FilesSafeReserve.Data.DataBase;
 using FilesSafeReserve.Data.Repositories;
 using FilesSafeReserve.Data.Repositories.IRepositories;
 using FilesSafeReserve.Data.Services;
 using FilesSafeReserve.Data.Services.IServices;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
@@ -19,7 +21,7 @@ public static class MauiProgram
         using var stream = a.GetManifestResourceStream("FilesSafeReserve.appsettings.json");
 
         var config = new ConfigurationBuilder()
-                    .AddJsonStream(stream)
+                    .AddJsonStream(stream!)
                     .Build();
 
         var appDataConfig = config.GetRequiredSection("AppData").Get<AppDataConfig>();
@@ -28,6 +30,7 @@ public static class MauiProgram
 
         builder
             .UseMauiApp<App>()
+            .UseMauiCommunityToolkitCore()
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -44,7 +47,7 @@ public static class MauiProgram
         builder.Services.AddTransient<MainPage>();
 
         var appService = new AppService();
-        appService.EnsureCreatedDocumentsDirectory(appDataConfig.AppName);
+        appService.EnsureCreatedDocumentsDirectory(appDataConfig!.AppName);
 
         var dbContext = new FsrDbContext(new(),config);
         dbContext.Database.EnsureCreated();

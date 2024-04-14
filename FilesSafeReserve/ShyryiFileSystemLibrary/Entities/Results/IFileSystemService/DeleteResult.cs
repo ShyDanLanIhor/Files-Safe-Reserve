@@ -29,11 +29,11 @@ public class DeleteResult
     /// <summary>
     /// Gets or sets the collection of items that were successfully deleted.
     /// </summary>
-    public ICollection<IPathable>? DeletedItems { get; set; }
+    public ICollection<IPathed>? DeletedItems { get; set; }
 
     /// <summary>
     /// Gets or sets the collection of items that failed to be deleted.
     /// </summary>
-    public ICollection<IPathable>? FailedItems { get; set; }
+    public ICollection<IPathed>? FailedItems { get; set; }
 }
 

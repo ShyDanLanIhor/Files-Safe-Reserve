@@ -21,6 +21,6 @@ public interface IFileSystemServices
     /// </summary>
     /// <param name="toDeleteParam">The collection of paths specifying the items to be deleted.</param>
     /// <returns>A <see cref="DeleteResult"/> representing the result of the deletion operation.</returns>
-    DeleteResult DeleteItems(IEnumerable<IPathable> toDeleteParam);
+    DeleteResult DeleteItems(IEnumerable<IPathed> toDeleteParam);
 }
 

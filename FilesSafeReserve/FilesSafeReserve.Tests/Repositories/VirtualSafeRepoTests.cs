@@ -7,9 +7,16 @@ using FluentAssertions;
 
 namespace FilesSafeReserve.Tests.Repositories;
 
+/// <summary>
+/// Test suite for the VirtualSafeRepo class.
+/// </summary>
 public class VirtualSafeRepoTests
 {
-    private async Task<FsrDbContext> GetDbContextAsync()
+    /// <summary>
+    /// Asynchronously retrieves a test database context.
+    /// </summary>
+    /// <returns>The test database context.</returns>
+    private static async Task<FsrDbContext> GetDbContextAsync()
     {
         var dbContext = TestFsrDbContextFactory.Create();
 
@@ -21,7 +28,11 @@ public class VirtualSafeRepoTests
         return dbContext;
     }
 
-    private FsrDbContext GetDbContext()
+    /// <summary>
+    /// Retrieves a test database context.
+    /// </summary>
+    /// <returns>The test database context.</returns>
+    private static FsrDbContext GetDbContext()
     {
         var dbContext = TestFsrDbContextFactory.Create();
 
@@ -33,6 +44,9 @@ public class VirtualSafeRepoTests
         return dbContext;
     }
 
+    /// <summary>
+    /// Tests the ToListAsync method of the VirtualSafeRepo class.
+    /// </summary>
     [Fact]
     public async void ToListAsync_ReturnsListOfVirtualSafeModels()
     {
@@ -47,6 +61,9 @@ public class VirtualSafeRepoTests
         models.Should().BeOfType<List<VirtualSafeModel>>();
     }
 
+    /// <summary>
+    /// Tests the GetByIdAsync method of the VirtualSafeRepo class.
+    /// </summary>
     [Fact]
     public async void GetByIdAsync_ReturnsVirtualSafeModel()
     {
@@ -62,6 +79,9 @@ public class VirtualSafeRepoTests
         modelGuid.Value.Should().Be(models.First());
     }
 
+    /// <summary>
+    /// Tests the UpdateAsync method of the VirtualSafeRepo class.
+    /// </summary>
     [Fact]
     public async void UpdateAsync_UpdatesVirtualSafeModel()
     {
@@ -83,6 +103,9 @@ public class VirtualSafeRepoTests
         changedModel.Should().Be(modelToChange);
     }
 
+    /// <summary>
+    /// Tests the AddAsync method of the VirtualSafeRepo class.
+    /// </summary>
     [Fact]
     public async void AddAsync_AddsVirtualSafeModel()
     {
@@ -105,34 +128,43 @@ public class VirtualSafeRepoTests
         addedModel.Should().Be(modelToAdd);
     }
 
+    /// <summary>
+    /// Tests the RemoveByIdAsync method of the VirtualSafeRepo class.
+    /// </summary>
     [Fact]
-    public async void DeleteByIdAsync_DeletesVirtualSafeModel()
+    public async void RemoveByIdAsync_RemovesVirtualSafeModel()
     {
         // Arrange
         IVirtualSafeRepo repo = new VirtualSafeRepo(await GetDbContextAsync());
-        var firstModelIdToDelete = (await repo.ToListAsync()).First().Id;
+        var firstModelIdToRemove = (await repo.ToListAsync()).First().Id;
 
         // Act
-        var guidDeleteResult = await repo.DeleteByIdAsync(firstModelIdToDelete);
+        var guidRemoveResult = await repo.RemoveByIdAsync(firstModelIdToRemove);
 
         // Assert
-        guidDeleteResult.IsSucceeded.Should().BeTrue();
+        guidRemoveResult.IsSucceeded.Should().BeTrue();
     }
 
+    /// <summary>
+    /// Tests the RemoveAsync method of the VirtualSafeRepo class.
+    /// </summary>
     [Fact]
-    public async void DeleteAsync_DeletesVirtualSafeModel()
+    public async void RemoveAsync_RemovesVirtualSafeModel()
     {
         // Arrange
         IVirtualSafeRepo repo = new VirtualSafeRepo(await GetDbContextAsync());
-        var modelToDelete = (await repo.ToListAsync()).First();
+        var modelToRemove = (await repo.ToListAsync()).First();
 
         // Act
-        var result = await repo.DeleteAsync(modelToDelete);
+        var result = await repo.RemoveAsync(modelToRemove);
 
         // Assert
         result.IsSucceeded.Should().BeTrue();
     }
 
+    /// <summary>
+    /// Tests the ToList method of the VirtualSafeRepo class.
+    /// </summary>
     [Fact]
     public void ToList_ReturnsListOfVirtualSafeModels()
     {
@@ -147,6 +179,9 @@ public class VirtualSafeRepoTests
         models.Should().BeOfType<List<VirtualSafeModel>>();
     }
 
+    /// <summary>
+    /// Tests the GetById method of the VirtualSafeRepo class.
+    /// </summary>
     [Fact]
     public void GetById_ReturnsVirtualSafeModel()
     {
@@ -162,6 +197,9 @@ public class VirtualSafeRepoTests
         modelGuid.Value.Should().Be(models.First());
     }
 
+    /// <summary>
+    /// Tests the Update method of the VirtualSafeRepo class.
+    /// </summary>
     [Fact]
     public void Update_UpdatesVirtualSafeModel()
     {
@@ -183,6 +221,9 @@ public class VirtualSafeRepoTests
         changedModel.Should().Be(modelToChange);
     }
 
+    /// <summary>
+    /// Tests the Add method of the VirtualSafeRepo class.
+    /// </summary>
     [Fact]
     public void Add_AddsVirtualSafeModel()
     {
@@ -205,29 +246,35 @@ public class VirtualSafeRepoTests
         addedModel.Should().Be(modelToAdd);
     }
 
+    /// <summary>
+    /// Tests the RemoveById method of the VirtualSafeRepo class.
+    /// </summary>
     [Fact]
-    public void DeleteById_DeletesVirtualSafeModel()
+    public void RemoveById_RemovesVirtualSafeModel()
     {
         // Arrange
         IVirtualSafeRepo repo = new VirtualSafeRepo(GetDbContext());
-        var firstModelIdToDelete = repo.ToList().First().Id;
+        var firstModelIdToRemove = repo.ToList().First().Id;
 
         // Act
-        var guidDeleteResult = repo.DeleteById(firstModelIdToDelete);
+        var guidRemoveResult = repo.RemoveById(firstModelIdToRemove);
 
         // Assert
-        guidDeleteResult.IsSucceeded.Should().BeTrue();
+        guidRemoveResult.IsSucceeded.Should().BeTrue();
     }
 
+    /// <summary>
+    /// Tests the Remove method of the VirtualSafeRepo class.
+    /// </summary>
     [Fact]
-    public void Delete_DeletesVirtualSafeModel()
+    public void Remove_RemovesVirtualSafeModel()
     {
         // Arrange
         IVirtualSafeRepo repo = new VirtualSafeRepo(GetDbContext());
-        var modelToDelete = repo.ToList().First();
+        var modelToRemove = repo.ToList().First();
 
         // Act
-        var result = repo.Delete(modelToDelete);
+        var result = repo.Remove(modelToRemove);
 
         // Assert
         result.IsSucceeded.Should().BeTrue();

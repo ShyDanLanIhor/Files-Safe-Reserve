@@ -1,6 +1,5 @@
 ﻿using ShyryiFileSystemLibrary.Interfaces;
 using ShyryiFileSystemLibrary.Models;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FilesSafeReserve.Data.Models;
@@ -26,32 +25,36 @@ public class VirtualSafeModel : ModelBase<Guid>
     public string Path { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the creation date.
+    /// Gets or sets the timestamp when the virtual safe was created.
     /// </summary>
     public DateTime CreatedTimestamp { get; set; } = DateTime.Now;
 
     /// <summary>
-    /// Gets or sets when was last update by user.
+    /// Gets or sets the timestamp when the virtual safe was last updated.
     /// </summary>
     public DateTime LastUpdatedTimestamp { get; set; } = DateTime.Now;
 
     /// <summary>
-    /// Gets or sets when was last data reservation.
+    /// Gets or sets the timestamp of the last reservation made on the virtual safe.
     /// </summary>
     public DateTime LastReservationTimestamp { get; set; } = DateTime.Now;
 
-    public List<LogModel> AssociatedLogs { get; set; } = new();
+    /// <summary>
+    /// Gets or sets the list of logs associated with the virtual safe.
+    /// </summary>
+    public List<LogModel> Logs { get; set; } = [];
 
     /// <summary>
-    /// Gets the directory model associated with the virtual safe.
+    /// Gets the directory associated with the virtual safe.
     /// </summary>
     [NotMapped]
     public DirectoryModel Directory { get => Path; }
 
     /// <summary>
-    /// Gets the items contained within the virtual safe.
+    /// Gets the items contained within the directory associated with the virtual safe.
     /// </summary>
     [NotMapped]
-    public List<IPathable> Items { get => Directory.Pathables; }
+    public List<IPathed>? Items { get => Directory.Patheds; }
 }
+
 

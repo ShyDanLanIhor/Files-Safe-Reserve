@@ -4,13 +4,16 @@ using FilesSafeReserve.Data.Models;
 
 namespace FilesSafeReserve.Data.Repositories.IRepositories;
 
+/// <summary>
+/// Represents a repository interface for logs.
+/// </summary>
 public interface ILogRepo :
-    IToListRepoBase<FsrDbContext, LogModel, Guid>,
-    IGetByIdRepoBase<FsrDbContext, LogModel, Guid>,
-    IAddRepoBase<FsrDbContext, LogModel, Guid>,
-    IUpdateRepoBase<FsrDbContext, LogModel, Guid>,
-    IDeleteRepoBase<FsrDbContext, LogModel, Guid>,
-    IDeleteByIdRepoBase<FsrDbContext, LogModel, Guid>
+    IRepoToList<FsrDbContext, LogModel, Guid>,
+    IRepoGetterById<FsrDbContext, LogModel, Guid>,
+    IRepoAdder<FsrDbContext, LogModel, Guid>,
+    IRepoUpdater<FsrDbContext, LogModel, Guid>,
+    IRepoRemover<FsrDbContext, LogModel, Guid>,
+    IRepoRemoverById<FsrDbContext, LogModel, Guid>
 {
 
 }

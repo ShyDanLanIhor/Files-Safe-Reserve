@@ -9,11 +9,11 @@ namespace ShyryiFileSystemLibrary.Mappers;
 public static class DirectoryMapper
 {
     /// <summary>
-    /// Converts a <see cref="DirectoryModel"/> object to an <see cref="IPathable"/> object.
+    /// Converts a <see cref="DirectoryModel"/> object to an <see cref="IPathed"/> object.
     /// </summary>
     /// <param name="model">The directory model to be converted.</param>
-    /// <returns>An <see cref="IPathable"/> object representing the directory model.</returns>
-    public static IPathable ToIPathable(this DirectoryModel model)
+    /// <returns>An <see cref="IPathed"/> object representing the directory model.</returns>
+    public static IPathed ToIPathable(this DirectoryModel model)
         => new DirectoryModel() { Path = model.Path };
 }
 

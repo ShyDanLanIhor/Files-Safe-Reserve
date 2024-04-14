@@ -83,7 +83,7 @@ public class DirectoryModelTests
     public void NameProperty_SetsFolderName(string prevPath, string newPath)
     {
         // Arrange
-        DirectoryModel file = new() { Path = prevPath };
+        DirectoryModel file = prevPath;
 
         // Act
         file.Name = "new";

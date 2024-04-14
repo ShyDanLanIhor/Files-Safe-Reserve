@@ -29,10 +29,10 @@ public class TransferResult
     /// <summary>
     /// Gets or sets the collection of items that were successfully transferred.
     /// </summary>
-    public ICollection<IPathable>? TransferredItems { get; set; }
+    public ICollection<IPathed>? TransferredItems { get; set; }
 
     /// <summary>
     /// Gets or sets the collection of items that failed to be transferred.
     /// </summary>
-    public ICollection<IPathable>? FailedItems { get; set; }
+    public ICollection<IPathed>? FailedItems { get; set; }
 }

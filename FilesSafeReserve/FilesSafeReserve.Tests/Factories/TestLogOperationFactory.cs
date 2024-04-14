@@ -2,12 +2,19 @@
 
 namespace FilesSafeReserve.Tests.Factories;
 
+/// <summary>
+/// Factory for creating a list of log operations.
+/// </summary>
 public static class TestLogOperationFactory
 {
+    /// <summary>
+    /// Creates a list of log operations.
+    /// </summary>
+    /// <returns>The list of log operations.</returns>
     public static List<LogOperationModel> CreateList()
     {
-        return new()
-        {
+        return
+        [
             new LogOperationModel
             {
                 IsSucceeded = true,
@@ -15,11 +22,11 @@ public static class TestLogOperationFactory
                 PerformTimestamp = DateTime.Now,
                 VirtualSafeFilePath = @"C:\Users\username\Documents",
                 ExternalFilePath = @"C:\Users\username\Documents",
-                AssociatedLog = new()
+                Log = new()
                 {
                     StartTimestamp = DateTime.Now,
                     EndTimestamp = DateTime.Now,
-                    AssociatedVirtualSafe = new()
+                    VirtualSafe = new()
                     {
                         Name = "Test Name 1",
                         Description = "Test Description 1",
@@ -34,11 +41,11 @@ public static class TestLogOperationFactory
                 PerformTimestamp = DateTime.Now,
                 VirtualSafeFilePath = @"C:\Users\username\Documents",
                 ExternalFilePath = @"C:\Users\username\Documents",
-                AssociatedLog = new()
+                Log = new()
                 {
                     StartTimestamp = DateTime.Now,
                     EndTimestamp = DateTime.Now,
-                    AssociatedVirtualSafe = new()
+                    VirtualSafe = new()
                     {
                         Name = "Test Name 2",
                         Description = "Test Description 2",
@@ -53,11 +60,11 @@ public static class TestLogOperationFactory
                 PerformTimestamp = DateTime.Now,
                 VirtualSafeFilePath = @"C:\Users\username\Documents",
                 ExternalFilePath = @"C:\Users\username\Documents",
-                AssociatedLog = new()
+                Log = new()
                 {
                     StartTimestamp = DateTime.Now,
                     EndTimestamp = DateTime.Now,
-                    AssociatedVirtualSafe = new()
+                    VirtualSafe = new()
                     {
                         Name = "Test Name 3",
                         Description = "Test Description 3",
@@ -65,6 +72,6 @@ public static class TestLogOperationFactory
                     }
                 }
             }
-        };
+        ];
     }
 }
