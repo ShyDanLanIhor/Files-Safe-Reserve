@@ -42,6 +42,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<IDbService, DbService>();
         builder.Services.AddSingleton<IAppService, AppService>();
         builder.Services.AddSingleton<IVirtualSafeRepo, VirtualSafeRepo>();
+        builder.Services.AddSingleton<IFileSystemService, FileSystemService>();
 
         builder.Services.AddDbContext<FsrDbContext>();
         builder.Services.AddTransient<MainPage>();

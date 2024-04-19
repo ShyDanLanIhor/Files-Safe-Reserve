@@ -18,11 +18,6 @@ public class LogModel : ModelBase<Guid>
     public DateTime EndTimestamp { get; set; }
 
     /// <summary>
-    /// Gets or sets the identifier of the associated virtual safe.
-    /// </summary>
-    public Guid VirtualSafeId { get; set; }
-
-    /// <summary>
     /// Gets or sets the associated virtual safe.
     /// </summary>
     public VirtualSafeModel VirtualSafe { get; set; } = null!;
@@ -30,7 +25,7 @@ public class LogModel : ModelBase<Guid>
     /// <summary>
     /// Gets or sets the list of log operations associated with this log.
     /// </summary>
-    public List<LogOperationModel> LogOperations { get; set; } = [];
+    public ICollection<LogOperationModel> LogOperations { get; set; } = [];
 
     /// <summary>
     /// Gets the message representing the log.

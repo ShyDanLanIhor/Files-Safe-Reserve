@@ -1,4 +1,5 @@
 ﻿using ShyryiFileSystemLibrary.Models;
+using static ShyryiFileSystemLibrary.Models.FileSystemItemModel;
 
 namespace ShyryiFileSystemLibrary.Interfaces;
 
@@ -7,6 +8,19 @@ namespace ShyryiFileSystemLibrary.Interfaces;
 /// </summary>
 public interface IPathed
 {
+    public FileSystemItemType Type
+    {
+        get
+        {
+            if (Directory.Exists(Path))
+                return FileSystemItemType.Directory;
+            else if (File.Exists(Path))
+                return FileSystemItemType.File;
+            else
+                return FileSystemItemType.Unknown;
+        }
+    }
+
     /// <summary>
     /// Gets or sets the name of the pathable object.
     /// </summary>
