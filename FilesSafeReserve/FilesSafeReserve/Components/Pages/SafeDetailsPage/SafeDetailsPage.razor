@@ -46,12 +46,12 @@
     </FooterTemplate>
 </Modal>
 
-<Modal @ref="ViewModel.UnknownFile" title="Unknown File" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+<Modal @ref="ViewModel.UnknownFileModal" title="Unknown File" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
     <BodyTemplate>
         File type is unknown, so it cant be open.
     </BodyTemplate>
     <FooterTemplate>
-        <Button Color="ButtonColor.Primary" @onclick="async () => await ViewModel.UnknownFile.HideAsync()">OK</Button>
+        <Button Color="ButtonColor.Primary" @onclick="async () => await ViewModel.UnknownFileModal.HideAsync()">OK</Button>
     </FooterTemplate>
 </Modal>
 
@@ -126,7 +126,7 @@
                                     }
                                     else
                                     {
-                                        <Icon Name="IconName.Question" @onclick='async () => await ViewModel.UnknownFile.ShowAsync()' />
+                                        <Icon Name="IconName.Question" @onclick='async () => await ViewModel.UnknownFileModal.ShowAsync()' />
                                     }
                                 </div>
                                 <div class="item-name">

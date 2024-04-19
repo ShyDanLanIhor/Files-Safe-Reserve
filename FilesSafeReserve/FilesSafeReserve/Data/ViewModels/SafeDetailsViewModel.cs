@@ -9,6 +9,6 @@ public class SafeDetailsViewModel
     public Modal DeleteFailedModal { get; set; } = default!;
     public Modal DeleteModal { get; set; } = default!;
     public Modal NotFoundModal { get; set; } = default!;
-    public Modal UnknownFile { get; set; } = default!;
+    public Modal UnknownFileModal { get; set; } = default!;
     public VirtualSafeModel? VirtualSafe { get; set; }
 }
