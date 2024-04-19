@@ -8,7 +8,7 @@
 @inject IVirtualSafeRepo VirtualSafeRepo
 @inject NavigationManager Navigation
 
-<Modal @ref="ViewModel.SuccessModal" title="Creating Info" UseStaticBackdrop="true" CloseOnEscape="false">
+<Modal @ref="ViewModel.SuccessModal" title="Creating Info" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
     <BodyTemplate>
         Virtual Safe was successfully created.<br>
         You will be redirected to Safes List Page.
@@ -18,7 +18,7 @@
     </FooterTemplate>
 </Modal>
 
-<Modal @ref="ViewModel.DuplicateModal" title="Duplicate Info" UseStaticBackdrop="true" CloseOnEscape="false">
+<Modal @ref="ViewModel.DuplicateModal" title="Duplicate Info" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
     <BodyTemplate>
         Virtual Safe in picked directory already exists.
     </BodyTemplate>

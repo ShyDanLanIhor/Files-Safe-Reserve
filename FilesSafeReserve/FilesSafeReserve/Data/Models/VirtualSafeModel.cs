@@ -40,9 +40,9 @@ public class VirtualSafeModel : ModelBase<Guid>
     public DateTime LastReservationTimestamp { get; set; } = DateTime.Now;
 
     /// <summary>
-    /// Gets or sets the list of logs associated with the virtual safe.
+    /// Gets or sets the list of collection associated with the virtual safe.
     /// </summary>
-    public List<LogModel> Logs { get; set; } = [];
+    public ICollection<LogModel> Logs { get; set; } = [];
 
     /// <summary>
     /// Gets the directory associated with the virtual safe.

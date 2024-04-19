@@ -1,4 +1,5 @@
 ﻿using ShyryiFileSystemLibrary.Interfaces;
+using System.Security.AccessControl;
 
 namespace ShyryiFileSystemLibrary.Models;
 
@@ -48,7 +49,7 @@ public abstract class FileSystemItemModel : IPathed
     /// <summary>
     /// Determines whether the specified object is equal to the current file system item.
     /// </summary>
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
         => obj is FileSystemItemModel && Equals(this, obj);
 
     /// <summary>
@@ -57,3 +58,9 @@ public abstract class FileSystemItemModel : IPathed
     public override int GetHashCode() => Path.GetHashCode();
 }
 
+public enum FileSystemItemType
+{
+    File,
+    Directory,
+    Unknown
+}

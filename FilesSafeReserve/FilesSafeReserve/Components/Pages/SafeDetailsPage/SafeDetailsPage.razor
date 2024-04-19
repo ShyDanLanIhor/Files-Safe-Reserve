@@ -1,3 +1,174 @@
 ﻿@page "/virtual-safe/details/{id}"
 
-<p>Safe Details Page</p>
+@using FilesSafeReserve.Data.Repositories.IRepositories
+@using FilesSafeReserve.Data.Services.IServices
+@using ShyryiFileSystemLibrary.Models
+@using System.Diagnostics
+
+@inject IVirtualSafeRepo VirtualSafeRepo
+@inject IFileSystemService FileExplorerService
+@inject NavigationManager Navigation
+
+<Modal @ref="ViewModel.DeleteModal" title="Virtual Safe Delete" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Are you sure that you want delete "@ViewModel.VirtualSafe!.Name"
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Danger" @onclick='OnDeleteSafeClick'>Delete</Button>
+        <Button Color="ButtonColor.Secondary" @onclick='async () => await ViewModel.DeleteModal.HideAsync()'>Cancel</Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.DeleteSucceededModal" title="Virtual Safe Deleting" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Virtual safe was deleted.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick='() => Navigation.NavigateTo($"/virtual-safes")'>OK</Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.DeleteFailedModal" title="Virtual Safe Deleting" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Virtual safe was not deleted.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick='async () => await ViewModel.DeleteFailedModal.HideAsync()'>OK</Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.NotFoundModal" title="Virtual Safe Finding" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Virtual safe was not found by id: @Id.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" onclick="history.back()">OK</Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.UnknownFile" title="Unknown File" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        File type is unknown, so it cant be open.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick="async () => await ViewModel.UnknownFile.HideAsync()">OK</Button>
+    </FooterTemplate>
+</Modal>
+
+<div class="main-container">
+    <div class="header-container gradient-background">
+        <h3>Safe Details Page</h3>
+    </div>
+
+    <div class="body-container gradient-background">
+        @if (ViewModel.VirtualSafe is not null)
+        {
+            <div class="name-container">
+                <h4>@ViewModel.VirtualSafe.Name</h4>
+            </div>
+
+            <div class="virtual-safe-container">
+                <div class="description-container">
+                    <p>@ViewModel.VirtualSafe.Description</p>
+
+                    <p>Path: @ViewModel.VirtualSafe.Path</p>
+                </div>
+
+                <div class="timestamp-container">
+                    <div class="timestamp-item">
+                        <p>Created On: @ViewModel.VirtualSafe.CreatedTimestamp</p>
+                    </div>
+                    <div class="timestamp-item">
+                        <p>Last Updated On: @ViewModel.VirtualSafe.LastUpdatedTimestamp</p>
+                    </div>
+                    <div class="timestamp-item">
+                        <p>Last Reservation On: @ViewModel.VirtualSafe.LastReservationTimestamp</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="btns-container">
+                <div class="btns-item">
+                    <Button @onclick='() => Navigation.NavigateTo($"/virtual-safe/edit/{Id}")' Color="ButtonColor.Primary"> Edit </Button>
+                </div>
+
+                <div class="btns-item">
+                    <Button @onclick='() => FileExplorerService.Open(ViewModel.VirtualSafe.Directory)' Color="ButtonColor.Primary"> Open folder </Button>
+                </div>
+
+                <div class="btns-item">
+                    <Button @onclick='async () => await ViewModel.DeleteModal.ShowAsync()' Color="ButtonColor.Danger"> Delete </Button>
+                </div>
+
+                <div class="btns-item">
+                    <Button onclick="history.back();" Color="ButtonColor.Secondary"> Go Back </Button>
+                </div>
+            </div>
+
+            <div class="items-container">
+                <div class="items-header-container">
+                    <h5> Virtual safe items </h5>
+                </div>
+                <div class="items-elements-container">
+                    @if (ViewModel.VirtualSafe.Items!.Count is not 0)
+                    {
+                        @foreach (var item in ViewModel.VirtualSafe.Items)
+                        {
+                            <div class="items-item gradient-background">
+                                <div class="item-icon">
+                                    @if (item.Type == FileSystemItemType.Directory)
+                                    {
+                                        <Icon Name="IconName.Folder" @onclick='() => FileExplorerService.Open(item)' />
+                                    }
+                                    else if (item.Type == FileSystemItemType.File)
+                                    {
+                                        <Icon Name="IconName.File" @onclick='() => FileExplorerService.Open(item)' />
+                                    }
+                                    else
+                                    {
+                                        <Icon Name="IconName.Question" @onclick='async () => await ViewModel.UnknownFile.ShowAsync()' />
+                                    }
+                                </div>
+                                <div class="item-name">
+                                    <span>@item.Name</span>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="alert-container">
+                            <Alert Color="AlertColor.Info"> <Icon Name="IconName.InfoCircleFill" class="me-2"></Icon> Not a single virtual safe item was found. </Alert>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+
+@code {
+    protected async override void OnInitialized()
+    {
+        var result = await VirtualSafeRepo.GetByIdAsync(new Guid(Id));
+
+        if (result.IsSucceeded is false)
+            await ViewModel.NotFoundModal.ShowAsync();
+
+        ViewModel.VirtualSafe = result.Value;
+    }
+
+    private async Task OnDeleteSafeClick()
+    {
+        await ViewModel.DeleteModal.HideAsync();
+
+        var result = await VirtualSafeRepo.RemoveAsync(ViewModel.VirtualSafe!);
+
+        if (result.IsSucceeded)
+            await ViewModel.DeleteSucceededModal.ShowAsync();
+        else
+            await ViewModel.DeleteFailedModal.ShowAsync();
+    }
+
+}

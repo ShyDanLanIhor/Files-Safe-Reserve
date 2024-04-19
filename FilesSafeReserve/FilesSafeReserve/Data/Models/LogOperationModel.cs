@@ -33,11 +33,6 @@ public class LogOperationModel : ModelBase<Guid>
     public DateTime PerformTimestamp { get; set; }
 
     /// <summary>
-    /// Gets or sets the identifier of the associated log.
-    /// </summary>
-    public Guid LogId { get; set; }
-
-    /// <summary>
     /// Gets or sets the associated log.
     /// </summary>
     public LogModel Log { get; set; } = null!;
