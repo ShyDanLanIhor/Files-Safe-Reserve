@@ -1,14 +1,20 @@
-﻿using ShyryiFileSystemLibrary.Interfaces;
-using ShyryiFileSystemLibrary.Models;
+﻿using FilesSafeReserve.Data.Interfaces.Models;
+using ShyryiFileSystemLibrary.Entities;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FilesSafeReserve.Data.Models;
 
 /// <summary>
-/// Represents a virtual safe model.
+/// Represents a virtual safe entity.
 /// </summary>
-public class VirtualSafeModel : ModelBase<Guid>
+[Table("VirtualSafe")]
+public class VirtualSafeModel : IModelBase<Guid>
 {
+    /// <summary>
+    /// Gets or sets the unique identifier of the virtual safe.
+    /// </summary>
+    public Guid Id { get; set; }
+
     /// <summary>
     /// Gets or sets the name of the virtual safe.
     /// </summary>
@@ -25,36 +31,18 @@ public class VirtualSafeModel : ModelBase<Guid>
     public string Path { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the timestamp when the virtual safe was created.
-    /// </summary>
-    public DateTime CreatedTimestamp { get; set; } = DateTime.Now;
-
-    /// <summary>
-    /// Gets or sets the timestamp when the virtual safe was last updated.
-    /// </summary>
-    public DateTime LastUpdatedTimestamp { get; set; } = DateTime.Now;
-
-    /// <summary>
-    /// Gets or sets the timestamp of the last reservation made on the virtual safe.
-    /// </summary>
-    public DateTime LastReservationTimestamp { get; set; } = DateTime.Now;
-
-    /// <summary>
-    /// Gets or sets the list of collection associated with the virtual safe.
-    /// </summary>
-    public ICollection<LogModel> Logs { get; set; } = [];
-
-    /// <summary>
     /// Gets the directory associated with the virtual safe.
     /// </summary>
     [NotMapped]
-    public DirectoryModel Directory { get => Path; }
+    public ShyDirectoryEntity Directory { get => Path; }
 
     /// <summary>
-    /// Gets the items contained within the directory associated with the virtual safe.
+    /// Gets or sets the details of the virtual safe.
     /// </summary>
-    [NotMapped]
-    public List<IPathed>? Items { get => Directory.Patheds; }
+    public VirtualSafeDetailsModel Details { get; set; } = null!;
+
+    /// <summary>
+    /// Gets or sets the reservation associated with the virtual safe.
+    /// </summary>
+    public ReservationModel Reservation { get; set; } = null!;
 }
-
-

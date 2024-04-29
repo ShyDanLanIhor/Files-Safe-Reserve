@@ -94,7 +94,7 @@
     private async Task OnCreateClick()
     {
         if (VirtualSafeRepo.ToList()
-                           .Where(s => s.Path == ViewModel.VirtualSafe.Path)
+                           .Where(s => s.Path.Contains(ViewModel.VirtualSafe.Path))
                            .Count() is 0)
         {
             await VirtualSafeRepo.AddAsync(
@@ -103,23 +103,29 @@
                     Name = ViewModel.VirtualSafe.Name,
                     Description = ViewModel.VirtualSafe.Description,
                     Path = ViewModel.VirtualSafe.Path,
-                    Logs =
-                    [
-                        new()
-                        {
-                            StartTimestamp = DateTime.Now,
-                            EndTimestamp = DateTime.Now,
-                            LogOperations =
-                            [
-                                new()
-                                {
-                                    IsSucceeded = true,
-                                    Type = LogOperationModel.OperationsTypes.CreateVirtualSafe,
-                                    PerformTimestamp = DateTime.Now,
-                                }
-                            ]
-                        }
-                    ]
+                    Details =
+                    new()
+                    {
+                        Logs =
+                        [
+                            new()
+                            {
+                                StartTimestamp = DateTime.Now,
+                                EndTimestamp = DateTime.Now,
+                                Operations =
+                                [
+                                    new()
+                                    {
+                                        IsSucceeded = true,
+                                        ItemPath = ViewModel.VirtualSafe.Path,
+                                        Type = LogOperationModel.Types.CreateVirtualSafe,
+                                        PerformTimestamp = DateTime.Now,
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    Reservation = new()
                 });
 
             await ViewModel.SuccessModal.ShowAsync();

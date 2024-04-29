@@ -4,8 +4,10 @@
 @using FilesSafeReserve.Data.Entities.Forms
 @using FilesSafeReserve.Data.Repositories.IRepositories
 @using FilesSafeReserve.Data.Models
+@using FilesSafeReserve.Data.Services.IServices
 
 @inject IVirtualSafeRepo VirtualSafeRepo
+@inject ILoggerService LoggerService
 @inject NavigationManager Navigation
 @inject IJSRuntime JSRuntime
 
@@ -106,11 +108,20 @@
 
         if (result.IsSucceeded)
         {
-            result.Value!.Name = ViewModel.VirtualSafe.Name;
+            result.Value.Name = ViewModel.VirtualSafe.Name;
             result.Value.Description = ViewModel.VirtualSafe.Description;
-            result.Value.LastUpdatedTimestamp = DateTime.Now;
+            result.Value.Details.UpdatedTimestamp = DateTime.Now;
 
-            VirtualSafeRepo.Update(result.Value);
+            await LoggerService
+                        .Log(async () => await VirtualSafeRepo.UpdateAsync(result.Value))
+                        .WithParameters(
+                            new()
+                            {
+                                VirtualSafeDetailsId = result.Value.Details.Id,
+                                Type = LogOperationModel.Types.UpdateVirtualSafe,
+                                ItemPath = result.Value.Path
+                            })
+                        .ExecuteAsync();
 
             await ViewModel.SuccessModal.ShowAsync();
         }

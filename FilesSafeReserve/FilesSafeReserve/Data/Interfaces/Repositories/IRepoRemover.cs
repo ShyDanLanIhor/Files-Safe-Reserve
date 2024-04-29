@@ -1,4 +1,5 @@
 ﻿using FilesSafeReserve.Data.Entities.Results.Basic;
+using FilesSafeReserve.Data.Interfaces.Models;
 using FilesSafeReserve.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,7 +11,9 @@ namespace FilesSafeReserve.Data.Interfaces.Repositories;
 /// <typeparam name="DbContextType">The type of the database context.</typeparam>
 /// <typeparam name="RepoType">The type of the repository.</typeparam>
 /// <typeparam name="IdType">The type of the identifier.</typeparam>
-public interface IRepoRemover<DbContextType, RepoType, IdType> where DbContextType : DbContext where RepoType : ModelBase<IdType>
+public interface IRepoRemover<DbContextType, RepoType, IdType> 
+    where DbContextType : DbContext 
+    where RepoType : class, IModelBase<IdType>
 {
     /// <summary>
     /// Gets the database context associated with the repository.

@@ -15,7 +15,6 @@ public interface IVirtualSafeRepo :
     IRepoRemover<FsrDbContext, VirtualSafeModel, Guid>,
     IRepoRemoverById<FsrDbContext, VirtualSafeModel, Guid>
 {
-
 }
 
 

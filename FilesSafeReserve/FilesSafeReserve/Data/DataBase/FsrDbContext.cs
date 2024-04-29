@@ -20,6 +20,11 @@ public class FsrDbContext : DbContext
     public DbSet<VirtualSafeModel> VirtualSafes { get; set; }
 
     /// <summary>
+    /// Gets or sets the virtual safe details models DbSet.
+    /// </summary>
+    public DbSet<VirtualSafeDetailsModel> VirtualSafeDetails { get; set; }
+
+    /// <summary>
     /// Gets or sets the log models DbSet.
     /// </summary>
     public DbSet<LogModel> Logs { get; set; }
@@ -28,6 +33,21 @@ public class FsrDbContext : DbContext
     /// Gets or sets the log operations models DbSet.
     /// </summary>
     public DbSet<LogOperationModel> LogOperations { get; set; }
+
+    /// <summary>
+    /// Gets or sets the reservations models DbSet.
+    /// </summary>
+    public DbSet<ReservationModel> Reservations { get; set; }
+
+    /// <summary>
+    /// Gets or sets the reservation files models DbSet.
+    /// </summary>
+    public DbSet<FileModel> ReservationFiles { get; set; }
+
+    /// <summary>
+    /// Gets or sets the reservation directories models DbSet.
+    /// </summary>
+    public DbSet<DirectoryModel> ReservationDirectories { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FsrDbContext"/> class.

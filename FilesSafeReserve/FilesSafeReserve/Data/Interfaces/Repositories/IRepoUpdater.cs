@@ -1,4 +1,5 @@
-﻿using FilesSafeReserve.Data.Models;
+﻿using FilesSafeReserve.Data.Interfaces.Models;
+using FilesSafeReserve.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace FilesSafeReserve.Data.Interfaces.Repositories;
@@ -11,7 +12,7 @@ namespace FilesSafeReserve.Data.Interfaces.Repositories;
 /// <typeparam name="IdType">The type of the identifier.</typeparam>
 public interface IRepoUpdater<DbContextType, RepoType, IdType>
     where DbContextType : DbContext
-    where RepoType : ModelBase<IdType>
+    where RepoType : class, IModelBase<IdType>
 {
     /// <summary>
     /// Gets the database context associated with the repository.
