@@ -8,20 +8,20 @@ using FluentAssertions;
 namespace FilesSafeReserve.Tests.Repositories;
 
 /// <summary>
-/// Test suite for the LogRepo class.
+/// Tests for LogRepo class.
 /// </summary>
 public class LogRepoTests
 {
     /// <summary>
-    /// Asynchronously retrieves a test database context.
+    /// Asynchronously retrieves a new instance of the FsrDbContext.
     /// </summary>
-    /// <returns>The test database context.</returns>
+    /// <returns>The asynchronously retrieved FsrDbContext instance.</returns>
     private static async Task<FsrDbContext> GetDbContextAsync()
     {
-        var dbContext = TestFsrDbContextFactory.Create();
+        var dbContext = TestsFsrDbContextFactory.Create();
 
-        // Adding predefined logs models
-        dbContext.Logs.AddRange(TestLogFactory.CreateList());
+        // Adding predefined virtual safe models
+        dbContext.VirtualSafes.AddRange(TestsVirtualSafeFactory.CreateRandomList());
 
         await dbContext.SaveChangesAsync();
 
@@ -29,15 +29,15 @@ public class LogRepoTests
     }
 
     /// <summary>
-    /// Retrieves a test database context.
+    /// Synchronously retrieves a new instance of the FsrDbContext.
     /// </summary>
-    /// <returns>The test database context.</returns>
+    /// <returns>The synchronously retrieved FsrDbContext instance.</returns>
     private static FsrDbContext GetDbContext()
     {
-        var dbContext = TestFsrDbContextFactory.Create();
+        var dbContext = TestsFsrDbContextFactory.Create();
 
-        // Adding predefined logs models
-        dbContext.Logs.AddRange(TestLogFactory.CreateList());
+        // Adding predefined virtual safe models
+        dbContext.VirtualSafes.AddRange(TestsVirtualSafeFactory.CreateRandomList());
 
         dbContext.SaveChanges();
 
@@ -45,7 +45,7 @@ public class LogRepoTests
     }
 
     /// <summary>
-    /// Tests the ToListAsync method of the LogRepo class.
+    /// Tests the asynchronous method ToListAsync to ensure it returns a list of LogModel objects.
     /// </summary>
     [Fact]
     public async void ToListAsync_ReturnsListOfLogModels()
@@ -62,7 +62,7 @@ public class LogRepoTests
     }
 
     /// <summary>
-    /// Tests the GetByIdAsync method of the LogRepo class.
+    /// Tests the asynchronous method GetByIdAsync to ensure it returns a LogModel object.
     /// </summary>
     [Fact]
     public async void GetByIdAsync_ReturnsLogModel()
@@ -80,7 +80,7 @@ public class LogRepoTests
     }
 
     /// <summary>
-    /// Tests the UpdateAsync method of the LogRepo class.
+    /// Tests the asynchronous method UpdateAsync to ensure it updates a LogModel object.
     /// </summary>
     [Fact]
     public async void UpdateAsync_UpdatesLogModel()
@@ -90,7 +90,6 @@ public class LogRepoTests
         var models = await repo.ToListAsync();
 
         var modelToChange = models.First();
-        modelToChange.StartTimestamp = DateTime.Now;
         modelToChange.EndTimestamp = DateTime.Now;
 
         // Act
@@ -103,19 +102,14 @@ public class LogRepoTests
     }
 
     /// <summary>
-    /// Tests the AddAsync method of the LogRepo class.
+    /// Tests the asynchronous method AddAsync to ensure it adds a LogModel object.
     /// </summary>
     [Fact]
     public async void AddAsync_AddsLogModel()
     {
         // Arrange
         ILogRepo repo = new LogRepo(await GetDbContextAsync());
-        LogModel modelToAdd =
-            new()
-            {
-                StartTimestamp = DateTime.Now,
-                EndTimestamp = DateTime.Now
-            };
+        LogModel modelToAdd = new();
 
         // Act
         await repo.AddAsync(modelToAdd);
@@ -127,7 +121,7 @@ public class LogRepoTests
     }
 
     /// <summary>
-    /// Tests the RemoveByIdAsync method of the LogRepo class.
+    /// Tests the asynchronous method RemoveByIdAsync to ensure it removes a LogModel object by its Id.
     /// </summary>
     [Fact]
     public async void RemoveByIdAsync_RemovesLogModel()
@@ -144,7 +138,7 @@ public class LogRepoTests
     }
 
     /// <summary>
-    /// Tests the RemoveAsync method of the LogRepo class.
+    /// Tests the asynchronous method RemoveAsync to ensure it removes a LogModel object.
     /// </summary>
     [Fact]
     public async void RemoveAsync_RemovesLogModel()
@@ -161,7 +155,7 @@ public class LogRepoTests
     }
 
     /// <summary>
-    /// Tests the ToList method of the LogRepo class.
+    /// Tests the synchronous method ToList to ensure it returns a list of LogModel objects.
     /// </summary>
     [Fact]
     public void ToList_ReturnsListOfLogModels()
@@ -178,7 +172,7 @@ public class LogRepoTests
     }
 
     /// <summary>
-    /// Tests the GetById method of the LogRepo class.
+    /// Tests the synchronous method GetById to ensure it returns a LogModel object.
     /// </summary>
     [Fact]
     public void GetById_ReturnsLogModel()
@@ -196,7 +190,7 @@ public class LogRepoTests
     }
 
     /// <summary>
-    /// Tests the Update method of the LogRepo class.
+    /// Tests the synchronous method Update to ensure it updates a LogModel object.
     /// </summary>
     [Fact]
     public void Update_UpdatesLogModel()
@@ -206,7 +200,6 @@ public class LogRepoTests
         var models = repo.ToList();
 
         var modelToChange = models.First();
-        modelToChange.StartTimestamp = DateTime.Now;
         modelToChange.EndTimestamp = DateTime.Now;
 
         // Act
@@ -219,19 +212,14 @@ public class LogRepoTests
     }
 
     /// <summary>
-    /// Tests the Add method of the LogRepo class.
+    /// Tests the synchronous method Add to ensure it adds a LogModel object.
     /// </summary>
     [Fact]
     public void Add_AddsLogModel()
     {
         // Arrange
         ILogRepo repo = new LogRepo(GetDbContext());
-        LogModel modelToAdd =
-            new()
-            {
-                StartTimestamp = DateTime.Now,
-                EndTimestamp = DateTime.Now
-            };
+        LogModel modelToAdd = new();
 
         // Act
         repo.Add(modelToAdd);
@@ -243,7 +231,7 @@ public class LogRepoTests
     }
 
     /// <summary>
-    /// Tests the RemoveById method of the LogRepo class.
+    /// Tests the synchronous method RemoveById to ensure it removes a LogModel object by its Id.
     /// </summary>
     [Fact]
     public void RemoveById_RemovesLogModel()
@@ -260,7 +248,7 @@ public class LogRepoTests
     }
 
     /// <summary>
-    /// Tests the Remove method of the LogRepo class.
+    /// Tests the synchronous method Remove to ensure it removes a LogModel object.
     /// </summary>
     [Fact]
     public void Remove_RemovesLogModel()

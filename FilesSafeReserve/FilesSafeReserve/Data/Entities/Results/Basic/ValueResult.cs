@@ -1,4 +1,6 @@
-﻿namespace FilesSafeReserve.Data.Entities.Results.Basic;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace FilesSafeReserve.Data.Entities.Results.Basic;
 
 /// <summary>
 /// Represents the result of an operation with a value.
@@ -8,6 +10,7 @@ public class ValueResult : ResultEntity
     /// <summary>
     /// Gets a value indicating whether the operation succeeded based on the presence and truthiness of the Value property.
     /// </summary>
+    [MemberNotNullWhen(returnValue: true, nameof(Value))]
     public new bool IsSucceeded { get => Value is not null or false; }
 
     /// <summary>
@@ -26,6 +29,7 @@ public class ValueResult<ValueType> : ResultEntity
     /// <summary>
     /// Gets a value indicating whether the operation succeeded based on the presence and truthiness of the Value property.
     /// </summary>
+    [MemberNotNullWhen(returnValue: true, nameof(Value))]
     public new bool IsSucceeded { get => Value is not null or false; }
 
     /// <summary>

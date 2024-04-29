@@ -17,11 +17,11 @@
                 <div class="item-container">
                     <div class="name-part">@safe.Name</div>
                     <p>@safe.Description</p>
-                    <p>Last Reservation: @safe.LastReservationTimestamp.ToString("dd/MM/yyyy HH:mm:ss")</p>
+                    <p>Last Reservation: @safe.Details.ReservedTimestamp.ToString("dd/MM/yyyy HH:mm:ss")</p>
                     <div style="text-align: center;">
                         <Button @onclick='() => Navigation.NavigateTo($"/virtual-safe/details/{safe.Id.ToString()}")' Color="ButtonColor.Primary"> Details </Button>
                     </div>
-                    @if (safe.Directory.Exist is false)
+                    @if (safe.Directory.Exists is false)
                     {
                         <div class="alert-container">
                             <Alert Color="AlertColor.Danger"> <Icon Name="IconName.ExclamationTriangleFill" class="me-2"></Icon> Virtual safe directory does not exist in the file system. </Alert>

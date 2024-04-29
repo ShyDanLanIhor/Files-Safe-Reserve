@@ -18,10 +18,10 @@ public class VirtualSafeRepoTests
     /// <returns>The test database context.</returns>
     private static async Task<FsrDbContext> GetDbContextAsync()
     {
-        var dbContext = TestFsrDbContextFactory.Create();
+        var dbContext = TestsFsrDbContextFactory.Create();
 
         // Adding predefined virtual safe models
-        dbContext.VirtualSafes.AddRange(TestVirtualSafeFactory.CreateList());
+        dbContext.VirtualSafes.AddRange(TestsVirtualSafeFactory.CreateRandomList());
 
         await dbContext.SaveChangesAsync();
 
@@ -34,10 +34,10 @@ public class VirtualSafeRepoTests
     /// <returns>The test database context.</returns>
     private static FsrDbContext GetDbContext()
     {
-        var dbContext = TestFsrDbContextFactory.Create();
+        var dbContext = TestsFsrDbContextFactory.Create();
 
         // Adding predefined virtual safe models
-        dbContext.VirtualSafes.AddRange(TestVirtualSafeFactory.CreateList());
+        dbContext.VirtualSafes.AddRange(TestsVirtualSafeFactory.CreateRandomList());
 
         dbContext.SaveChanges();
 

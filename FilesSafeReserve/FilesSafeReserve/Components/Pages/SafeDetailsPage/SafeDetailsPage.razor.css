@@ -103,62 +103,159 @@
     animation: GradientAnim 20s ease infinite;
 }
 
-.items-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding-top: 10px;
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-top: 10px;
-    border-radius: 10px;
-    background: white;
-    width: 100%;
-}
-
-.items-elements-container {
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    width: 100%;
-}
-
-.items-item {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    padding: 5px;
-    margin: 5px;
-    border-radius: 10px;
-    color: white;
-}
-
-.item-icon{
-    margin-right: 10px;
-    cursor: pointer;
-}
-
-    .item-icon:hover {
-        transform: scale(1.1);
-    }
-
-    .item-icon:active {
-        transform: scale(0.9);
-    }
-
 .alert-container {
     width: 90%;
     margin: 20px;
 }
 
-.item-name {
-    cursor: default;
+.directory-container {
+    background: white;
+    width: 100%;
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.directory-header-container {
+    margin: 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.directory-elements-container {
+    width: 100%;
+}
+
+.directory-element-container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.directory-element-data {
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+}
+
+.directory-element-icon {
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.directory-element-name {
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.directory-element-btns {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    align-items: center;
+}
+
+.directory-element-delete {
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.reservation-container {
+    background: white;
+    width: 100%;
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.reservation-header-container {
+    margin: 10px;
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.reservation-elements-container {
+    width: 100%;
+}
+
+.reservation-element-container {
+    width: 100%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.reservation-element-data {
+    padding: 10px;
+    border-radius: 10px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+}
+
+.reservation-element-icon {
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.reservation-element-name {
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.reservation-element-btns {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    align-items: center;
+}
+
+.reservation-element-reserve {
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.reservation-element-delete {
+    margin-right: 5px;
+    margin-left: 5px;
 }
 
 @media (max-width: 800px) {
     .btns-container {
+        flex-direction: column;
+    }
+    .reserves-btns-container {
         flex-direction: column;
     }
 }
