@@ -24,10 +24,10 @@ jobs:
     - name: Install MAUI workload
       run: dotnet workload install android ios maccatalyst
     - name: Restore dependencies
-      run: dotnet restore ./FilesSafeReserve/FilesSafeReserve.sln
+      run: dotnet restore ./solution.sln
     - name: Build
-      run: dotnet build ./FilesSafeReserve/FilesSafeReserve.sln --no-restore
+      run: dotnet build ./solution.sln --no-restore
     - name: Test SFS Library
-      run: dotnet test ./FilesSafeReserve/ShyryiFileSystemLibrary.Tests/ShyryiFileSystemLibrary.Tests.csproj --no-build --verbosity normal
+      run: dotnet test ./tests/ShyryiFileSystemLibrary.Tests/ShyryiFileSystemLibrary.Tests.csproj --no-build --verbosity normal
     - name: Test FSR
-      run: dotnet test ./FilesSafeReserve/FilesSafeReserve.Tests/FilesSafeReserve.Tests.csproj --no-build --verbosity normal
+      run: dotnet test ./tests/FilesSafeReserve.Tests/FilesSafeReserve.Tests.csproj --no-build --verbosity normal
