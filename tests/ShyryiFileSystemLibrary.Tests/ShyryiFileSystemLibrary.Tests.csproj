@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ShyryiFileSystemLibrary\ShyryiFileSystemLibrary.csproj" />
+    <ProjectReference Include="..\..\src\ShyryiFileSystemLibrary\ShyryiFileSystemLibrary.csproj" />
   </ItemGroup>
 
 </Project>

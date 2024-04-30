@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FilesSafeReserve\FilesSafeReserve.csproj" />
+    <ProjectReference Include="..\..\src\FilesSafeReserve\FilesSafeReserve.csproj" />
   </ItemGroup>
 
   <ItemGroup>
