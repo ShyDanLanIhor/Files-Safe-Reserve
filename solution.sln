@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34728.123
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilesSafeReserve", "src\FilesSafeReserve\FilesSafeReserve.csproj", "{0654CC93-C009-41F7-B300-1941D79DB026}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C9A1E553-030D-4FD0-8A1A-81B59E4A5471}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShyryiFileSystemLibrary", "src\ShyryiFileSystemLibrary\ShyryiFileSystemLibrary.csproj", "{EF27D268-0359-4468-8997-CC6791A924E6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{AF49DB61-D88F-4632-AAF7-A439CB0F9115}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FilesSafeReserve.Tests", "tests\FilesSafeReserve.Tests\FilesSafeReserve.Tests.csproj", "{A617BBC4-8E15-4694-ACDB-4A3613BFC9F7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShyryiFileSystemLibrary.Tests", "tests\ShyryiFileSystemLibrary.Tests\ShyryiFileSystemLibrary.Tests.csproj", "{8A99B172-5249-4905-8C3F-11D561E60FDA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0654CC93-C009-41F7-B300-1941D79DB026}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0654CC93-C009-41F7-B300-1941D79DB026}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0654CC93-C009-41F7-B300-1941D79DB026}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{0654CC93-C009-41F7-B300-1941D79DB026}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0654CC93-C009-41F7-B300-1941D79DB026}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0654CC93-C009-41F7-B300-1941D79DB026}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{EF27D268-0359-4468-8997-CC6791A924E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF27D268-0359-4468-8997-CC6791A924E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF27D268-0359-4468-8997-CC6791A924E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF27D268-0359-4468-8997-CC6791A924E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A617BBC4-8E15-4694-ACDB-4A3613BFC9F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A617BBC4-8E15-4694-ACDB-4A3613BFC9F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A617BBC4-8E15-4694-ACDB-4A3613BFC9F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A617BBC4-8E15-4694-ACDB-4A3613BFC9F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A99B172-5249-4905-8C3F-11D561E60FDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A99B172-5249-4905-8C3F-11D561E60FDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A99B172-5249-4905-8C3F-11D561E60FDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A99B172-5249-4905-8C3F-11D561E60FDA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0654CC93-C009-41F7-B300-1941D79DB026} = {C9A1E553-030D-4FD0-8A1A-81B59E4A5471}
+		{EF27D268-0359-4468-8997-CC6791A924E6} = {C9A1E553-030D-4FD0-8A1A-81B59E4A5471}
+		{A617BBC4-8E15-4694-ACDB-4A3613BFC9F7} = {AF49DB61-D88F-4632-AAF7-A439CB0F9115}
+		{8A99B172-5249-4905-8C3F-11D561E60FDA} = {AF49DB61-D88F-4632-AAF7-A439CB0F9115}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5C3E0C50-9E24-4EE8-A9AE-FFB318ED2F37}
+	EndGlobalSection
+EndGlobal

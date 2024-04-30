@@ -24,7 +24,7 @@
         Are you sure that you want delete "@ViewModel.VirtualSafe!.Name"
     </BodyTemplate>
     <FooterTemplate>
-        <Button Color="ButtonColor.Danger" @onclick='OnDeleteSafeClick'>Delete</Button>
+        <Button Color="ButtonColor.Danger" @onclick='async () => await OnDeleteSafeClick()'>Delete</Button>
         <Button Color="ButtonColor.Secondary" @onclick='async () => await ViewModel.DeleteModal.HideAsync()'>Cancel</Button>
     </FooterTemplate>
 </Modal>
@@ -308,16 +308,13 @@
     {
         await ViewModel.DeleteModal.HideAsync();
 
-        var result = await LoggerService
-                                .Log(async () => await VirtualSafeRepo.RemoveAsync(ViewModel.VirtualSafe!))
-                                .WithCriterion(res => res.IsSucceeded)
-                                .WithParameters(new()
-                                {
-                                    VirtualSafeDetailsId = ViewModel.VirtualSafe!.Details.Id,
-                                    Type = LogOperationModel.Types.DeleteVirtualSafe,
-                                    ItemPath = ViewModel.VirtualSafe.Path,
-                                })
-                                .ExecuteAsync();
+        if (ViewModel.VirtualSafe is null)
+        {
+            await ViewModel.DeleteFailedModal.ShowAsync();
+            return;
+        }
+
+        var result = await VirtualSafeRepo.RemoveAsync(ViewModel.VirtualSafe);
 
         if (result.IsSucceeded)
             await ViewModel.DeleteSucceededModal.ShowAsync();
