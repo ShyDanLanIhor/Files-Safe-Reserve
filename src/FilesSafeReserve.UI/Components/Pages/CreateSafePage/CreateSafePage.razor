@@ -1,0 +1,138 @@
+﻿@page "/virtual-safe/create"
+
+@using CommunityToolkit.Maui.Storage
+@using FilesSafeReserve.App.Models
+@using FilesSafeReserve.Infra.Repositories.IRepositories
+
+@inject IVirtualSafeRepo VirtualSafeRepo
+@inject NavigationManager Navigation
+
+<Modal @ref="ViewModel.SuccessModal" title="Creating Info" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Virtual Safe was successfully created.<br>
+        You will be redirected to Safes List Page.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick='() => Navigation.NavigateTo("/virtual-safes")'>Understood</Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.DuplicateModal" title="Duplicate Info" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Virtual Safe in picked directory already exists.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick='async () => await ViewModel.DuplicateModal.HideAsync()'>OK</Button>
+        <Button Color="ButtonColor.Secondary" @onclick='() => Navigation.NavigateTo("/virtual-safes")'>Go to safes list</Button>
+    </FooterTemplate>
+</Modal>
+
+<div class="main-container">
+    <h3>Create Safe Page</h3>
+    <EditForm EditContext="ViewModel.EditContext" OnValidSubmit="OnCreateClick" style="width: 100%">
+        <DataAnnotationsValidator />
+
+        <div class="create-container">
+            <div class="form-floating mb-3 input-container">
+                <InputText @bind-Value="ViewModel.VirtualSafe.Name" type="text" class="form-control" id="floatingInput" placeholder="Safe Name" />
+                <label for="floatingInput">Safe name</label>
+            </div>
+            <div class="form-floating input-container">
+                <InputTextArea @bind-Value="ViewModel.VirtualSafe.Description" class="form-control" placeholder="Leave a description here" id="floatingTextarea2" style="height: 200px"></InputTextArea>
+                <label for="floatingTextarea2">Safe description</label>
+            </div>
+            <div class="input-group mb-3 input-container">
+                <InputText @bind-Value="ViewModel.VirtualSafe.Path" type="text" class="form-control" placeholder="Path to safe" aria-label="Path to safe" aria-describedby="basic-addon2" />
+                <div class="input-group-append">
+                    <Button @onclick="OnPickClick" Color="ButtonColor.Secondary">Pick</Button>
+                </div>
+            </div>
+            <div class="btns-container">
+                <div class="btns-container-item">
+                    <Button Type="ButtonType.Submit" Color="ButtonColor.Success"> Create </Button>
+                </div>
+                <div class="btns-container-item">
+                    <Button onclick="history.back();" Color="ButtonColor.Secondary"> Go Back </Button>
+                </div>
+            </div>
+
+            @if (ViewModel.EditContext.Validate() is false)
+            {
+                <div style="width: 90%;">
+                    <Alert Color="AlertColor.Danger">
+                        <div class="danger-container">
+                            <strong>Danger!</strong>
+                            <div class="messages-container">
+                                @foreach (var message in ViewModel.EditContext.GetValidationMessages())
+                                {
+                                    <div class="message-container">
+                                        <Icon Name="IconName.ExclamationTriangleFill" class="me-2"></Icon>
+                                        @message
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </Alert>
+                </div>
+            }
+        </div>
+    </EditForm>
+</div>
+
+@code
+{
+    private async Task OnPickClick()
+    {
+        var result = await FolderPicker.PickAsync(default);
+
+        if (result.Folder is null) return;
+
+        ViewModel.VirtualSafe.Path = result.Folder.Path;
+    }
+
+    private async Task OnCreateClick()
+    {
+        if (VirtualSafeRepo.ToList()
+                           .Where(s => s.Path.Contains(ViewModel.VirtualSafe.Path))
+                           .Count() is 0)
+        {
+            await VirtualSafeRepo.AddAsync(
+                new()
+                {
+                    Name = ViewModel.VirtualSafe.Name,
+                    Description = ViewModel.VirtualSafe.Description,
+                    Path = ViewModel.VirtualSafe.Path,
+                    Details =
+                    new()
+                    {
+                        Logs =
+                        [
+                            new()
+                            {
+                                StartTimestamp = DateTime.Now,
+                                EndTimestamp = DateTime.Now,
+                                Operations =
+                                [
+                                    new()
+                                    {
+                                        IsSucceeded = true,
+                                        ItemPath = ViewModel.VirtualSafe.Path,
+                                        Type = LogOperationModel.Types.CreateVirtualSafe,
+                                        PerformTimestamp = DateTime.Now,
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    Reservation = new()
+                });
+
+            await ViewModel.SuccessModal.ShowAsync();
+        }
+        else
+        {
+            await ViewModel.DuplicateModal.ShowAsync();
+        }
+    }
+}
+

@@ -1,0 +1,404 @@
+﻿@page "/virtual-safe/details/{id}"
+
+@using CommunityToolkit.Maui.Storage
+@using FilesSafeReserve.App.Models
+@using FilesSafeReserve.App.Services.IServices
+@using FilesSafeReserve.Domain.Entities
+@using FilesSafeReserve.Domain.Extensions
+@using FilesSafeReserve.Domain.Interfaces
+@using FilesSafeReserve.Infra.Repositories.IRepositories
+@using FilesSafeReserve.Infra.Services.IServices
+
+@inject IVirtualSafeRepo VirtualSafeRepo
+@inject IFileOpenerService FileExplorerService
+@inject IFileRepo FileRepo
+@inject IDirectoryRepo DirectoryRepo
+@inject ILoggerService LoggerService
+@inject NavigationManager Navigation
+
+<Modal @ref="ViewModel.DeleteModal" title="Virtual Safe Delete" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Are you sure that you want delete "@ViewModel.VirtualSafe!.Name"
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Danger" @onclick='async () => await OnDeleteSafeClick()'>Delete</Button>
+        <Button Color="ButtonColor.Secondary" @onclick='async () => await ViewModel.DeleteModal.HideAsync()'>Cancel</Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.DeleteSucceededModal" title="Virtual Safe Deleting" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Virtual safe was deleted.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick='() => Navigation.NavigateTo($"/virtual-safes")'>OK</Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.DeleteFailedModal" title="Virtual Safe Deleting" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Virtual safe was not deleted.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick='async () => await ViewModel.DeleteFailedModal.HideAsync()'>OK</Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.NotFoundModal" title="Virtual Safe Finding" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Virtual safe was not found by id: @Id.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" onclick="history.back()">OK</Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.UnknownFileModal" title="Unknown File" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        File type is unknown, so it can't be open.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick="async () => await ViewModel.UnknownFileModal.HideAsync()">OK</Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.AlreadyInReservationModal" title="Unknown File" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Picked item already exist in virtual safe reservation items, so it can't be saved as new reservation item.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick="async () => await ViewModel.AlreadyInReservationModal.HideAsync()">Understood</Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.IsInSafeDirectoryModal" title="Unknown File" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Picked item is in virtual safe directory, so it can't be saved as new reservation item.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick="async () => await ViewModel.IsInSafeDirectoryModal.HideAsync()">Understood</Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.NoItemWasPickedModal" title="Unknown File" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        No item was picked to be saved as reservation item.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick="async () => await ViewModel.NoItemWasPickedModal.HideAsync()">Understood</Button>
+    </FooterTemplate>
+</Modal>
+
+<div class="main-container">
+    <div class="header-container gradient-background">
+        <h3>Safe Details Page</h3>
+    </div>
+
+    <div class="body-container gradient-background">
+        @if (ViewModel.VirtualSafe is not null)
+        {
+            <div class="name-container">
+                <h4>@ViewModel.VirtualSafe.Name</h4>
+            </div>
+
+            <div class="virtual-safe-container">
+                <div class="description-container">
+                    <p>@ViewModel.VirtualSafe.Description</p>
+
+                    <p>Path: @ViewModel.VirtualSafe.Path</p>
+                </div>
+
+                <div class="timestamp-container">
+                    <div class="timestamp-item">
+                        <p>Created On: @ViewModel.VirtualSafe.Details.CreatedTimestamp</p>
+                    </div>
+                    <div class="timestamp-item">
+                        <p>Last Updated On: @ViewModel.VirtualSafe.Details.UpdatedTimestamp</p>
+                    </div>
+                    <div class="timestamp-item">
+                        <p>Last Reservation On: @ViewModel.VirtualSafe.Details.ReservedTimestamp</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="btns-container">
+                <div class="btns-item">
+                    <Button @onclick='() => Navigation.NavigateTo($"/virtual-safe/edit/{Id}")' Color="ButtonColor.Primary"> Edit </Button>
+                </div>
+
+                <div class="btns-item">
+                    <Button @onclick='() => FileExplorerService.Open(ViewModel.VirtualSafe.Directory)' Color="ButtonColor.Primary"> Open folder </Button>
+                </div>
+
+                <div class="btns-item">
+                    <Button @onclick='async () => await ViewModel.DeleteModal.ShowAsync()' Color="ButtonColor.Danger"> Delete </Button>
+                </div>
+
+                <div class="btns-item">
+                    <Button onclick="history.back();" Color="ButtonColor.Secondary"> Go Back </Button>
+                </div>
+            </div>
+
+            <div class="directory-container">
+                <div class="directory-header-container">
+                    <h5> Items in virtual safe </h5>
+                </div>
+                <div class="directory-elements-container">
+                    @if (ViewModel.VirtualSafe.Directory.Patheds.Count is not 0)
+                    {
+                        @foreach (var item in ViewModel.VirtualSafe.Directory.Patheds)
+                        {
+                            <div class="directory-element-container">
+                                <div class="directory-element-data gradient-background">
+                                    <div class="directory-element-icon">
+                                        @if (item.Type is ShyFsType.Directory)
+                                        {
+                                            <Icon Name="IconName.Folder" @onclick='() => FileExplorerService.Open(item)' />
+                                        }
+                                        else if (item.Type is ShyFsType.File)
+                                        {
+                                            <Icon Name="IconName.File" @onclick='() => FileExplorerService.Open(item)' />
+                                        }
+                                        else
+                                        {
+                                            <Icon Name="IconName.Question" @onclick='async () => await ViewModel.UnknownFileModal.ShowAsync()' />
+                                        }
+                                    </div>
+                                    <div class="directory-element-name">
+                                        <span>@item.Name</span>
+                                    </div>
+                                </div>
+                                <div class="directory-element-btns">
+                                    <div class="directory-element-delete">
+                                        <Button Color="ButtonColor.Danger" @onclick='async () => item.Delete()'> Delete </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="alert-container">
+                            <Alert Color="AlertColor.Info"> <Icon Name="IconName.InfoCircleFill" class="me-2"></Icon> Not a single item in virtual safe was found. </Alert>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="reservation-container">
+                <div class="reservation-header-container">
+                    <h5> Virtual safe items to reserve </h5>
+                </div>
+                <div class="reservation-elements-container">
+                    @if (ViewModel.VirtualSafe.Reservation.Patheds.Count is not 0)
+                    {
+                        @foreach (var item in ViewModel.VirtualSafe.Reservation.IdsPathedsPair)
+                        {
+                            <div class="reservation-element-container">
+                                <div class="reservation-element-data gradient-background">
+                                    <div class="reservation-element-icon">
+                                        @if (item.Value.Type is ShyFsType.Directory)
+                                        {
+                                            <Icon Name="IconName.Folder" @onclick='() => FileExplorerService.Open(item.Value)' />
+                                        }
+                                        else if (item.Value.Type is ShyFsType.File)
+                                        {
+                                            <Icon Name="IconName.File" @onclick='() => FileExplorerService.Open(item.Value)' />
+                                        }
+                                        else
+                                        {
+                                            <Icon Name="IconName.Question" @onclick='async () => await ViewModel.UnknownFileModal.ShowAsync()' />
+                                        }
+                                    </div>
+                                    <div class="reservation-element-name">
+                                        <span>@item.Value.Name</span>
+                                    </div>
+                                </div>
+                                <div class="reservation-element-btns">
+                                    <div class="reservation-element-reserve">
+                                        <Button Color="ButtonColor.Primary" @onclick='() => OnReserveClick(item)'> Reserve </Button>
+                                    </div>
+                                    <div class="reservation-element-delete">
+                                        <Button Color="ButtonColor.Danger" @onclick='async () => await OnRemoveClick(item)'> Remove </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="alert-container">
+                            <Alert Color="AlertColor.Info"> <Icon Name="IconName.InfoCircleFill" class="me-2"></Icon> Not a single item to reserve was found. </Alert>
+                        </div>
+                    }
+                </div>
+                <div class="reserves-btns-container">
+                    <div class="reserves-btns-item">
+                        <Button @onclick='OnPickFolderToReserveClick' Color="ButtonColor.Primary"> Pick Folder </Button>
+                        <Button @onclick='OnPickFileToReserveClick' Color="ButtonColor.Primary"> Pick File </Button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+
+@code {
+    protected async override void OnInitialized()
+    {
+        var result = await VirtualSafeRepo.GetByIdAsync(new Guid(Id));
+
+        if (result.IsSucceeded is false)
+            await ViewModel.NotFoundModal.ShowAsync();
+
+        ViewModel.VirtualSafe = result.Value;
+    }
+
+    private void OnReserveClick(KeyValuePair<Guid, IShyPathed> item)
+    {
+        if (ViewModel.VirtualSafe is null) return;
+
+        LoggerService
+            .Log(() => item.Value.CopyToAsSub(ViewModel.VirtualSafe.Path))
+            .WithParameters(new()
+            {
+                VirtualSafeDetailsId = ViewModel.VirtualSafe.Details.Id,
+                Type = LogOperationModel.Types.TransferToVirtualSafe,
+                ItemPath = item.Value.Path,
+            })
+            .Execute();
+    }
+
+    private async Task OnRemoveClick(KeyValuePair<Guid, IShyPathed> item)
+    {
+        if (ViewModel.VirtualSafe is null) return;
+        @if (item.Value.Type is ShyFsType.Directory)
+        {
+            await LoggerService
+                    .Log(async () => await DirectoryRepo.RemoveByIdAsync(item.Key))
+                    .WithCriterion(res => res.IsSucceeded)
+                    .WithParameters(new()
+                    {
+                        VirtualSafeDetailsId = ViewModel.VirtualSafe.Details.Id,
+                        Type = LogOperationModel.Types.RemoveFromReservation,
+                        ItemPath = item.Value.Path,
+                    })
+                    .ExecuteAsync();
+        }
+        else if (item.Value.Type is ShyFsType.File)
+        {
+            await LoggerService
+                    .Log(async () => await FileRepo.RemoveByIdAsync(item.Key))
+                    .WithCriterion(res => res.IsSucceeded)
+                    .WithParameters(new()
+                    {
+                        VirtualSafeDetailsId = ViewModel.VirtualSafe.Details.Id,
+                        Type = LogOperationModel.Types.RemoveFromReservation,
+                        ItemPath = item.Value.Path,
+                    })
+                    .ExecuteAsync();
+        }
+    }
+
+    private async Task OnDeleteSafeClick()
+    {
+        await ViewModel.DeleteModal.HideAsync();
+
+        if (ViewModel.VirtualSafe is null)
+        {
+            await ViewModel.DeleteFailedModal.ShowAsync();
+            return;
+        }
+
+        var result = await VirtualSafeRepo.RemoveAsync(ViewModel.VirtualSafe);
+
+        if (result.IsSucceeded)
+            await ViewModel.DeleteSucceededModal.ShowAsync();
+        else
+            await ViewModel.DeleteFailedModal.ShowAsync();
+    }
+
+    private async Task OnPickFolderToReserveClick()
+    {
+        var result = await FolderPicker.PickAsync(default);
+
+        if (result.Folder is null || ViewModel.VirtualSafe is null)
+        {
+            await ViewModel.NoItemWasPickedModal.ShowAsync();
+            return;
+        }
+
+        if (result.Folder.Path.Contains(ViewModel.VirtualSafe.Path))
+        {
+            await ViewModel.IsInSafeDirectoryModal.ShowAsync();
+            return;
+        }
+
+        if (ViewModel.VirtualSafe.Reservation.Directories.Any(el => el.Path == result.Folder.Path))
+        {
+            await ViewModel.AlreadyInReservationModal.ShowAsync();
+            return;
+        }
+
+        await LoggerService
+                .Log(async () =>
+                {
+                    await DirectoryRepo.AddAsync(
+                        new()
+                        {
+                            Path = result.Folder.Path,
+                            ReservationId = ViewModel.VirtualSafe.Reservation.Id
+                        });
+                })
+                .WithParameters(new()
+                {
+                    VirtualSafeDetailsId = ViewModel.VirtualSafe!.Details.Id,
+                    Type = LogOperationModel.Types.AddToReservation,
+                    ItemPath = result.Folder.Path
+                })
+                .ExecuteAsync();
+    }
+
+    private async Task OnPickFileToReserveClick()
+    {
+        var result = await FilePicker.PickAsync(default);
+
+        if (result is null || ViewModel.VirtualSafe is null)
+        {
+            await ViewModel.NoItemWasPickedModal.ShowAsync();
+            return;
+        }
+
+        if (result.FullPath.Contains(ViewModel.VirtualSafe.Path))
+        {
+            await ViewModel.IsInSafeDirectoryModal.ShowAsync();
+            return;
+        }
+
+        if (ViewModel.VirtualSafe.Reservation.Files.Any(el => el.Path == result.FullPath))
+        {
+            await ViewModel.AlreadyInReservationModal.ShowAsync();
+            return;
+        }
+        await LoggerService
+                .Log(async () =>
+                {
+                    await FileRepo.AddAsync(
+                        new()
+                        {
+                            Path = result.FullPath,
+                            ReservationId = ViewModel.VirtualSafe.Reservation.Id
+                        });
+                })
+                .WithParameters(new()
+                    {
+                        VirtualSafeDetailsId = ViewModel.VirtualSafe!.Details.Id,
+                        Type = LogOperationModel.Types.AddToReservation,
+                        ItemPath = result.FullPath
+                    })
+                .ExecuteAsync();
+    }
+
+}
+

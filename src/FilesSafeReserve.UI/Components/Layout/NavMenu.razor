@@ -1,0 +1,42 @@
+﻿@using BlazorBootstrap
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">FilesSafeReserve.UI</a>
+    </div>
+</div>
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <div class="item-icon">
+                    <Icon Name="IconName.HouseFill" />
+                </div> Home
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="virtual-safes" Match="NavLinkMatch.All">
+                <div class="item-icon">
+                    <Icon class="item-icon" Name="IconName.SafeFill"></Icon>
+                </div> Safes List
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="SmartphonePage">
+                <div class="item-icon">
+                    <Icon class="item-icon" Name="IconName.Phone"></Icon>
+                </div> Smartphone
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="SettingsPage">
+                <div class="item-icon">
+                    <Icon class="item-icon" Name="IconName.GearFill"></Icon>
+                </div> Settings
+            </NavLink>
+        </div>
+    </nav>
+</div>
