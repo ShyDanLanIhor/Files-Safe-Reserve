@@ -1,0 +1,48 @@
+﻿@page "/virtual-safes"
+
+@using FilesSafeReserve.Infra.Repositories.IRepositories
+
+@inject IVirtualSafeRepo VirtualSafeRepo
+@inject NavigationManager Navigation
+
+<div class="main-container">
+    <h3>Safes List Page</h3>
+    <div class="list-container">
+        @if (ViewModel.VirtualSafes.Count is not 0)
+        {
+            @foreach (var safe in ViewModel.VirtualSafes)
+            {
+                <div class="item-container">
+                    <div class="name-part">@safe.Name</div>
+                    <p>@safe.Description</p>
+                    <p>Last Reservation: @safe.Details.ReservedTimestamp.ToString("dd/MM/yyyy HH:mm:ss")</p>
+                    <div style="text-align: center;">
+                        <Button @onclick='() => Navigation.NavigateTo($"/virtual-safe/details/{safe.Id.ToString()}")' Color="ButtonColor.Primary"> Details </Button>
+                    </div>
+                    @if (safe.Directory.Exists is false)
+                    {
+                        <div class="alert-container">
+                            <Alert Color="AlertColor.Danger"> <Icon Name="IconName.ExclamationTriangleFill" class="me-2"></Icon> Virtual safe directory does not exist in the file system. </Alert>
+                        </div>
+                    }
+                </div>
+            }
+        }
+        else
+        {
+            <div class="alert-container">
+                <Alert Color="AlertColor.Info"> <Icon Name="IconName.InfoCircleFill" class="me-2"></Icon> Not a single virtual safe was found. </Alert>
+            </div>
+        }
+        <Button @onclick='() => Navigation.NavigateTo($"/virtual-safe/create")' Color="ButtonColor.Primary" Style="margin: 20px;"> Create New </Button>
+    </div>
+</div>
+
+
+
+@code{
+    protected override async void OnInitialized()
+    {
+        ViewModel.VirtualSafes = await VirtualSafeRepo.ToListAsync();
+    }
+}
