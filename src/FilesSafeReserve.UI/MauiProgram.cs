@@ -8,7 +8,6 @@ using FilesSafeReserve.Infra.Services;
 using FilesSafeReserve.Infra.Services.IServices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System.Reflection;
 
 namespace FilesSafeReserve.UI;
 public static class MauiProgram
@@ -23,9 +22,9 @@ public static class MauiProgram
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .Build();
 
-        var appDataConfig = config.GetRequiredSection("AppData").Get<AppDataConfig>();
-
         builder.Configuration.AddConfiguration(config);
+
+        var appDataConfig = config.GetRequiredSection("AppData").Get<AppDataConfig>();
 
         builder
             .UseMauiApp<App>()
@@ -46,6 +45,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<IVirtualSafeRepo, VirtualSafeRepo>();
         builder.Services.AddSingleton<ILogRepo, LogRepo>();
         builder.Services.AddSingleton<ILogOperationRepo, LogOperationRepo>();
+        builder.Services.AddSingleton<IReservationRepo, ReservationRepo>();
         builder.Services.AddSingleton<IFileRepo, FileRepo>();
         builder.Services.AddSingleton<IDirectoryRepo, DirectoryRepo>();
 

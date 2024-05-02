@@ -109,7 +109,10 @@ public class ReservationRepoTests
     {
         // Arrange
         IReservationRepo repo = new ReservationRepo(await GetDbContextAsync());
-        ReservationModel modelToAdd = new();
+        ReservationModel modelToAdd = new()
+        {
+            SafeId = repo.ToList().First().SafeId,
+        };
 
         // Act
         await repo.AddAsync(modelToAdd);
@@ -219,7 +222,10 @@ public class ReservationRepoTests
     {
         // Arrange
         IReservationRepo repo = new ReservationRepo(GetDbContext());
-        ReservationModel modelToAdd = new();
+        ReservationModel modelToAdd = new()
+        {
+            SafeId = repo.ToList().First().SafeId,
+        };
 
         // Act
         repo.Add(modelToAdd);

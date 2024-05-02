@@ -471,7 +471,7 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
                 LogModel log = InitStartLog(Parameters!.VirtualSafeDetailsId);
 
                 var actionsList = Actions.ToList();
-                var criteriaList = Criteria!.ToList();
+                var criteriaList = Criteria?.ToList();
                 var operationsParametersList = Parameters.Operations.ToList();
 
                 for (int i = 0; i < actionsList.Count; i++)
@@ -480,7 +480,7 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
                     {
                         actionsList[i]();
 
-                        log.Operations.Add(CreateActionLogOp(criteriaList[i], operationsParametersList[i].Type, operationsParametersList[i].ItemPath));
+                        log.Operations.Add(CreateActionLogOp(criteriaList is null ? (() => true) : criteriaList[i], operationsParametersList[i].Type, operationsParametersList[i].ItemPath));
                     }
                     catch (Exception)
                     {
