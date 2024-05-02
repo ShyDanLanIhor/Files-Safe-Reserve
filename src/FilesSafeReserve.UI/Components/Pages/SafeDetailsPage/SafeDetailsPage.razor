@@ -10,9 +10,10 @@
 @using FilesSafeReserve.Infra.Services.IServices
 
 @inject IVirtualSafeRepo VirtualSafeRepo
-@inject IFileOpenerService FileExplorerService
+@inject IReservationRepo ReservationRepo
 @inject IFileRepo FileRepo
 @inject IDirectoryRepo DirectoryRepo
+@inject IFileOpenerService FileExplorerService
 @inject ILoggerService LoggerService
 @inject NavigationManager Navigation
 
@@ -137,6 +138,30 @@
                 <div class="btns-item">
                     <Button onclick="history.back();" Color="ButtonColor.Secondary"> Go Back </Button>
                 </div>
+            </div>
+
+            <div class="reserve-time-container">
+                <div class="reserve-time-header-container">
+                    <h5> Reservation time </h5>
+                </div>
+                <div class="reserve-time-elements-container">
+                    <div class="form-floating mb-3 input-container">
+                        <InputText @bind-Value="ViewModel.ReservationTimeOfDay" type="text" class="form-control" id="floatingInput" placeholder="hours:minutes:seconds" />
+                        <label for="floatingInput">hours:minutes:seconds</label>
+                    </div>
+                </div>
+                <div class="reserve-time-btns-container">
+                    <div class="reserves-btns-item">
+                        <Button @onclick='async () => await OnSaveTimeClick()' Color="ButtonColor.Primary"> Save Time </Button>
+                        <Button @onclick='async () => await OnClearTimeClick()' Color="ButtonColor.Danger"> Clear Time </Button>
+                    </div>
+                </div>
+                @if (ViewModel.TimeOfDayErrorMessage != string.Empty)
+                {
+                    <div class="alert-container">
+                        <Alert Color="AlertColor.Danger"> <Icon Name="IconName.ExclamationTriangleFill" class="me-2"></Icon> @ViewModel.TimeOfDayErrorMessage </Alert>
+                    </div>
+                }
             </div>
 
             <div class="directory-container">
@@ -400,5 +425,22 @@
                 .ExecuteAsync();
     }
 
+    private async Task OnSaveTimeClick()
+    {
+        if (ViewModel.VirtualSafe is null) return;
+
+        ViewModel.VirtualSafe.Reservation.ToReserveTimeSpan = TimeSpan.Parse(ViewModel.ReservationTimeOfDay);
+
+        await ReservationRepo.UpdateAsync(ViewModel.VirtualSafe.Reservation);
+    }
+
+    private async Task OnClearTimeClick()
+    {
+        if (ViewModel.VirtualSafe is null) return;
+
+        ViewModel.VirtualSafe.Reservation.ToReserveTimeSpan = TimeSpan.Zero;
+
+        await ReservationRepo.UpdateAsync(ViewModel.VirtualSafe.Reservation);
+    }
 }
 

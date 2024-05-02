@@ -13,6 +13,10 @@ public class ReservationRepo(FsrDbContext dbContext) : IReservationRepo
     public async Task<ValueResult<ReservationModel?>> GetByIdAsync(Guid id)
     {
         return await DbContext.Reservations
+            .Include(field => field.Safe)
+                .ThenInclude(field => field.Details)
+                    .ThenInclude(field => field.Logs)
+                        .ThenInclude(field => field.Operations)
             .Include(field => field.Files)
             .Include(field => field.Directories)
             .FirstOrDefaultAsync();
@@ -21,6 +25,10 @@ public class ReservationRepo(FsrDbContext dbContext) : IReservationRepo
     public ValueResult<ReservationModel?> GetById(Guid id)
     {
         return DbContext.Reservations
+            .Include(field => field.Safe)
+                .ThenInclude(field => field.Details)
+                    .ThenInclude(field => field.Logs)
+                        .ThenInclude(field => field.Operations)
             .Include(field => field.Files)
             .Include(field => field.Directories)
             .FirstOrDefault();
@@ -29,6 +37,10 @@ public class ReservationRepo(FsrDbContext dbContext) : IReservationRepo
     public async Task<List<ReservationModel>> ToListAsync()
     {
         return await DbContext.Reservations
+            .Include(field => field.Safe)
+                .ThenInclude(field => field.Details)
+                    .ThenInclude(field => field.Logs)
+                        .ThenInclude(field => field.Operations)
             .Include(field => field.Files)
             .Include(field => field.Directories)
             .ToListAsync();
@@ -37,6 +49,10 @@ public class ReservationRepo(FsrDbContext dbContext) : IReservationRepo
     public List<ReservationModel> ToList()
     {
         return [.. DbContext.Reservations
+            .Include(field => field.Safe)
+                .ThenInclude(field => field.Details)
+                    .ThenInclude(field => field.Logs)
+                        .ThenInclude(field => field.Operations)
             .Include(field => field.Files)
             .Include(field => field.Directories)];
     }

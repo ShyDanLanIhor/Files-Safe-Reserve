@@ -17,6 +17,16 @@ public class ReservationModel : IModelBase<Guid>
     public Guid Id { get; set; }
 
     /// <summary>
+    /// Gets or sets the time when last reservation was made.
+    /// </summary>
+    public DateTime ReservedTimestamp { get; set; } = DateTime.MinValue;
+
+    /// <summary>
+    /// Gets or sets the time of day when reservation takes place.
+    /// </summary>
+    public TimeSpan ToReserveTimeSpan { get; set; } = TimeSpan.Zero;
+
+    /// <summary>
     /// Gets or sets the collection of files associated with this reservation.
     /// The default value is an empty collection.
     /// </summary>
