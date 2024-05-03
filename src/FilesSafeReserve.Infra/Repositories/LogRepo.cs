@@ -24,14 +24,14 @@ public class LogRepo(FsrDbContext dbContext) : ILogRepo
     {
         return await DbContext.Logs
             .Include(field => field.Operations)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(el => el.Id == id);
     }
 
     public ValueResult<LogModel?> GetById(Guid id)
     {
         return DbContext.Logs
             .Include(field => field.Operations)
-            .FirstOrDefault();
+            .FirstOrDefault(el => el.Id == id);
     }
 
     public async Task<List<LogModel>> ToListAsync()

@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MediaDevices" Version="1.10.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\FilesSafeReserve.Domain\FilesSafeReserve.Domain.csproj" />
   </ItemGroup>
 

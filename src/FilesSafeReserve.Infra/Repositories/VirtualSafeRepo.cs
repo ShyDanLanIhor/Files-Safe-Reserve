@@ -30,7 +30,7 @@ public class VirtualSafeRepo(FsrDbContext dbContext) : IVirtualSafeRepo
                 .ThenInclude(field => field.Files)
             .Include(field => field.Reservation)
                 .ThenInclude(field => field.Directories)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(el => el.Id == id);
     }
 
     public ValueResult<VirtualSafeModel?> GetById(Guid id)
@@ -43,7 +43,7 @@ public class VirtualSafeRepo(FsrDbContext dbContext) : IVirtualSafeRepo
                 .ThenInclude(field => field.Files)
             .Include(field => field.Reservation)
                 .ThenInclude(field => field.Directories)
-            .FirstOrDefault();
+            .FirstOrDefault(el => el.Id == id);
     }
 
     public async Task<List<VirtualSafeModel>> ToListAsync()

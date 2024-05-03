@@ -39,10 +39,12 @@ public static class MauiProgram
 
         builder.Services.AddSingleton<IDbService, DbService>();
         builder.Services.AddSingleton<IAppService, AppService>();
-        builder.Services.AddSingleton<IFileOpenerService, FileOpenerService>();
         builder.Services.AddSingleton<ILoggerService, LoggerService>();
+        builder.Services.AddSingleton<IFileOpenerService, FileOpenerService>();
+        builder.Services.AddSingleton<ISmartphoneService, SmartphoneService>();
 
         builder.Services.AddSingleton<IVirtualSafeRepo, VirtualSafeRepo>();
+        builder.Services.AddSingleton<IVirtualSafeDetailsRepo, VirtualSafeDetailsRepo>();
         builder.Services.AddSingleton<ILogRepo, LogRepo>();
         builder.Services.AddSingleton<ILogOperationRepo, LogOperationRepo>();
         builder.Services.AddSingleton<IReservationRepo, ReservationRepo>();

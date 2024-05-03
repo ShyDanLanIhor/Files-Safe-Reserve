@@ -19,7 +19,7 @@ public class ReservationRepo(FsrDbContext dbContext) : IReservationRepo
                         .ThenInclude(field => field.Operations)
             .Include(field => field.Files)
             .Include(field => field.Directories)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(el => el.Id == id);
     }
 
     public ValueResult<ReservationModel?> GetById(Guid id)
@@ -31,7 +31,7 @@ public class ReservationRepo(FsrDbContext dbContext) : IReservationRepo
                         .ThenInclude(field => field.Operations)
             .Include(field => field.Files)
             .Include(field => field.Directories)
-            .FirstOrDefault();
+            .FirstOrDefault(el => el.Id == id);
     }
 
     public async Task<List<ReservationModel>> ToListAsync()
