@@ -1,3 +1,173 @@
-﻿@page "/SmartphonePage"
+﻿@page "/smartphone"
 
-<p>Smartphone Page</p>
+@using FilesSafeReserve.App.Services.IServices
+@using FilesSafeReserve.Infra.Repositories.IRepositories
+
+@inject IVirtualSafeRepo VirtualSafeRepo
+@inject ISmartphoneService SmartphoneService
+
+<Modal @ref="ViewModel.ConfirmReservation" title="Reservation confirmation" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Are you sure you want to reserve files from phone '@ViewModel.SelectedSmartphoneName' to virtual safe '@ViewModel.SelectedVirtualSafe.Name'?
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick='async () => await OnConfirmClick()'> Confirm </Button>
+        <Button Color="ButtonColor.Secondary" @onclick='async () => await ViewModel.ConfirmReservation.HideAsync()'> Cancel </Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.ReservationProgress" title="Reservation Progress" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Please wait for the reservation of '@ViewModel.SelectedSmartphoneName' phone's files to complete.
+    </BodyTemplate>
+    <FooterTemplate>
+        <div class="loader-container">
+            <span class="loader"></span>
+        </div>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.ReservationSucceeded" title="Reservation Progress" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Reservation of phone '@ViewModel.SelectedSmartphoneName' completed.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Secondary" @onclick='async () => await ViewModel.ReservationSucceeded.HideAsync()'> Understood </Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.ReservationFailed" title="Reservation Progress" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Reservation of phone '@ViewModel.SelectedSmartphoneName' failed.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Secondary" @onclick='async () => await ViewModel.ReservationFailed.HideAsync()'> Understood </Button>
+    </FooterTemplate>
+</Modal>
+
+<div class="main-container">
+    <div class="header-container gradient-background">
+        <h3>Smartphone Page</h3>
+    </div>
+    <div class="virtual-safes-container gradient-background">
+        <div class="virtual-safes-header-container">
+            <h5> Virtual Safe for phone reservation </h5>
+        </div>
+
+        <div class="virtual-safes-elements-container">
+            @if (ViewModel.VirtualSafes.Count is not 0)
+            {
+                @foreach (var safe in ViewModel.VirtualSafes)
+                {
+                    <div class="virtual-safes-element-container">
+                        <div class="virtual-safes-element-data">
+                            <div class="virtual-safes-element-icon">
+                                @if (ViewModel.SelectedVirtualSafe == safe)
+                                {
+                                    <Icon Name="IconName.Activity" />
+                                }
+                                else
+                                {
+                                    <Icon Name="IconName.Phone" />
+                                }
+                            </div>
+                            <div class="virtual-safes-element-name">
+                                <span>@safe.Name</span>
+                            </div>
+                        </div>
+                           <div class="virtual-safes-element-btns">
+                            @if (ViewModel.SelectedVirtualSafe != safe)
+                            {
+                                <div class="virtual-safes-element-select">
+                                    <Button Color="ButtonColor.Primary" @onclick='() => ViewModel.SelectedVirtualSafe = safe'> Select </Button>
+                                </div>
+                            }
+                            </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="alert-container">
+                    <Alert Color="AlertColor.Info"> <Icon Name="IconName.InfoCircleFill" class="me-2"></Icon> Not a single item in virtual safe was found. </Alert>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="smartphones-container gradient-background">
+        <div class="smartphones-header-container">
+            <h5> Connected smartphones </h5>
+        </div>
+
+        <div class="smartphones-elements-container">
+            @if (ViewModel.SmartphonesNames.Count is not 0)
+            {
+                @foreach (var name in ViewModel.SmartphonesNames)
+                {
+                    <div class="smartphones-element-container">
+                        <div class="smartphones-element-data">
+                            <div class="smartphones-element-icon">
+                                <Icon Name="IconName.Phone" />
+                            </div>
+                            <div class="smartphones-element-name">
+                                <span>@name</span>
+                            </div>
+                        </div>
+                        @if (ViewModel.SelectedVirtualSafe is not null)
+                        {
+                            <div class="smartphones-element-btns">
+                                <div class="smartphones-element-reserve">
+                                    <Button Color="ButtonColor.Primary" @onclick='() => OnReserveClick(name)'> Reserve </Button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="alert-container">
+                    <Alert Color="AlertColor.Info"> <Icon Name="IconName.InfoCircleFill" class="me-2"></Icon> Not a single item in connected smartphone was found. </Alert>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+
+    protected async override void OnInitialized()
+    {
+        ViewModel.VirtualSafes = await VirtualSafeRepo.ToListAsync();
+        var result = SmartphoneService.GetDevicesNames();
+
+        if (!result.IsSucceeded) return;
+
+        ViewModel.SmartphonesNames = result.Value;
+    }
+
+    private async Task OnConfirmClick()
+    {
+        await ViewModel.ConfirmReservation.HideAsync();
+
+        await ViewModel.ReservationProgress.ShowAsync();
+
+        var result = SmartphoneService.TransferFiles(ViewModel.SelectedSmartphoneName,
+                                        ViewModel.SelectedVirtualSafe.Path);
+
+        await ViewModel.ReservationProgress.HideAsync();
+
+        if (result.IsSucceeded)
+            await ViewModel.ReservationSucceeded.ShowAsync();
+        else
+            await ViewModel.ReservationFailed.ShowAsync();
+    }
+
+    private async Task OnReserveClick(string name)
+    {
+        ViewModel.SelectedSmartphoneName = name;
+
+        await ViewModel.ConfirmReservation.ShowAsync();
+    }
+}

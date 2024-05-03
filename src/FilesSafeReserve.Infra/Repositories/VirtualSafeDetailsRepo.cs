@@ -14,14 +14,14 @@ public class VirtualSafeDetailsRepo(FsrDbContext dbContext) : IVirtualSafeDetail
     {
         return await DbContext.VirtualSafeDetails
             .Include(field => field.Logs)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(el => el.Id == id);
     }
 
     public ValueResult<VirtualSafeDetailsModel?> GetById(Guid id)
     {
         return DbContext.VirtualSafeDetails
             .Include(field => field.Logs)
-            .FirstOrDefault();
+            .FirstOrDefault(el => el.Id == id);
     }
 
     public async Task<List<VirtualSafeDetailsModel>> ToListAsync()
