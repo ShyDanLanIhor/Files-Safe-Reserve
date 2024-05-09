@@ -1,96 +1,97 @@
-﻿using FilesSafeReserve.App.Models;
+﻿using FilesSafeReserve.App.Entities.Params.ILogBuilder;
+using FilesSafeReserve.App.Entities.Results.ILogBuilder;
 
-namespace FilesSafeReserve.App.Services.IServices;
+namespace FilesSafeReserve.App.Builders.IBuilders;
 
 /// <summary>
 /// Interface for a logging service that provides methods for logging actions and functions.
 /// </summary>
-public interface ILoggerService
+public interface ILogBuilder
 {
     /// <summary>
     /// Logs a synchronous action.
     /// </summary>
-    public IActionState LogAction(Action func);
+    public IActionState WithAction(Action func);
 
     /// <summary>
     /// Logs an asynchronous action.
     /// </summary>
-    public IActionAsyncState LogAction(Func<Task> func);
+    public IActionAsyncState WithAction(Func<Task> func);
 
     /// <summary>
     /// Logs a synchronous function.
     /// </summary>
-    public IFuncState<ResultType> LogFunc<ResultType>(Func<ResultType> func) where ResultType : class;
+    public IFuncState<ResultType> WithFunc<ResultType>(Func<ResultType> func) where ResultType : class;
 
     /// <summary>
     /// Logs an asynchronous function.
     /// </summary>
-    public IFuncAsyncState<ResultType> LogFunc<ResultType>(Func<Task<ResultType>> func) where ResultType : class;
+    public IFuncAsyncState<ResultType> WithFunc<ResultType>(Func<Task<ResultType>> func) where ResultType : class;
 
     // Methods for logging multiple actions and functions
 
     /// <summary>
     /// Logs multiple synchronous actions.
     /// </summary>
-    public IActionsState LogActions(IEnumerable<Action> func);
+    public IActionsState WithActions(IEnumerable<Action> func);
 
     /// <summary>
     /// Logs multiple asynchronous actions.
     /// </summary>
-    public IActionsAsyncState LogActions(IEnumerable<Func<Task>> func);
+    public IActionsAsyncState WithActions(IEnumerable<Func<Task>> func);
 
     /// <summary>
     /// Logs multiple synchronous functions.
     /// </summary>
-    public IFuncsState<ResultType> LogFuncs<ResultType>(IEnumerable<Func<ResultType>> func) where ResultType : class;
+    public IFuncsState<ResultType> WithFuncs<ResultType>(IEnumerable<Func<ResultType>> func) where ResultType : class;
 
     /// <summary>
     /// Logs multiple asynchronous functions.
     /// </summary>
-    public IFuncsAsyncState<ResultType> LogFuncs<ResultType>(IEnumerable<Func<Task<ResultType>>> func) where ResultType : class;
+    public IFuncsAsyncState<ResultType> WithFuncs<ResultType>(IEnumerable<Func<Task<ResultType>>> func) where ResultType : class;
 
 
     /// <summary>
     /// Logs a synchronous action.
     /// </summary>
-    public IActionState Log(Action func);
+    public IActionState WithDelegate(Action func);
 
     /// <summary>
     /// Logs an asynchronous action.
     /// </summary>
-    public IActionAsyncState Log(Func<Task> func);
+    public IActionAsyncState WithDelegate(Func<Task> func);
 
     /// <summary>
     /// Logs a synchronous function.
     /// </summary>
-    public IFuncState<ResultType> Log<ResultType>(Func<ResultType> func) where ResultType : class;
+    public IFuncState<ResultType> WithDelegate<ResultType>(Func<ResultType> func) where ResultType : class;
 
     /// <summary>
     /// Logs an asynchronous function.
     /// </summary>
-    public IFuncAsyncState<ResultType> Log<ResultType>(Func<Task<ResultType>> func) where ResultType : class;
+    public IFuncAsyncState<ResultType> WithDelegate<ResultType>(Func<Task<ResultType>> func) where ResultType : class;
 
     // Methods for logging multiple actions and functions
 
     /// <summary>
     /// Logs multiple synchronous actions.
     /// </summary>
-    public IActionsState Log(IEnumerable<Action> func);
+    public IActionsState WithDelegate(IEnumerable<Action> func);
 
     /// <summary>
     /// Logs multiple asynchronous actions.
     /// </summary>
-    public IActionsAsyncState Log(IEnumerable<Func<Task>> func);
+    public IActionsAsyncState WithDelegate(IEnumerable<Func<Task>> func);
 
     /// <summary>
     /// Logs multiple synchronous functions.
     /// </summary>
-    public IFuncsState<ResultType> Log<ResultType>(IEnumerable<Func<ResultType>> func) where ResultType : class;
+    public IFuncsState<ResultType> WithDelegate<ResultType>(IEnumerable<Func<ResultType>> func) where ResultType : class;
 
     /// <summary>
     /// Logs multiple asynchronous functions.
     /// </summary>
-    public IFuncsAsyncState<ResultType> Log<ResultType>(IEnumerable<Func<Task<ResultType>>> func) where ResultType : class;
+    public IFuncsAsyncState<ResultType> WithDelegate<ResultType>(IEnumerable<Func<Task<ResultType>>> func) where ResultType : class;
 
 
     /// <summary>
@@ -111,7 +112,7 @@ public interface ILoggerService
         /// <summary>
         /// Gets or sets the parameters for the action.
         /// </summary>
-        protected LogOpParams? Parameters { get; set; }
+        protected LogBuilderOpParams? Parameters { get; set; }
 
         /// <summary>
         /// Sets the criterion for executing the action.
@@ -129,19 +130,19 @@ public interface ILoggerService
         /// </summary>
         /// <param name="parameters">The parameters to be set.</param>
         /// <returns>The executable state instance with the parameters set.</returns>
-        public IExecutableState WithParameters(LogOpParams parameters);
+        public IBuildableState WithParameters(LogBuilderOpParams parameters);
 
         /// <summary>
         /// Represents the executable state of a single action in the logging process.
         /// </summary>
-        public interface IExecutableState : IActionState
+        public interface IBuildableState : IActionState
         {
             /// <summary>
             /// Sets the criterion for executing the action.
             /// </summary>
             /// <param name="criterion">The criterion function to be set.</param>
             /// <returns>The executable state instance with the criterion set.</returns>
-            public new IExecutableState WithCriterion(Func<bool> criterion)
+            public new IBuildableState WithCriterion(Func<bool> criterion)
             {
                 Criterion = criterion;
                 return this;
@@ -152,23 +153,17 @@ public interface ILoggerService
             /// </summary>
             /// <param name="parameters">The parameters to be set.</param>
             /// <returns>The executable state instance with the parameters set.</returns>
-            public new IExecutableState WithParameters(LogOpParams parameters)
+            public new IBuildableState WithParameters(LogBuilderOpParams parameters)
             {
                 Parameters = parameters;
                 return this;
             }
 
             /// <summary>
-            /// Executes the action synchronously and returns the result entity.
+            /// Builds the action synchronously and returns the result entity.
             /// </summary>
             /// <returns>The result entity of the action execution.</returns>
-            public ResultEntity Execute();
-
-            /// <summary>
-            /// Executes the action asynchronously and returns a task representing the result entity.
-            /// </summary>
-            /// <returns>A task representing the result entity of the action execution.</returns>
-            public Task<ResultEntity> ExecuteAsync();
+            public LogBuilderResult Build();
         }
     }
 
@@ -191,7 +186,7 @@ public interface ILoggerService
         /// <summary>
         /// Gets or sets the parameters for the asynchronous action.
         /// </summary>
-        protected LogOpParams? Parameters { get; set; }
+        protected LogBuilderOpParams? Parameters { get; set; }
 
         /// <summary>
         /// Sets the criterion for executing the asynchronous action.
@@ -209,19 +204,19 @@ public interface ILoggerService
         /// </summary>
         /// <param name="parameters">The parameters to be set.</param>
         /// <returns>The executable state instance with the parameters set.</returns>
-        public IExecutableState WithParameters(LogOpParams parameters);
+        public IBuildableState WithParameters(LogBuilderOpParams parameters);
 
         /// <summary>
         /// Represents the executable state of an asynchronous action in the logging process.
         /// </summary>
-        public interface IExecutableState : IActionAsyncState
+        public interface IBuildableState : IActionAsyncState
         {
             /// <summary>
             /// Sets the criterion for executing the asynchronous action.
             /// </summary>
             /// <param name="criterion">The criterion function to be set.</param>
             /// <returns>The executable state instance with the criterion set.</returns>
-            public new IExecutableState WithCriterion(Func<bool> criterion)
+            public new IBuildableState WithCriterion(Func<bool> criterion)
             {
                 Criterion = criterion;
                 return this;
@@ -232,17 +227,17 @@ public interface ILoggerService
             /// </summary>
             /// <param name="parameters">The parameters to be set.</param>
             /// <returns>The executable state instance with the parameters set.</returns>
-            public new IExecutableState WithParameters(LogOpParams parameters)
+            public new IBuildableState WithParameters(LogBuilderOpParams parameters)
             {
                 Parameters = parameters;
                 return this;
             }
 
             /// <summary>
-            /// Executes the asynchronous action and returns a task representing the result entity.
+            /// Builds the asynchronous action and returns a task representing the result entity.
             /// </summary>
             /// <returns>A task representing the result entity of the asynchronous action execution.</returns>
-            public Task<ResultEntity> ExecuteAsync();
+            public Task<LogBuilderResult> BuildAsync();
         }
     }
 
@@ -266,7 +261,7 @@ public interface ILoggerService
         /// <summary>
         /// Gets or sets the parameters for the function.
         /// </summary>
-        protected LogOpParams? Parameters { get; set; }
+        protected LogBuilderOpParams? Parameters { get; set; }
 
         /// <summary>
         /// Sets the criterion for executing the function.
@@ -284,19 +279,19 @@ public interface ILoggerService
         /// </summary>
         /// <param name="parameters">The parameters to be set.</param>
         /// <returns>The executable state instance with the parameters set.</returns>
-        public IExecutableState WithParameters(LogOpParams parameters);
+        public IBuildableState WithParameters(LogBuilderOpParams parameters);
 
         /// <summary>
         /// Represents the executable state of a function in the logging process.
         /// </summary>
-        public interface IExecutableState : IFuncState<FuncReturnType>
+        public interface IBuildableState : IFuncState<FuncReturnType>
         {
             /// <summary>
             /// Sets the criterion for executing the function.
             /// </summary>
             /// <param name="criterion">The criterion function to be set.</param>
             /// <returns>The executable state instance with the criterion set.</returns>
-            public new IExecutableState WithCriterion(Predicate<FuncReturnType> criterion)
+            public new IBuildableState WithCriterion(Predicate<FuncReturnType> criterion)
             {
                 Criterion = criterion;
                 return this;
@@ -307,23 +302,17 @@ public interface ILoggerService
             /// </summary>
             /// <param name="parameters">The parameters to be set.</param>
             /// <returns>The executable state instance with the parameters set.</returns>
-            public new IExecutableState WithParameters(LogOpParams parameters)
+            public new IBuildableState WithParameters(LogBuilderOpParams parameters)
             {
                 Parameters = parameters;
                 return this;
             }
 
             /// <summary>
-            /// Executes the function synchronously and returns the result entity.
+            /// Builds the function synchronously and returns the result entity.
             /// </summary>
             /// <returns>The result entity of the function execution.</returns>
-            public ResultEntity<FuncReturnType> Execute();
-
-            /// <summary>
-            /// Executes the function asynchronously and returns a task representing the result entity.
-            /// </summary>
-            /// <returns>A task representing the result entity of the function execution.</returns>
-            public Task<ResultEntity<FuncReturnType>> ExecuteAsync();
+            public LogBuilderResult<FuncReturnType> Build();
         }
     }
 
@@ -347,7 +336,7 @@ public interface ILoggerService
         /// <summary>
         /// Gets or sets the parameters for the asynchronous function.
         /// </summary>
-        protected LogOpParams? Parameters { get; set; }
+        protected LogBuilderOpParams? Parameters { get; set; }
 
         /// <summary>
         /// Sets the criterion for executing the asynchronous function.
@@ -365,19 +354,19 @@ public interface ILoggerService
         /// </summary>
         /// <param name="parameters">The parameters to be set.</param>
         /// <returns>The executable state instance with the parameters set.</returns>
-        public IExecutableState WithParameters(LogOpParams parameters);
+        public IBuildableState WithParameters(LogBuilderOpParams parameters);
 
         /// <summary>
         /// Represents the executable state of an asynchronous function in the logging process.
         /// </summary>
-        public interface IExecutableState : IFuncAsyncState<FuncReturnType>
+        public interface IBuildableState : IFuncAsyncState<FuncReturnType>
         {
             /// <summary>
             /// Sets the criterion for executing the asynchronous function.
             /// </summary>
             /// <param name="criterion">The criterion function to be set.</param>
             /// <returns>The executable state instance with the criterion set.</returns>
-            public new IExecutableState WithCriterion(Predicate<FuncReturnType> criterion)
+            public new IBuildableState WithCriterion(Predicate<FuncReturnType> criterion)
             {
                 Criterion = criterion;
                 return this;
@@ -388,17 +377,17 @@ public interface ILoggerService
             /// </summary>
             /// <param name="parameters">The parameters to be set.</param>
             /// <returns>The executable state instance with the parameters set.</returns>
-            public new IExecutableState WithParameters(LogOpParams parameters)
+            public new IBuildableState WithParameters(LogBuilderOpParams parameters)
             {
                 Parameters = parameters;
                 return this;
             }
 
             /// <summary>
-            /// Executes the asynchronous function and returns a task representing the result entity.
+            /// Builds the asynchronous function and returns a task representing the result entity.
             /// </summary>
             /// <returns>A task representing the result entity of the asynchronous function execution.</returns>
-            public Task<ResultEntity<FuncReturnType>> ExecuteAsync();
+            public Task<LogBuilderResult<FuncReturnType>> BuildAsync();
         }
     }
 
@@ -421,7 +410,7 @@ public interface ILoggerService
         /// <summary>
         /// Gets or sets the parameters for the actions.
         /// </summary>
-        protected LogOpsParams? Parameters { get; set; }
+        protected LogBuilderOpsParams? Parameters { get; set; }
 
         /// <summary>
         /// Sets the criteria for executing the actions.
@@ -439,19 +428,19 @@ public interface ILoggerService
         /// </summary>
         /// <param name="parameters">The parameters to be set.</param>
         /// <returns>The executable state instance with the parameters set.</returns>
-        public IExecutableState WithParameters(LogOpsParams parameters);
+        public IBuildableState WithParameters(LogBuilderOpsParams parameters);
 
         /// <summary>
         /// Represents the executable state of actions in the logging process.
         /// </summary>
-        public interface IExecutableState : IActionsState
+        public interface IBuildableState : IActionsState
         {
             /// <summary>
             /// Sets the criteria for executing the actions.
             /// </summary>
             /// <param name="criteria">The criteria functions to be set.</param>
             /// <returns>The executable state instance with the criteria set.</returns>
-            public new IExecutableState WithCriteria(IEnumerable<Func<bool>> criteria)
+            public new IBuildableState WithCriteria(IEnumerable<Func<bool>> criteria)
             {
                 Criteria = criteria;
                 return this;
@@ -462,23 +451,17 @@ public interface ILoggerService
             /// </summary>
             /// <param name="parameters">The parameters to be set.</param>
             /// <returns>The executable state instance with the parameters set.</returns>
-            public new IExecutableState WithParameters(LogOpsParams parameters)
+            public new IBuildableState WithParameters(LogBuilderOpsParams parameters)
             {
                 Parameters = parameters;
                 return this;
             }
 
             /// <summary>
-            /// Executes the actions synchronously and returns the result entity.
+            /// Builds the actions synchronously and returns the result entity.
             /// </summary>
             /// <returns>The result entity of the actions execution.</returns>
-            public ResultEntity Execute();
-
-            /// <summary>
-            /// Executes the actions asynchronously and returns a task representing the result entity.
-            /// </summary>
-            /// <returns>A task representing the result entity of the actions execution.</returns>
-            public Task<ResultEntity> ExecuteAsync();
+            public LogBuilderResult Build();
         }
     }
 
@@ -501,7 +484,7 @@ public interface ILoggerService
         /// <summary>
         /// Gets or sets the parameters for the actions.
         /// </summary>
-        protected LogOpsParams? Parameters { get; set; }
+        protected LogBuilderOpsParams? Parameters { get; set; }
 
         /// <summary>
         /// Sets the criteria for executing the actions.
@@ -519,19 +502,19 @@ public interface ILoggerService
         /// </summary>
         /// <param name="parameters">The parameters to be set.</param>
         /// <returns>The executable state instance with the parameters set.</returns>
-        public IExecutableState WithParameters(LogOpsParams parameters);
+        public IBuildableState WithParameters(LogBuilderOpsParams parameters);
 
         /// <summary>
         /// Represents the executable state of asynchronous actions in the logging process.
         /// </summary>
-        public interface IExecutableState : IActionsAsyncState
+        public interface IBuildableState : IActionsAsyncState
         {
             /// <summary>
             /// Sets the criteria for executing the actions.
             /// </summary>
             /// <param name="criteria">The criteria functions to be set.</param>
             /// <returns>The executable state instance with the criteria set.</returns>
-            public new IExecutableState WithCriteria(IEnumerable<Func<bool>> criteria)
+            public new IBuildableState WithCriteria(IEnumerable<Func<bool>> criteria)
             {
                 Criteria = criteria;
                 return this;
@@ -542,17 +525,17 @@ public interface ILoggerService
             /// </summary>
             /// <param name="parameters">The parameters to be set.</param>
             /// <returns>The executable state instance with the parameters set.</returns>
-            public new IExecutableState WithParameters(LogOpsParams parameters)
+            public new IBuildableState WithParameters(LogBuilderOpsParams parameters)
             {
                 Parameters = parameters;
                 return this;
             }
 
             /// <summary>
-            /// Executes the asynchronous actions and returns a task representing the result entity.
+            /// Builds the asynchronous actions and returns a task representing the result entity.
             /// </summary>
             /// <returns>A task representing the result entity of the asynchronous actions execution.</returns>
-            public Task<ResultEntity> ExecuteAsync();
+            public Task<LogBuilderResult> BuildAsync();
         }
     }
 
@@ -576,7 +559,7 @@ public interface ILoggerService
         /// <summary>
         /// Gets or sets the parameters for the function delegates.
         /// </summary>
-        protected LogOpsParams? Parameters { get; set; }
+        protected LogBuilderOpsParams? Parameters { get; set; }
 
         /// <summary>
         /// Sets the criteria for executing the function delegates.
@@ -594,19 +577,19 @@ public interface ILoggerService
         /// </summary>
         /// <param name="parameters">The parameters to be set.</param>
         /// <returns>The executable state instance with the parameters set.</returns>
-        public IExecutableState WithParameters(LogOpsParams parameters);
+        public IBuildableState WithParameters(LogBuilderOpsParams parameters);
 
         /// <summary>
         /// Represents the executable state of function delegates in the logging process.
         /// </summary>
-        public interface IExecutableState : IFuncsState<FuncReturnType>
+        public interface IBuildableState : IFuncsState<FuncReturnType>
         {
             /// <summary>
             /// Sets the criteria for executing the function delegates.
             /// </summary>
             /// <param name="criteria">The criteria predicates to be set.</param>
             /// <returns>The executable state instance with the criteria set.</returns>
-            public new IExecutableState WithCriteria(IEnumerable<Predicate<FuncReturnType>> criteria)
+            public new IBuildableState WithCriteria(IEnumerable<Predicate<FuncReturnType>> criteria)
             {
                 Criteria = criteria;
                 return this;
@@ -617,23 +600,17 @@ public interface ILoggerService
             /// </summary>
             /// <param name="parameters">The parameters to be set.</param>
             /// <returns>The executable state instance with the parameters set.</returns>
-            public new IExecutableState WithParameters(LogOpsParams parameters)
+            public new IBuildableState WithParameters(LogBuilderOpsParams parameters)
             {
                 Parameters = parameters;
                 return this;
             }
 
             /// <summary>
-            /// Executes the function delegates and returns a results entity.
+            /// Builds the function delegates and returns a results entity.
             /// </summary>
             /// <returns>A results entity containing the results of the function delegates execution.</returns>
-            public ResultsEntity<FuncReturnType> Execute();
-
-            /// <summary>
-            /// Asynchronously executes the function delegates and returns a task representing the results entity.
-            /// </summary>
-            /// <returns>A task representing the results entity of the asynchronous function delegates execution.</returns>
-            public Task<ResultsEntity<FuncReturnType>> ExecuteAsync();
+            public LogsBuilderResult<FuncReturnType> Build();
         }
     }
 
@@ -656,7 +633,7 @@ public interface ILoggerService
         /// <summary>
         /// Gets or sets the parameters for the asynchronous function delegates.
         /// </summary>
-        protected LogOpsParams? Parameters { get; set; }
+        protected LogBuilderOpsParams? Parameters { get; set; }
 
         /// <summary>
         /// Sets the criteria for executing the asynchronous function delegates.
@@ -674,19 +651,19 @@ public interface ILoggerService
         /// </summary>
         /// <param name="parameters">The parameters to be set.</param>
         /// <returns>The executable state instance with the parameters set.</returns>
-        public IExecutableState WithParameters(LogOpsParams parameters);
+        public IBuildableState WithParameters(LogBuilderOpsParams parameters);
 
         /// <summary>
         /// Represents the executable state of asynchronous function delegates in the logging process.
         /// </summary>
-        public interface IExecutableState : IFuncsAsyncState<FuncReturnType>
+        public interface IBuildableState : IFuncsAsyncState<FuncReturnType>
         {
             /// <summary>
             /// Sets the criteria for executing the asynchronous function delegates.
             /// </summary>
             /// <param name="criteria">The criteria predicates to be set.</param>
             /// <returns>The executable state instance with the criteria set.</returns>
-            public new IExecutableState WithCriteria(IEnumerable<Predicate<FuncReturnType>> criteria)
+            public new IBuildableState WithCriteria(IEnumerable<Predicate<FuncReturnType>> criteria)
             {
                 Criteria = criteria;
                 return this;
@@ -697,7 +674,7 @@ public interface ILoggerService
             /// </summary>
             /// <param name="parameters">The parameters to be set.</param>
             /// <returns>The executable state instance with the parameters set.</returns>
-            public new IExecutableState WithParameters(LogOpsParams parameters)
+            public new IBuildableState WithParameters(LogBuilderOpsParams parameters)
             {
                 Parameters = parameters;
                 return this;
@@ -707,101 +684,7 @@ public interface ILoggerService
             /// Asynchronously executes the function delegates and returns a results entity.
             /// </summary>
             /// <returns>A task representing the results entity of the asynchronous function delegates execution.</returns>
-            public Task<ResultsEntity<FuncReturnType>> ExecuteAsync();
+            public Task<LogsBuilderResult<FuncReturnType>> BuildAsync();
         }
-    }
-
-    /// <summary>
-    /// Represents the parameters for a single log operation.
-    /// </summary>
-    public class LogOpParams
-    {
-        /// <summary>
-        /// Gets or sets the ID of the virtual safe details associated with the log operation.
-        /// </summary>
-        public required Guid VirtualSafeDetailsId { get; set; }
-
-        /// <summary>
-        /// Gets or sets the path of the item associated with the log operation.
-        /// </summary>
-        public required string ItemPath { get; set; }
-
-        /// <summary>
-        /// Gets or sets the type of the log operation.
-        /// </summary>
-        public required LogOperationModel.Types Type { get; set; }
-    }
-
-    /// <summary>
-    /// The `LogOpsParams` class is used to log operations parameters.
-    /// </summary>
-    public class LogOpsParams
-    {
-        /// <summary>
-        /// Gets or sets the ID of the virtual safe details. This is a required property.
-        /// </summary>
-        /// <value>The ID of the virtual safe details.</value>
-        /// <see cref="Guid"/>
-        public required Guid VirtualSafeDetailsId { get; set; }
-
-        /// <summary>
-        /// Gets or sets the collection of operations parameters. This is a required property.
-        /// </summary>
-        /// <value>The collection of operations parameters.</value>
-        /// <see cref="ICollection{T}"/>
-        public required ICollection<OperationsParams> Operations { get; set; }
-
-        /// <summary>
-        /// The `OperationsParams` class is used to define the parameters for each operation.
-        /// </summary>
-        public class OperationsParams
-        {
-            /// <summary>
-            /// Gets or sets the path of the item. This is a required property.
-            /// </summary>
-            /// <value>The path of the item.</value>
-            public required string ItemPath { get; set; }
-
-            /// <summary>
-            /// Gets or sets the type of the log operation. This is a required property.
-            /// </summary>
-            /// <value>The type of the log operation.</value>
-            /// <see cref="LogOperationModel.Types"/>
-            public required LogOperationModel.Types Type { get; set; }
-        }
-    }
-
-
-    /// <summary>
-    /// Represents the result of a logging operation.
-    /// </summary>
-    public record ResultEntity(LogModel Log)
-    {
-        /// <summary>
-        /// Gets a value indicating whether all operations in the log were successful.
-        /// </summary>
-        public bool IsSucceeded { get => Log.Operations.All(el => el.IsSucceeded is true); }
-    }
-
-    /// <summary>
-    /// Represents the result of a logging operation with a specific result type.
-    /// </summary>
-    public record ResultEntity<ResultType>(LogModel Log, ResultType? ActionResult)
-    {
-        /// <summary>
-        /// Gets a value indicating whether all operations in the log were successful.
-        /// </summary>
-        public bool IsSucceeded { get => Log.Operations.All(el => el.IsSucceeded is true); }
-    }
-
-    /// <summary>
-    /// Represents the result of logging multiple operations with a specific result type.
-    /// </summary>
-    public record ResultsEntity<ResultType>(LogModel Log, IEnumerable<ResultType?>? ActionResult)
-    {
-        /// <summary>
-        /// Gets a value indicating whether all operations in the log were successful.
-        /// </summary>
-        public bool IsSucceeded { get => Log.Operations.All(el => el.IsSucceeded is true); }
     }
 }

@@ -1,8 +1,11 @@
-﻿using FilesSafeReserve.App.Models;
-using FilesSafeReserve.App.Services.IServices;
+﻿using FilesSafeReserve.App.Builders.IBuilders;
+using FilesSafeReserve.App.Entities.Params.ILogBuilder;
+using FilesSafeReserve.App.Models;
 using FilesSafeReserve.Domain.Extensions;
+using FilesSafeReserve.Infra.Builders;
+using FilesSafeReserve.Infra.Extensions;
+using FilesSafeReserve.Infra.Repositories;
 using FilesSafeReserve.Infra.Repositories.IRepositories;
-using static FilesSafeReserve.App.Services.IServices.ILoggerService.LogOpsParams;
 
 namespace FilesSafeReserve.Services.Worker;
 
@@ -44,71 +47,54 @@ public class ReservationWorker(ILogger<ReservationWorker> logger, IServiceProvid
         {
             var timeOfDay = DateTime.Now.TimeOfDay;
 
-            using (var scope = _serviceProvider.CreateScope())
+            using var scope = _serviceProvider.CreateScope();
+            var services = scope.ServiceProvider;
+
+            var reservationRepo = services.GetService<IReservationRepo>();
+            var logRepo = services.GetService<ILogRepo>();
+            var logBuilder = services.GetService<ILogBuilder>();
+
+            if (reservationRepo is null || logBuilder is null || logRepo is null)
+                _logger.LogInformation("Service provider returned null running at: {time}", DateTimeOffset.Now);
+            else
             {
-                var services = scope.ServiceProvider;
-                var reservationRepo = services.GetService<IReservationRepo>();
-                var loggerService = services.GetService<ILoggerService>();
+                var reservations = await reservationRepo.ToListAsync();
 
-                if (reservationRepo is null || loggerService is null)
-                    _logger.LogInformation("Service provider returned null running at: {time}", DateTimeOffset.Now);
-                else
+                var selectedReservation = reservations
+                                            .Where(el => el.ReservedTimestamp.Date != DateTime.Now.Date)
+                                            .Where(el => el.ToReserveTimeSpan < DateTime.Now.TimeOfDay)
+                                            .Where(el => el.ToReserveTimeSpan != TimeSpan.Zero);
+
+                foreach (var reservation in selectedReservation)
                 {
-                    var reservations = await reservationRepo.ToListAsync();
-
-                    var selectedReservation = reservations
-                                                .Where(el => el.ReservedTimestamp.Date != DateTime.Now.Date)
-                                                .Where(el => el.ToReserveTimeSpan < DateTime.Now.TimeOfDay)
-                                                .Where(el => el.ToReserveTimeSpan != TimeSpan.Zero);
-
-                    foreach (var reservation in selectedReservation)
-                    {
-                        List<Action> funcsList = new List<Action>();
-                        List<OperationsParams> operationsList = new List<OperationsParams>();
-
-                        foreach (var file in reservation.Files)
-                        {
-                            var func = () => file.CopyToAsSub(reservation.Safe.Path);
-                            funcsList.Add(func);
-                            operationsList.Add(new()
+                    await logBuilder
+                            .WithDelegate(reservation.Patheds
+                                .Select(el => new Action(() => el.CopyToAsSub(reservation.Safe.Path))))
+                            .WithParameters(new()
                             {
-                                ItemPath = file.Path,
-                                Type = LogOperationModel.Types.TransferToVirtualSafe,
-                            });
-                        }
-
-                        foreach (var dir in reservation.Directories)
-                        {
-                            var func = () => dir.CopyToAsSub(reservation.Safe.Path);
-                            funcsList.Add(func);
-                            operationsList.Add(new()
-                            {
-                                ItemPath = dir.Path,
-                                Type = LogOperationModel.Types.TransferToVirtualSafe,
-                            });
-                        }
-
-                        await loggerService
-                                    .Log(funcsList)
-                                    .WithParameters(new()
+                                VirtualSafeDetailsId = reservation.Safe.Details.Id,
+                                Operations = reservation.Patheds
+                                    .Select(el => new LogBuilderOpsParams.OperationsParams()
                                     {
-                                        VirtualSafeDetailsId = reservation.Safe.Details.Id,
-                                        Operations = operationsList
+                                        ItemPath = el.Path,
+                                        Type = LogOperationModel.Types.TransferToVirtualSafe
                                     })
-                                    .ExecuteAsync();
+                                    .ToList()
+                            })
+                            .Build()
+                            .LogResultAsync(logRepo);
 
-                        reservation.ReservedTimestamp = DateTime.Now;
+                    reservation.ReservedTimestamp = DateTime.Now;
 
-                        await reservationRepo.UpdateAsync(reservation);
+                    await reservationRepo.UpdateAsync(reservation);
 
-                        _logger.LogInformation("Reservation worker reserved virtual safe '{name}' running at: {time}", reservation.Safe.Name, DateTimeOffset.Now);
-                    }
-
-                    _logger.LogInformation("Reservation worker running at: {time}", DateTimeOffset.Now);
+                    _logger.LogInformation("Reservation worker reserved virtual safe '{name}' running at: {time}", reservation.Safe.Name, DateTimeOffset.Now);
                 }
 
-                await Task.Delay(10 * minute, stoppingToken);
+                _logger.LogInformation("Reservation worker running at: {time}", DateTimeOffset.Now);
             }
+
+            await Task.Delay(10 * minute, stoppingToken);
         }
     }
 

@@ -1,6 +1,9 @@
 ﻿@page "/virtual-safe/details/{id}"
 
 @using CommunityToolkit.Maui.Storage
+@using FilesSafeReserve.App.Builders.IBuilders
+@using FilesSafeReserve.App.Entities
+@using FilesSafeReserve.App.Entities.Params.ILogBuilder
 @using FilesSafeReserve.App.Models
 @using FilesSafeReserve.App.Services.IServices
 @using FilesSafeReserve.Domain.Entities
@@ -8,13 +11,20 @@
 @using FilesSafeReserve.Domain.Interfaces
 @using FilesSafeReserve.Infra.Repositories.IRepositories
 @using FilesSafeReserve.Infra.Services.IServices
+@using FilesSafeReserve.Infra.Extensions;
+@using FilesSafeReserve.UI.Data.Stores
+
+@implements IDisposable
 
 @inject IVirtualSafeRepo VirtualSafeRepo
 @inject IReservationRepo ReservationRepo
 @inject IFileRepo FileRepo
 @inject IDirectoryRepo DirectoryRepo
 @inject IFileOpenerService FileExplorerService
-@inject ILoggerService LoggerService
+@inject ILogBuilder LogBuilder
+@inject ILogRepo LogRepo
+@inject IShortcutRepo ShortcutRepo
+@inject KeyUpStore KeyUpStore
 @inject NavigationManager Navigation
 
 <Modal @ref="ViewModel.DeleteModal" title="Virtual Safe Delete" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
@@ -128,7 +138,11 @@
                 </div>
 
                 <div class="btns-item">
-                    <Button @onclick='() => FileExplorerService.Open(ViewModel.VirtualSafe.Directory)' Color="ButtonColor.Primary"> Open folder </Button>
+                    <Button @onclick='() => FileExplorerService.Open(ViewModel.VirtualSafe.Directory)' Color="ButtonColor.Primary"> Open </Button>
+                </div>
+
+                <div class="btns-item">
+                    <Button @onclick='() => OnReserveSafeClick()' Color="ButtonColor.Primary"> Reserve </Button>
                 </div>
 
                 <div class="btns-item">
@@ -272,27 +286,111 @@
 @code {
     protected async override void OnInitialized()
     {
-        var result = await VirtualSafeRepo.GetByIdAsync(new Guid(Id));
+        var safeResult = await VirtualSafeRepo.GetByIdAsync(new Guid(Id));
 
-        if (result.IsSucceeded is false)
+        if (safeResult.IsSucceeded is false)
             await ViewModel.NotFoundModal.ShowAsync();
 
-        ViewModel.VirtualSafe = result.Value;
+        ViewModel.VirtualSafe = safeResult.Value;
+
+        var openSafeShortcutResult = await ShortcutRepo.GetByTypeAsync(ShortcutModel.Types.OpenVirtualSafe);
+        var reserveSafeShortcutResult = await ShortcutRepo.GetByTypeAsync(ShortcutModel.Types.ReserveVirtualSafe);
+
+        if (openSafeShortcutResult.IsSucceeded)
+        {
+            ViewModel.OpenSafeShortcut = openSafeShortcutResult.Value;
+
+            KeyUpStore
+                .WithName($"{nameof(SafeDetailsPage)}_{nameof(OnOpenSafeShortcut)}")
+                .Add(OnOpenSafeShortcut);
+        }
+
+        if (reserveSafeShortcutResult.IsSucceeded)
+        {
+            ViewModel.ReserveSafeShortcut = reserveSafeShortcutResult.Value;
+
+            KeyUpStore
+                .WithName($"{nameof(SafeDetailsPage)}_{nameof(OnReserveSafeShortcut)}")
+                .Add(OnReserveSafeShortcut);
+        }
     }
 
-    private void OnReserveClick(KeyValuePair<Guid, IShyPathed> item)
+    public void Dispose()
+    {
+        KeyUpStore.Remove(shortcut => shortcut.Key.Contains(nameof(SafeDetailsPage)));
+    }
+
+    private Task OnOpenSafeShortcut(ShortcutEntity shortcut)
+    {
+        if (ViewModel.OpenSafeShortcut is null || ViewModel.VirtualSafe is null) return Task.CompletedTask;
+        if (shortcut != ViewModel.OpenSafeShortcut) return Task.CompletedTask;
+
+        FileExplorerService.Open(ViewModel.VirtualSafe.Directory);
+
+        return Task.CompletedTask;
+    }
+
+    private async Task OnReserveSafeShortcut(ShortcutEntity shortcut)
+    {
+        if (ViewModel.ReserveSafeShortcut is null || ViewModel.VirtualSafe is null) return;
+        if (shortcut != ViewModel.ReserveSafeShortcut) return;
+
+        await LogBuilder
+                .WithDelegate(ViewModel.VirtualSafe.Reservation.Patheds
+                    .Select(el => new Action(() => el.CopyToAsSub(ViewModel.VirtualSafe.Path))))
+                .WithParameters(new()
+                {
+                    VirtualSafeDetailsId = ViewModel.VirtualSafe.Details.Id,
+                    Operations = ViewModel.VirtualSafe.Reservation.Patheds
+                        .Select(el => new LogBuilderOpsParams.OperationsParams()
+                        {
+                            ItemPath = el.Path,
+                            Type = LogOperationModel.Types.TransferToVirtualSafe
+                        })
+                        .ToList()
+                })
+                .Build()
+                .LogResultAsync(LogRepo);
+
+        StateHasChanged();
+    }
+
+    private async Task OnReserveSafeClick()
+    {
+        await LogBuilder
+                .WithDelegate(ViewModel.VirtualSafe.Reservation.Patheds
+                    .Select(el => new Action(() => el.CopyToAsSub(ViewModel.VirtualSafe.Path))))
+                .WithParameters(new()
+                {
+                    VirtualSafeDetailsId = ViewModel.VirtualSafe.Details.Id,
+                    Operations = ViewModel.VirtualSafe.Reservation.Patheds
+                        .Select(el => new LogBuilderOpsParams.OperationsParams()
+                        {
+                            ItemPath = el.Path,
+                            Type = LogOperationModel.Types.TransferToVirtualSafe
+                        })
+                        .ToList()
+                })
+                .Build()
+                .LogResultAsync(LogRepo);
+
+        StateHasChanged();
+    }
+
+    private async void OnReserveClick(KeyValuePair<Guid, IShyPathed> item)
     {
         if (ViewModel.VirtualSafe is null) return;
 
-        LoggerService
-            .Log(() => item.Value.CopyToAsSub(ViewModel.VirtualSafe.Path))
-            .WithParameters(new()
-            {
-                VirtualSafeDetailsId = ViewModel.VirtualSafe.Details.Id,
-                Type = LogOperationModel.Types.TransferToVirtualSafe,
-                ItemPath = item.Value.Path,
-            })
-            .Execute();
+        await LogBuilder
+                 .WithDelegate(() => item.Value.CopyToAsSub(ViewModel.VirtualSafe.Path))
+                 .WithParameters(new()
+                 {
+                     VirtualSafeDetailsId = ViewModel.VirtualSafe.Details.Id,
+                     Type = LogOperationModel.Types.TransferToVirtualSafe,
+                     ItemPath = item.Value.Path,
+                 })
+                 .Build()
+                 .LogResultAsync(LogRepo);
     }
 
     private async Task OnRemoveClick(KeyValuePair<Guid, IShyPathed> item)
@@ -300,8 +398,8 @@
         if (ViewModel.VirtualSafe is null) return;
         @if (item.Value.Type is ShyFsType.Directory)
         {
-            await LoggerService
-                    .Log(async () => await DirectoryRepo.RemoveByIdAsync(item.Key))
+            await LogBuilder
+                    .WithDelegate(async () => await DirectoryRepo.RemoveByIdAsync(item.Key))
                     .WithCriterion(res => res.IsSucceeded)
                     .WithParameters(new()
                     {
@@ -309,12 +407,12 @@
                         Type = LogOperationModel.Types.RemoveFromReservation,
                         ItemPath = item.Value.Path,
                     })
-                    .ExecuteAsync();
+                    .BuildAsync();
         }
         else if (item.Value.Type is ShyFsType.File)
         {
-            await LoggerService
-                    .Log(async () => await FileRepo.RemoveByIdAsync(item.Key))
+            await LogBuilder
+                    .WithDelegate(async () => await FileRepo.RemoveByIdAsync(item.Key))
                     .WithCriterion(res => res.IsSucceeded)
                     .WithParameters(new()
                     {
@@ -322,7 +420,7 @@
                         Type = LogOperationModel.Types.RemoveFromReservation,
                         ItemPath = item.Value.Path,
                     })
-                    .ExecuteAsync();
+                    .BuildAsync();
         }
     }
 
@@ -366,8 +464,8 @@
             return;
         }
 
-        await LoggerService
-                .Log(async () =>
+        await LogBuilder
+                .WithDelegate(async () =>
                 {
                     await DirectoryRepo.AddAsync(
                         new()
@@ -382,7 +480,7 @@
                     Type = LogOperationModel.Types.AddToReservation,
                     ItemPath = result.Folder.Path
                 })
-                .ExecuteAsync();
+                .BuildAsync();
     }
 
     private async Task OnPickFileToReserveClick()
@@ -406,8 +504,8 @@
             await ViewModel.AlreadyInReservationModal.ShowAsync();
             return;
         }
-        await LoggerService
-                .Log(async () =>
+        await LogBuilder
+                .WithDelegate(async () =>
                 {
                     await FileRepo.AddAsync(
                         new()
@@ -417,12 +515,12 @@
                         });
                 })
                 .WithParameters(new()
-                    {
-                        VirtualSafeDetailsId = ViewModel.VirtualSafe!.Details.Id,
-                        Type = LogOperationModel.Types.AddToReservation,
-                        ItemPath = result.FullPath
-                    })
-                .ExecuteAsync();
+                {
+                    VirtualSafeDetailsId = ViewModel.VirtualSafe!.Details.Id,
+                    Type = LogOperationModel.Types.AddToReservation,
+                    ItemPath = result.FullPath
+                })
+                .BuildAsync();
     }
 
     private async Task OnSaveTimeClick()

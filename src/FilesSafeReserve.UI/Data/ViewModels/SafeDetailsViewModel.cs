@@ -13,6 +13,10 @@ public class SafeDetailsViewModel
     public Modal AlreadyInReservationModal { get; set; } = default!;
     public Modal IsInSafeDirectoryModal { get; set; } = default!;
     public Modal NoItemWasPickedModal { get; set; } = default!;
+
+    public ShortcutModel? OpenSafeShortcut { get; set; }
+    public ShortcutModel? ReserveSafeShortcut { get; set; }
+
     private string _reservationTimeOfDay = string.Empty;
     public string ReservationTimeOfDay
     {

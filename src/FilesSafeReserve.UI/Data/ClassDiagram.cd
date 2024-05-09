@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="Forms group">
+    <Position X="10.779" Y="0.5" Height="0.325" Width="0.995" />
+  </Comment>
+  <Comment CommentText="Handlers group">
+    <Position X="3.15" Y="0.5" Height="0.325" Width="1.191" />
+  </Comment>
+  <Comment CommentText="IManagers group">
+    <Position X="5.442" Y="0.5" Height="0.325" Width="1.25" />
+  </Comment>
+  <Comment CommentText="Managers group">
+    <Position X="8.18" Y="0.5" Height="0.325" Width="1.183" />
+  </Comment>
+  <Comment CommentText="Stores group">
+    <Position X="1.007" Y="0.5" Height="0.325" Width="0.966" />
+  </Comment>
+  <Comment CommentText="ViewModels group">
+    <Position X="5.13" Y="5.857" Height="0.325" Width="1.321" />
+  </Comment>
+  <Class Name="FilesSafeReserve.UI.Data.Entities.Forms.VirtualSafeForm">
+    <Position X="10.5" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAIAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\Entities\Forms\VirtualSafeForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FilesSafeReserve.UI.Data.Handlers.KeyUpHandler">
+    <Position X="2.75" Y="1" Width="2" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Delegate Name="FilesSafeReserve.UI.Data.Handlers.KeyUpHandler.KeyUpEventHandler">
+        <TypeIdentifier>
+          <NewMemberFileName>Data\Handlers\KeyUpHandler.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAA=</HashCode>
+      <FileName>Data\Handlers\KeyUpHandler.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FilesSafeReserve.UI.Data.Managers.KeyUpManager">
+    <Position X="7.25" Y="1.25" Width="3" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Class Name="FilesSafeReserve.UI.Data.Managers.KeyUpManager.ListenerEntity">
+        <TypeIdentifier>
+          <NewMemberFileName>Data\Managers\KeyUpManager.cs</NewMemberFileName>
+        </TypeIdentifier>
+        <Lollipop Position="0.2" />
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\Managers\KeyUpManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FilesSafeReserve.UI.Data.Stores.KeyUpStore">
+    <Position X="0.5" Y="1" Width="2" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Class Name="FilesSafeReserve.UI.Data.Stores.KeyUpStore.ExecutableState">
+        <TypeIdentifier>
+          <NewMemberFileName>Data\Stores\KeyUpStore.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAABAAEAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\Stores\KeyUpStore.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FilesSafeReserve.UI.Data.ViewModels.CreateSafeViewModel">
+    <Position X="0.5" Y="6.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAQAAAAAAAAAAAAAAAAAAACAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>Data\ViewModels\CreateSafeViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FilesSafeReserve.UI.Data.ViewModels.EditSafeViewModel">
+    <Position X="2.75" Y="6.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAAAAAAAAAAAAAAAAAIACAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>Data\ViewModels\EditSafeViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FilesSafeReserve.UI.Data.ViewModels.SafeDetailsViewModel">
+    <Position X="5" Y="6.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>gAAQAAAIQJAAAAAAAAQAACAAAABCAAAgAAEAAAAABAA=</HashCode>
+      <FileName>Data\ViewModels\SafeDetailsViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FilesSafeReserve.UI.Data.ViewModels.SafesListViewModel">
+    <Position X="7.75" Y="6.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>Data\ViewModels\SafesListViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FilesSafeReserve.UI.Data.ViewModels.SmartphoneViewModel">
+    <Position X="10" Y="6.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAAAAAAIAAAAAACAAAAAAAAiMAEAAAAAAAA=</HashCode>
+      <FileName>Data\ViewModels\SmartphoneViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="FilesSafeReserve.UI.Data.Managers.IManagers.IKeyUpManager">
+    <Position X="5" Y="1" Width="2" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Interface Name="FilesSafeReserve.UI.Data.Managers.IManagers.IKeyUpManager.IListenerEntity">
+        <TypeIdentifier>
+          <NewMemberFileName>Data\Managers\IManagers\IKeyUpManager.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Interface>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\Managers\IManagers\IKeyUpManager.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

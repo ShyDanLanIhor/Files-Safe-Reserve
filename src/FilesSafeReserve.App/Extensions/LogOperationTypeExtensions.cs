@@ -21,6 +21,7 @@ public static class LogOperationTypeExtensions
             LogOperationModel.Types.TransferToVirtualSafe => "Transfer to virtual safe",
             LogOperationModel.Types.RemoveFromReservation => "Remove from reservation",
             LogOperationModel.Types.DeleteFromVirtualSafe => "Delete from virtual safe",
+            LogOperationModel.Types.ReserveSmartphone => "Reserve smartphone",
             _ => "Unknown"
         };
 
@@ -38,6 +39,7 @@ public static class LogOperationTypeExtensions
             LogOperationModel.Types.TransferToVirtualSafe => "Transferring to virtual safe",
             LogOperationModel.Types.RemoveFromReservation => "Removing from reservation",
             LogOperationModel.Types.DeleteFromVirtualSafe => "Deletion from virtual safe",
+            LogOperationModel.Types.ReserveSmartphone => "Smartphone reservation",
             _ => "Unknown"
         };
 }

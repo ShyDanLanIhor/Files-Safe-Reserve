@@ -1,13 +1,19 @@
 ﻿using CommunityToolkit.Maui.Core;
+using FilesSafeReserve.App.Builders.IBuilders;
 using FilesSafeReserve.App.Services.IServices;
+using FilesSafeReserve.Infra.Builders;
 using FilesSafeReserve.Infra.Configs;
 using FilesSafeReserve.Infra.DataBase;
 using FilesSafeReserve.Infra.Repositories;
 using FilesSafeReserve.Infra.Repositories.IRepositories;
 using FilesSafeReserve.Infra.Services;
 using FilesSafeReserve.Infra.Services.IServices;
+using FilesSafeReserve.UI.Data.Managers;
+using FilesSafeReserve.UI.Data.Managers.IManagers;
+using FilesSafeReserve.UI.Data.Stores;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.JSInterop;
 
 namespace FilesSafeReserve.UI;
 public static class MauiProgram
@@ -39,7 +45,7 @@ public static class MauiProgram
 
         builder.Services.AddSingleton<IDbService, DbService>();
         builder.Services.AddSingleton<IAppService, AppService>();
-        builder.Services.AddSingleton<ILoggerService, LoggerService>();
+        builder.Services.AddSingleton<ILogBuilder, LogBuilder>();
         builder.Services.AddSingleton<IFileOpenerService, FileOpenerService>();
         builder.Services.AddSingleton<ISmartphoneService, SmartphoneService>();
 
@@ -50,6 +56,11 @@ public static class MauiProgram
         builder.Services.AddSingleton<IReservationRepo, ReservationRepo>();
         builder.Services.AddSingleton<IFileRepo, FileRepo>();
         builder.Services.AddSingleton<IDirectoryRepo, DirectoryRepo>();
+        builder.Services.AddSingleton<IShortcutRepo, ShortcutRepo>();
+
+        builder.Services.AddScoped<IKeyUpManager, KeyUpManager>();
+
+        builder.Services.AddSingleton<KeyUpStore>();
 
         builder.Services.AddDbContext<FsrDbContext>();
         builder.Services.AddTransient<MainPage>();

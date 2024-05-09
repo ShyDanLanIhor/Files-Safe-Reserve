@@ -1,10 +1,15 @@
 ﻿@page "/smartphone"
 
+@using FilesSafeReserve.App.Models
 @using FilesSafeReserve.App.Services.IServices
 @using FilesSafeReserve.Infra.Repositories.IRepositories
+@using FilesSafeReserve.App.Builders.IBuilders
+@using FilesSafeReserve.Infra.Extensions;
 
 @inject IVirtualSafeRepo VirtualSafeRepo
 @inject ISmartphoneService SmartphoneService
+@inject ILogBuilder LogBuilder
+@inject ILogRepo LogRepo
 
 <Modal @ref="ViewModel.ConfirmReservation" title="Reservation confirmation" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
     <BodyTemplate>
@@ -153,8 +158,18 @@
 
         await ViewModel.ReservationProgress.ShowAsync();
 
-        var result = SmartphoneService.TransferFiles(ViewModel.SelectedSmartphoneName,
-                                        ViewModel.SelectedVirtualSafe.Path);
+        var result = await LogBuilder
+                                .WithDelegate(() => SmartphoneService.TransferFiles(ViewModel.SelectedSmartphoneName,
+                                                                                    ViewModel.SelectedVirtualSafe.Path))
+                                .WithCriterion(result => result.IsSucceeded)
+                                .WithParameters(new()
+                                {
+                                    VirtualSafeDetailsId = ViewModel.SelectedVirtualSafe.Details.Id,
+                                    Type = LogOperationModel.Types.ReserveSmartphone,
+                                    ItemPath = ViewModel.SelectedVirtualSafe.Path
+                                })
+                                .Build()
+                                .LogResultAsync(LogRepo);
 
         await ViewModel.ReservationProgress.HideAsync();
 
