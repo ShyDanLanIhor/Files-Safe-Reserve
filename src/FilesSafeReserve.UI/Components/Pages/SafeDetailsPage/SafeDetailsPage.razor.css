@@ -98,12 +98,6 @@
     margin: 10px;
 }
 
-.gradient-background {
-    background: linear-gradient(90deg, #08c5d7, #2778d2, #6d27d2);
-    background-size: 600% 600%;
-    animation: GradientAnim 20s ease infinite;
-}
-
 .alert-container {
     width: 90%;
     margin: 20px;
@@ -281,26 +275,12 @@
     margin-left: 5px;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 855px) {
     .btns-container {
         flex-direction: column;
     }
 
     .reserves-btns-container {
         flex-direction: column;
-    }
-}
-
-@keyframes GradientAnim {
-    0% {
-        background-position: 0% 49%
-    }
-
-    50% {
-        background-position: 100% 52%
-    }
-
-    100% {
-        background-position: 0% 49%
     }
 }

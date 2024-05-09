@@ -1,0 +1,248 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="Models group">
+    <Position X="5.9" Y="1.404" Height="0.338" Width="1" />
+  </Comment>
+  <Comment CommentText="Models interface group">
+    <Position X="4.071" Y="9.498" Height="0.338" Width="1.547" />
+  </Comment>
+  <Comment CommentText="Extensions group">
+    <Position X="3.335" Y="11.74" Height="0.338" Width="1.144" />
+  </Comment>
+  <Comment CommentText="Services interface group">
+    <Position X="0.615" Y="11.759" Height="0.338" Width="1.547" />
+  </Comment>
+  <Comment CommentText="Builders interface group">
+    <Position X="1" Y="8" Height="0.338" Width="1.547" />
+  </Comment>
+  <Comment CommentText="Results group">
+    <Position X="8.806" Y="8.167" Height="0.338" Width="0.972" />
+  </Comment>
+  <Class Name="FilesSafeReserve.App.Models.DirectoryModel">
+    <Position X="7" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAABAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\DirectoryModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Reservation" />
+    </ShowAsAssociation>
+    <Lollipop Orientation="Bottom" Position="0.229" />
+  </Class>
+  <Class Name="FilesSafeReserve.App.Models.FileModel">
+    <Position X="7" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAABAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\FileModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Reservation" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FilesSafeReserve.App.Models.LogModel">
+    <Position X="4" Y="2.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>gAACAAACAAAAAAAAAAAAAASQAAAAAAAAAAAAAAAAABA=</HashCode>
+      <FileName>Models\LogModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="VirtualSafeDetails" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Operations" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FilesSafeReserve.App.Models.LogOperationModel">
+    <Position X="0.75" Y="2.25" Width="2" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="FilesSafeReserve.App.Models.LogOperationModel.Types">
+        <TypeIdentifier>
+          <NewMemberFileName>Models\LogOperationModel.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAACIAAABAAAAAAEAAACAAAAAAgAAAAAAQAAIAAAAEA=</HashCode>
+      <FileName>Models\LogOperationModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Log" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FilesSafeReserve.App.Models.ReservationModel">
+    <Position X="10" Y="5" Width="1.75" />
+    <AssociationLine Name="Safe" Type="FilesSafeReserve.App.Models.VirtualSafeModel" FixedToPoint="true">
+      <Path>
+        <Point X="11.438" Y="5" />
+        <Point X="11.438" Y="4.123" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>ACACAIAAAgAAAAAAAAAAACAAAAAAAAAACAAAAAAAEIA=</HashCode>
+      <FileName>Models\ReservationModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Safe" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Files" />
+      <Property Name="Directories" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Orientation="Bottom" Position="0.293" />
+  </Class>
+  <Class Name="FilesSafeReserve.App.Models.ShortcutModel">
+    <Position X="4" Y="4.75" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="FilesSafeReserve.App.Models.ShortcutModel.Types">
+        <TypeIdentifier>
+          <NewMemberFileName>Models\ShortcutModel.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAACAAAAAAgUAAAAAAAAAAAAAQAAAgAACAA=</HashCode>
+      <FileName>Models\ShortcutModel.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FilesSafeReserve.App.Models.VirtualSafeDetailsModel">
+    <Position X="7.25" Y="2.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAACAIAQAAAAAgIAAAAAACAAAAAAAAAAAAAAAAAAEAA=</HashCode>
+      <FileName>Models\VirtualSafeDetailsModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Safe" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Logs" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FilesSafeReserve.App.Models.VirtualSafeModel">
+    <Position X="10.25" Y="2.25" Width="1.5" />
+    <AssociationLine Name="Reservation" Type="FilesSafeReserve.App.Models.ReservationModel" FixedFromPoint="true">
+      <Path>
+        <Point X="10.75" Y="4.123" />
+        <Point X="10.75" Y="5" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAACABAAAAAhAAIAEAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\VirtualSafeModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Details" />
+      <Property Name="Reservation" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="FilesSafeReserve.App.Extensions.LogOperationTypeExtensions">
+    <Position X="2.75" Y="12.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAABAA=</HashCode>
+      <FileName>Extensions\LogOperationTypeExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FilesSafeReserve.App.Entities.Results.Basic.ObjResult">
+    <Position X="9.75" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Entities\Results\Basic\ObjResult.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FilesSafeReserve.App.Entities.Results.Basic.ResultEntity">
+    <Position X="7.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAIAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAiA=</HashCode>
+      <FileName>Entities\Results\Basic\ResultEntity.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FilesSafeReserve.App.Entities.Results.Basic.ValueResult">
+    <Position X="7.25" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Entities\Results\Basic\ValueResult.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FilesSafeReserve.App.Entities.Results.Basic.ValueResult&lt;ValueType&gt;">
+    <Position X="9.5" Y="8.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgDAAAAiA=</HashCode>
+      <FileName>Entities\Results\Basic\ValueResult.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="FilesSafeReserve.App.Interfaces.Models.IModelBase&lt;IdType&gt;">
+    <Position X="4" Y="10" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Interfaces\Models\IModelBase.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FilesSafeReserve.App.Services.IServices.ISmartphoneService">
+    <Position X="0.5" Y="12.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAEAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Services\IServices\ISmartphoneService.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="FilesSafeReserve.App.Builders.IBuilders.ILogBuilder">
+    <Position X="0.5" Y="8.5" Width="2.5" />
+    <NestedTypes>
+      <Interface Name="FilesSafeReserve.App.Builders.IBuilders.ILogBuilder.IActionState" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Builders\IBuilders\ILogBuilder.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Interface>
+      <Interface Name="FilesSafeReserve.App.Builders.IBuilders.ILogBuilder.IActionAsyncState" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Builders\IBuilders\ILogBuilder.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Interface>
+      <Interface Name="FilesSafeReserve.App.Builders.IBuilders.ILogBuilder.IFuncState&lt;FuncReturnType&gt;" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Builders\IBuilders\ILogBuilder.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Interface>
+      <Interface Name="FilesSafeReserve.App.Builders.IBuilders.ILogBuilder.IFuncAsyncState&lt;FuncReturnType&gt;" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Builders\IBuilders\ILogBuilder.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Interface>
+      <Interface Name="FilesSafeReserve.App.Builders.IBuilders.ILogBuilder.IActionsState" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Builders\IBuilders\ILogBuilder.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Interface>
+      <Interface Name="FilesSafeReserve.App.Builders.IBuilders.ILogBuilder.IActionsAsyncState" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Builders\IBuilders\ILogBuilder.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Interface>
+      <Interface Name="FilesSafeReserve.App.Builders.IBuilders.ILogBuilder.IFuncsState&lt;FuncReturnType&gt;" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Builders\IBuilders\ILogBuilder.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Interface>
+      <Interface Name="FilesSafeReserve.App.Builders.IBuilders.ILogBuilder.IFuncsAsyncState&lt;FuncReturnType&gt;" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Builders\IBuilders\ILogBuilder.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Interface>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAAAAAAAAABAIAAAAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>Builders\IBuilders\ILogBuilder.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,9 +1,9 @@
-using FilesSafeReserve.App.Services.IServices;
 using FilesSafeReserve.Infra.DataBase;
 using FilesSafeReserve.Infra.Repositories.IRepositories;
 using FilesSafeReserve.Infra.Repositories;
-using FilesSafeReserve.Infra.Services;
 using FilesSafeReserve.Services.Worker;
+using FilesSafeReserve.App.Builders.IBuilders;
+using FilesSafeReserve.Infra.Builders;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -21,7 +21,7 @@ builder.Services.AddDbContext<FsrDbContext>();
 builder.Services.AddScoped<ILogRepo, LogRepo>();
 builder.Services.AddScoped<IReservationRepo, ReservationRepo>();
 
-builder.Services.AddScoped<ILoggerService, LoggerService>();
+builder.Services.AddScoped<ILogBuilder, LogBuilder>();
 
 builder.Services.AddHostedService<ReservationWorker>();
 

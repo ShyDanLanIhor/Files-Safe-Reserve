@@ -1,38 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Comment CommentText="Entities Group">
+  <Comment CommentText="Entities group">
     <Position X="3.495" Y="0.5" Height="0.317" Width="0.992" />
   </Comment>
-  <Comment CommentText="Extensions Group">
-    <Position X="3.725" Y="7.509" Height="0.331" Width="1.226" />
+  <Comment CommentText="Extensions group">
+    <Position X="3.738" Y="7.078" Height="0.331" Width="1.226" />
   </Comment>
-  <Comment CommentText="Mappers Group">
-    <Position X="2.689" Y="11.415" Height="0.342" Width="1.094" />
+  <Comment CommentText="Mappers group">
+    <Position X="2.651" Y="10.193" Height="0.342" Width="1.094" />
   </Comment>
-  <Comment CommentText="Interfaces Group">
-    <Position X="8.904" Y="4.5" Height="0.331" Width="1.16" />
+  <Comment CommentText="Interfaces group">
+    <Position X="9" Y="4.25" Height="0.331" Width="1.16" />
   </Comment>
-  <Comment CommentText="Exceptions Group">
-    <Position X="8.25" Y="11.75" Height="0.331" Width="1.237" />
+  <Comment CommentText="Exceptions group">
+    <Position X="7.958" Y="10.375" Height="0.331" Width="1.174" />
   </Comment>
-  <Class Name="ShyryiFileSystemLibrary.Entities.ShyDirectoryEntity">
-    <Position X="0.75" Y="1.5" Width="1.5" />
+  <Class Name="FilesSafeReserve.Domain.Entities.ShyDirectoryEntity">
+    <Position X="0.75" Y="1.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>ACAAAAAAAAACAAIAAAAAAAQEAAAAACgAAAAAAUAAEIA=</HashCode>
       <FileName>Entities\ShyDirectoryEntity.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="ShyryiFileSystemLibrary.Entities.ShyFileEntity">
-    <Position X="6.25" Y="1.5" Width="1.5" />
+  <Class Name="FilesSafeReserve.Domain.Entities.ShyFileEntity">
+    <Position X="6" Y="1.25" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAACAAIAAAAAAAUQAAAAASgAAAABAkAgAAA=</HashCode>
       <FileName>Entities\ShyFileEntity.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="ShyryiFileSystemLibrary.Entities.ShyFsEntity">
-    <Position X="3.25" Y="1.5" Width="1.5" />
+  <Class Name="FilesSafeReserve.Domain.Entities.ShyFsEntity">
+    <Position X="3.25" Y="1.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAIAgAAAAAQAAAAAAIAAgQAAAAEAAiA=</HashCode>
       <FileName>Entities\ShyFsEntity.cs</FileName>
@@ -42,78 +42,78 @@
     </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="ShyryiFileSystemLibrary.Extensions.ShyDirectoryExtensions">
-    <Position X="0.5" Y="8.25" Width="2.25" />
+  <Class Name="FilesSafeReserve.Domain.Extensions.ShyDirectoryExtensions">
+    <Position X="0.5" Y="7.75" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAEAAAAAAAQAEIAEAAAAAAAAAAIAA=</HashCode>
       <FileName>Extensions\ShyDirectoryExtensions.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ShyryiFileSystemLibrary.Extensions.ShyFileExtensions">
-    <Position X="3.25" Y="8.25" Width="2.25" />
+  <Class Name="FilesSafeReserve.Domain.Extensions.ShyFileExtensions">
+    <Position X="3.25" Y="7.75" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAEAAAAAAAQAEIAEAAAAAAAAAAIAA=</HashCode>
       <FileName>Extensions\ShyFileExtensions.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ShyryiFileSystemLibrary.Extensions.ShyPathedExtensions">
-    <Position X="6" Y="8.25" Width="2.25" />
+  <Class Name="FilesSafeReserve.Domain.Extensions.ShyPathedExtensions">
+    <Position X="6" Y="7.75" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAEAAAAAAAQAEIAEAAAAAAAAAAIAA=</HashCode>
       <FileName>Extensions\ShyPathedExtensions.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ShyryiFileSystemLibrary.Mappers.DirectoryInfoMapper">
-    <Position X="0.5" Y="12.25" Width="1.5" />
+  <Class Name="FilesSafeReserve.Domain.Mappers.DirectoryInfoMapper">
+    <Position X="0.5" Y="11" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAgQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Mappers\DirectoryInfoMapper.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ShyryiFileSystemLibrary.Mappers.FileInfoMapper">
-    <Position X="0.5" Y="14" Width="1.5" />
+  <Class Name="FilesSafeReserve.Domain.Mappers.FileInfoMapper">
+    <Position X="0.5" Y="12.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAQAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAA=</HashCode>
       <FileName>Mappers\FileInfoMapper.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ShyryiFileSystemLibrary.Mappers.ShyDirectoryMapper">
-    <Position X="2.5" Y="12.25" Width="1.5" />
+  <Class Name="FilesSafeReserve.Domain.Mappers.ShyDirectoryMapper">
+    <Position X="4.5" Y="12.75" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Mappers\ShyDirectoryMapper.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ShyryiFileSystemLibrary.Mappers.ShyFileMapper">
-    <Position X="2.5" Y="14" Width="1.5" />
+  <Class Name="FilesSafeReserve.Domain.Mappers.ShyFileMapper">
+    <Position X="2.5" Y="11" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Mappers\ShyFileMapper.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ShyryiFileSystemLibrary.Mappers.ShyPathedMapper">
-    <Position X="4.5" Y="12.25" Width="1.5" />
+  <Class Name="FilesSafeReserve.Domain.Mappers.ShyPathedMapper">
+    <Position X="4.5" Y="11" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAgAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAA=</HashCode>
       <FileName>Mappers\ShyPathedMapper.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ShyryiFileSystemLibrary.Exceptions.FsRenamingException">
-    <Position X="8" Y="12.5" Width="1.75" />
+  <Class Name="FilesSafeReserve.Domain.Exceptions.FsRenamingException">
+    <Position X="7.25" Y="11" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Exceptions\FsRenamingException.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ShyryiFileSystemLibrary.Exceptions.InvalidPathFormatException">
-    <Position X="7.75" Y="14" Width="2.25" />
+  <Class Name="FilesSafeReserve.Domain.Exceptions.InvalidPathFormatException">
+    <Position X="7" Y="12.5" Width="3.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Exceptions\InvalidPathFormatException.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Interface Name="ShyryiFileSystemLibrary.Interfaces.IShyPathed">
-    <Position X="8.75" Y="5" Width="1.5" />
+  <Interface Name="FilesSafeReserve.Domain.Interfaces.IShyPathed">
+    <Position X="8.75" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAIAAAAAAAQAAAAAAAAAAQAAAAEAAAA=</HashCode>
       <FileName>Interfaces\IShyPathed.cs</FileName>
@@ -122,8 +122,8 @@
       <Property Name="Type" />
     </ShowAsAssociation>
   </Interface>
-  <Enum Name="ShyryiFileSystemLibrary.Entities.ShyFsType">
-    <Position X="3.25" Y="5.5" Width="1.5" />
+  <Enum Name="FilesSafeReserve.Domain.Entities.ShyFsType">
+    <Position X="3.25" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAABAAAAAAAAgAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Entities\ShyFsEntity.cs</FileName>

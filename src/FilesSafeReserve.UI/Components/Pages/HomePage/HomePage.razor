@@ -1,3 +1,17 @@
 ﻿@page "/"
 
+@using FilesSafeReserve.UI.Data.Managers.IManagers
+
+@inject IKeyUpManager KeyUpManager
+
 <p>Home Page</p>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await KeyUpManager.Listener.EnsureStartedAsync();
+        }
+    }
+}

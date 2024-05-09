@@ -1,47 +1,45 @@
-﻿using FilesSafeReserve.App.Models;
-using FilesSafeReserve.App.Services.IServices;
-using FilesSafeReserve.Infra.Repositories.IRepositories;
-using static FilesSafeReserve.App.Services.IServices.ILoggerService;
+﻿using FilesSafeReserve.App.Builders.IBuilders;
+using FilesSafeReserve.App.Models;
+using FilesSafeReserve.App.Entities.Params.ILogBuilder;
+using FilesSafeReserve.App.Entities.Results.ILogBuilder;
+using static FilesSafeReserve.App.Builders.IBuilders.ILogBuilder;
+using System.Collections.Generic;
 
-namespace FilesSafeReserve.Infra.Services;
+namespace FilesSafeReserve.Infra.Builders;
 
 /// <summary>
 /// The `LoggerService` class provides methods for logging actions and functions.
 /// It implements the `ILoggerService` interface.
 /// </summary>
-/// <remarks>
-/// Initializes a new instance of the `LoggerService` class.
-/// </remarks>
-/// <param name="LogRepo">The repository for logs.</param>
-public class LoggerService(ILogRepo LogRepo) : ILoggerService
+public class LogBuilder : ILogBuilder
 {
     /// <summary>
     /// Logs an action and returns an `IActionState`.
     /// </summary>
     /// <param name="func">The action to log.</param>
     /// <returns>An `IActionState` representing the logged action.</returns>
-    public IActionState LogAction(Action func) => new ActionState(func, LogRepo);
+    public IActionState WithAction(Action func) => new ActionState(func);
 
     /// <summary>
     /// Logs an asynchronous action and returns an `IActionAsyncState`.
     /// </summary>
     /// <param name="func">The asynchronous action to log.</param>
     /// <returns>An `IActionAsyncState` representing the logged asynchronous action.</returns>
-    public IActionAsyncState LogAction(Func<Task> func) => new ActionAsyncState(func, LogRepo);
+    public IActionAsyncState WithAction(Func<Task> func) => new ActionAsyncState(func);
 
     /// <summary>
     /// Logs multiple actions and returns an `IActionsState`.
     /// </summary>
     /// <param name="func">The actions to log.</param>
     /// <returns>An `IActionsState` representing the logged actions.</returns>
-    public IActionsState LogActions(IEnumerable<Action> func) => new ActionsState(func, LogRepo);
+    public IActionsState WithActions(IEnumerable<Action> func) => new ActionsState(func);
 
     /// <summary>
     /// Logs multiple asynchronous actions and returns an `IActionsAsyncState`.
     /// </summary>
     /// <param name="func">The asynchronous actions to log.</param>
     /// <returns>An `IActionsAsyncState` representing the logged asynchronous actions.</returns>
-    public IActionsAsyncState LogActions(IEnumerable<Func<Task>> func) => new ActionsAsyncState(func, LogRepo);
+    public IActionsAsyncState WithActions(IEnumerable<Func<Task>> func) => new ActionsAsyncState(func);
 
     /// <summary>
     /// Logs a function and returns an `IFuncState`.
@@ -49,8 +47,8 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
     /// <typeparam name="ResultType">The type of the return value of the function.</typeparam>
     /// <param name="func">The function to log.</param>
     /// <returns>An `IFuncState` representing the logged function.</returns>
-    public IFuncState<ResultType> LogFunc<ResultType>(Func<ResultType> func) where ResultType : class
-        => new FuncState<ResultType>(func, LogRepo);
+    public IFuncState<ResultType> WithFunc<ResultType>(Func<ResultType> func) where ResultType : class
+        => new FuncState<ResultType>(func);
 
     /// <summary>
     /// Logs an asynchronous function and returns an `IFuncAsyncState`.
@@ -58,8 +56,8 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
     /// <typeparam name="ResultType">The type of the return value of the function.</typeparam>
     /// <param name="func">The asynchronous function to log.</param>
     /// <returns>An `IFuncAsyncState` representing the logged asynchronous function.</returns>
-    public IFuncAsyncState<ResultType> LogFunc<ResultType>(Func<Task<ResultType>> func) where ResultType : class
-        => new FuncAsyncState<ResultType>(func, LogRepo);
+    public IFuncAsyncState<ResultType> WithFunc<ResultType>(Func<Task<ResultType>> func) where ResultType : class
+        => new FuncAsyncState<ResultType>(func);
 
     /// <summary>
     /// Logs multiple functions and returns an `IFuncsState`.
@@ -67,8 +65,8 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
     /// <typeparam name="ResultType">The type of the return value of the functions.</typeparam>
     /// <param name="func">The functions to log.</param>
     /// <returns>An `IFuncsState` representing the logged functions.</returns>
-    public IFuncsState<ResultType> LogFuncs<ResultType>(IEnumerable<Func<ResultType>> func) where ResultType : class
-        => new FuncsState<ResultType>(func, LogRepo);
+    public IFuncsState<ResultType> WithFuncs<ResultType>(IEnumerable<Func<ResultType>> func) where ResultType : class
+        => new FuncsState<ResultType>(func);
 
     /// <summary>
     /// Logs multiple asynchronous functions and returns an `IFuncsAsyncState`.
@@ -76,36 +74,36 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
     /// <typeparam name="ResultType">The type of the return value of the functions.</typeparam>
     /// <param name="func">The asynchronous functions to log.</param>
     /// <returns>An `IFuncsAsyncState` representing the logged asynchronous functions.</returns>
-    public IFuncsAsyncState<ResultType> LogFuncs<ResultType>(IEnumerable<Func<Task<ResultType>>> func) where ResultType : class
-        => new FuncsAsyncState<ResultType>(func, LogRepo);
+    public IFuncsAsyncState<ResultType> WithFuncs<ResultType>(IEnumerable<Func<Task<ResultType>>> func) where ResultType : class
+        => new FuncsAsyncState<ResultType>(func);
 
     /// <summary>
     /// Logs an action and returns an `IActionState`.
     /// </summary>
     /// <param name="func">The action to log.</param>
     /// <returns>An `IActionState` representing the logged action.</returns>
-    public IActionState Log(Action func) => new ActionState(func, LogRepo);
+    public IActionState WithDelegate(Action func) => new ActionState(func);
 
     /// <summary>
     /// Logs an asynchronous action and returns an `IActionAsyncState`.
     /// </summary>
     /// <param name="func">The asynchronous action to log.</param>
     /// <returns>An `IActionAsyncState` representing the logged asynchronous action.</returns>
-    public IActionAsyncState Log(Func<Task> func) => new ActionAsyncState(func, LogRepo);
+    public IActionAsyncState WithDelegate(Func<Task> func) => new ActionAsyncState(func);
 
     /// <summary>
     /// Logs multiple actions and returns an `IActionsState`.
     /// </summary>
     /// <param name="func">The actions to log.</param>
     /// <returns>An `IActionsState` representing the logged actions.</returns>
-    public IActionsState Log(IEnumerable<Action> func) => new ActionsState(func, LogRepo);
+    public IActionsState WithDelegate(IEnumerable<Action> func) => new ActionsState(func);
 
     /// <summary>
     /// Logs multiple asynchronous actions and returns an `IActionsAsyncState`.
     /// </summary>
     /// <param name="func">The asynchronous actions to log.</param>
     /// <returns>An `IActionsAsyncState` representing the logged asynchronous actions.</returns>
-    public IActionsAsyncState Log(IEnumerable<Func<Task>> func) => new ActionsAsyncState(func, LogRepo);
+    public IActionsAsyncState WithDelegate(IEnumerable<Func<Task>> func) => new ActionsAsyncState(func);
 
     /// <summary>
     /// Logs a function and returns an `IFuncState`.
@@ -113,8 +111,8 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
     /// <typeparam name="ResultType">The type of the return value of the function.</typeparam>
     /// <param name="func">The function to log.</param>
     /// <returns>An `IFuncState` representing the logged function.</returns>
-    public IFuncState<ResultType> Log<ResultType>(Func<ResultType> func) where ResultType : class
-        => new FuncState<ResultType>(func, LogRepo);
+    public IFuncState<ResultType> WithDelegate<ResultType>(Func<ResultType> func) where ResultType : class
+        => new FuncState<ResultType>(func);
 
     /// <summary>
     /// Logs an asynchronous function and returns an `IFuncAsyncState`.
@@ -122,8 +120,8 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
     /// <typeparam name="ResultType">The type of the return value of the function.</typeparam>
     /// <param name="func">The asynchronous function to log.</param>
     /// <returns>An `IFuncAsyncState` representing the logged asynchronous function.</returns>
-    public IFuncAsyncState<ResultType> Log<ResultType>(Func<Task<ResultType>> func) where ResultType : class
-        => new FuncAsyncState<ResultType>(func, LogRepo);
+    public IFuncAsyncState<ResultType> WithDelegate<ResultType>(Func<Task<ResultType>> func) where ResultType : class
+        => new FuncAsyncState<ResultType>(func);
 
     /// <summary>
     /// Logs multiple functions and returns an `IFuncsState`.
@@ -131,8 +129,8 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
     /// <typeparam name="ResultType">The type of the return value of the functions.</typeparam>
     /// <param name="func">The functions to log.</param>
     /// <returns>An `IFuncsState` representing the logged functions.</returns>
-    public IFuncsState<ResultType> Log<ResultType>(IEnumerable<Func<ResultType>> func) where ResultType : class
-        => new FuncsState<ResultType>(func, LogRepo);
+    public IFuncsState<ResultType> WithDelegate<ResultType>(IEnumerable<Func<ResultType>> func) where ResultType : class
+        => new FuncsState<ResultType>(func);
 
     /// <summary>
     /// Logs multiple asynchronous functions and returns an `IFuncsAsyncState`.
@@ -140,8 +138,8 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
     /// <typeparam name="ResultType">The type of the return value of the functions.</typeparam>
     /// <param name="func">The asynchronous functions to log.</param>
     /// <returns>An `IFuncsAsyncState` representing the logged asynchronous functions.</returns>
-    public IFuncsAsyncState<ResultType> Log<ResultType>(IEnumerable<Func<Task<ResultType>>> func) where ResultType : class
-        => new FuncsAsyncState<ResultType>(func, LogRepo);
+    public IFuncsAsyncState<ResultType> WithDelegate<ResultType>(IEnumerable<Func<Task<ResultType>>> func) where ResultType : class
+        => new FuncsAsyncState<ResultType>(func);
 
     /// <summary>
     /// Initializes a new `LogModel` with the start timestamp and the ID of the virtual safe details.
@@ -211,11 +209,8 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
     /// Initializes a new instance of the <see cref="ActionState"/> class with the specified action and log repository.
     /// </remarks>
     /// <param name="func">The action to be executed.</param>
-    /// <param name="logRepo">The repository for logging.</param>
-    public class ActionState(Action func, ILogRepo logRepo) : IActionState
+    public class ActionState(Action func) : IActionState
     {
-        protected ILogRepo LogRepo { get; } = logRepo;
-
         /// <summary>
         /// Gets or sets the action to be executed.
         /// </summary>
@@ -229,35 +224,34 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
         /// <summary>
         /// Gets or sets the parameters for the action.
         /// </summary>
-        public LogOpParams? Parameters { get; set; }
+        public LogBuilderOpParams? Parameters { get; set; }
 
         /// <inheritdoc/>
-        IActionState.IExecutableState IActionState.WithParameters(LogOpParams parameters)
+        IActionState.IBuildableState IActionState.WithParameters(LogBuilderOpParams parameters)
         {
             Parameters = parameters;
-            return new ExecutableState(Action, Criterion, parameters, LogRepo);
+            return new BuildableState(Action, Criterion, parameters);
         }
 
         /// <summary>
         /// Represents the executable state of an action to be logged.
         /// </summary>
-        public class ExecutableState : ActionState, IActionState.IExecutableState
+        public class BuildableState : ActionState, IActionState.IBuildableState
         {
             /// <summary>
-            /// Initializes a new instance of the <see cref="ExecutableState"/> class with the specified action, criterion, parameters, and log repository.
+            /// Initializes a new instance of the <see cref="BuildableState"/> class with the specified action, criterion, parameters, and log repository.
             /// </summary>
             /// <param name="func">The action to be executed.</param>
             /// <param name="criterion">The criterion for executing the action.</param>
             /// <param name="parameters">The parameters for the action.</param>
-            /// <param name="logRepo">The repository for logging.</param>
-            public ExecutableState(Action func, Func<bool>? criterion, LogOpParams parameters, ILogRepo logRepo) : base(func, logRepo)
+            public BuildableState(Action func, Func<bool>? criterion, LogBuilderOpParams parameters) : base(func)
             {
                 Criterion = criterion;
                 Parameters = parameters;
             }
 
             /// <inheritdoc/>
-            ResultEntity IActionState.IExecutableState.Execute()
+            LogBuilderResult IActionState.IBuildableState.Build()
             {
                 LogModel log = InitStartLog(Parameters!.VirtualSafeDetailsId);
 
@@ -273,31 +267,6 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
                 }
 
                 log.EndTimestamp = DateTime.Now;
-
-                LogRepo.Add(log);
-
-                return new(log);
-            }
-
-            /// <inheritdoc/>
-            async Task<ResultEntity> IActionState.IExecutableState.ExecuteAsync()
-            {
-                LogModel log = InitStartLog(Parameters!.VirtualSafeDetailsId);
-
-                try
-                {
-                    Action();
-
-                    log.Operations.Add(CreateActionLogOp(Criterion, Parameters.Type, Parameters.ItemPath));
-                }
-                catch (Exception)
-                {
-                    log.Operations.Add(CreateFailedLogOp(Parameters.Type, Parameters.ItemPath));
-                }
-
-                log.EndTimestamp = DateTime.Now;
-
-                await LogRepo.AddAsync(log);
 
                 return new(log);
             }
@@ -312,10 +281,8 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
     /// Initializes a new instance of the <see cref="ActionAsyncState"/> class with the specified asynchronous action and log repository.
     /// </remarks>
     /// <param name="func">The asynchronous action to be executed.</param>
-    /// <param name="logRepo">The repository for logging.</param>
-    public class ActionAsyncState(Func<Task> func, ILogRepo logRepo) : IActionAsyncState
+    public class ActionAsyncState(Func<Task> func) : IActionAsyncState
     {
-        protected ILogRepo LogRepo { get; } = logRepo;
 
         /// <summary>
         /// Gets or sets the asynchronous action to be executed.
@@ -330,35 +297,34 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
         /// <summary>
         /// Gets or sets the parameters for the action.
         /// </summary>
-        public LogOpParams? Parameters { get; set; }
+        public LogBuilderOpParams? Parameters { get; set; }
 
         /// <inheritdoc/>
-        IActionAsyncState.IExecutableState IActionAsyncState.WithParameters(LogOpParams parameters)
+        IActionAsyncState.IBuildableState IActionAsyncState.WithParameters(LogBuilderOpParams parameters)
         {
             Parameters = parameters;
-            return new ExecutableState(Action, Criterion, parameters, LogRepo);
+            return new BuildableState(Action, Criterion, parameters);
         }
 
         /// <summary>
         /// Represents the executable state of an asynchronous action to be logged.
         /// </summary>
-        public class ExecutableState : ActionAsyncState, IActionAsyncState.IExecutableState
+        public class BuildableState : ActionAsyncState, IActionAsyncState.IBuildableState
         {
             /// <summary>
-            /// Initializes a new instance of the <see cref="ExecutableState"/> class with the specified asynchronous action, criterion, parameters, and log repository.
+            /// Initializes a new instance of the <see cref="BuildableState"/> class with the specified asynchronous action, criterion, parameters, and log repository.
             /// </summary>
             /// <param name="func">The asynchronous action to be executed.</param>
             /// <param name="criterion">The criterion for executing the action.</param>
             /// <param name="parameters">The parameters for the action.</param>
-            /// <param name="logRepo">The repository for logging.</param>
-            public ExecutableState(Func<Task> func, Func<bool>? criterion, LogOpParams parameters, ILogRepo logRepo) : base(func, logRepo)
+            public BuildableState(Func<Task> func, Func<bool>? criterion, LogBuilderOpParams parameters) : base(func)
             {
                 Criterion = criterion;
                 Parameters = parameters;
             }
 
             /// <inheritdoc/>
-            async Task<ResultEntity> IActionAsyncState.IExecutableState.ExecuteAsync()
+            async Task<LogBuilderResult> IActionAsyncState.IBuildableState.BuildAsync()
             {
                 LogModel log = InitStartLog(Parameters!.VirtualSafeDetailsId);
 
@@ -375,8 +341,6 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
 
                 log.EndTimestamp = DateTime.Now;
 
-                await LogRepo.AddAsync(log);
-
                 return new(log);
             }
         }
@@ -390,10 +354,8 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
     /// Initializes a new instance of the <see cref="ActionsState"/> class with the specified actions and log repository.
     /// </remarks>
     /// <param name="funcs">The actions to be executed.</param>
-    /// <param name="logRepo">The repository for logging.</param>
-    public class ActionsState(IEnumerable<Action> funcs, ILogRepo logRepo) : IActionsState
+    public class ActionsState(IEnumerable<Action> funcs) : IActionsState
     {
-        protected ILogRepo LogRepo { get; } = logRepo;
 
         /// <summary>
         /// Gets or sets the actions to be executed.
@@ -408,40 +370,45 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
         /// <summary>
         /// Gets or sets the parameters for the actions.
         /// </summary>
-        public LogOpsParams? Parameters { get; set; }
+        public LogBuilderOpsParams? Parameters { get; set; }
 
         /// <inheritdoc/>
-        IActionsState.IExecutableState IActionsState.WithParameters(LogOpsParams parameters)
+        IActionsState.IBuildableState IActionsState.WithParameters(LogBuilderOpsParams parameters)
         {
             Parameters = parameters;
-            return new ExecutableState(Actions, Criteria, parameters, LogRepo);
+            return new BuildableState(Actions, Criteria, parameters);
         }
 
         /// <summary>
         /// Represents the executable state of logging multiple actions.
         /// </summary>
-        public class ExecutableState : ActionsState, IActionsState.IExecutableState
+        public class BuildableState : ActionsState, IActionsState.IBuildableState
         {
             /// <summary>
-            /// Initializes a new instance of the <see cref="ExecutableState"/> class with the specified actions, criteria, parameters, and log repository.
+            /// Initializes a new instance of the <see cref="BuildableState"/> class with the specified actions, criteria, parameters, and log repository.
             /// </summary>
             /// <param name="funcs">The actions to be executed.</param>
             /// <param name="criteria">The criteria for executing each action.</param>
             /// <param name="parameters">The parameters for the actions.</param>
-            /// <param name="logRepo">The repository for logging.</param>
-            public ExecutableState(IEnumerable<Action> funcs, IEnumerable<Func<bool>>? criteria, LogOpsParams parameters, ILogRepo logRepo) : base(funcs, logRepo)
+            public BuildableState(IEnumerable<Action> funcs, IEnumerable<Func<bool>>? criteria, LogBuilderOpsParams parameters) : base(funcs)
             {
                 Criteria = criteria;
                 Parameters = parameters;
             }
 
             /// <inheritdoc/>
-            ResultEntity IActionsState.IExecutableState.Execute()
+            LogBuilderResult IActionsState.IBuildableState.Build()
             {
                 LogModel log = InitStartLog(Parameters!.VirtualSafeDetailsId);
 
                 var actionsList = Actions.ToList();
-                var criteriaList = Criteria!.ToList();
+                var criteriaList = Criteria?.ToList() ?? [];
+
+                if (criteriaList.Count is 0)
+                {
+                    criteriaList.AddRange(actionsList.Select(el => new Func<bool>(() => true)));
+                }
+
                 var operationsParametersList = Parameters.Operations.ToList();
 
                 for (int i = 0; i < actionsList.Count; i++)
@@ -460,38 +427,6 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
 
                 log.EndTimestamp = DateTime.Now;
 
-                LogRepo.Add(log);
-
-                return new(log);
-            }
-
-            /// <inheritdoc/>
-            async Task<ResultEntity> IActionsState.IExecutableState.ExecuteAsync()
-            {
-                LogModel log = InitStartLog(Parameters!.VirtualSafeDetailsId);
-
-                var actionsList = Actions.ToList();
-                var criteriaList = Criteria?.ToList();
-                var operationsParametersList = Parameters.Operations.ToList();
-
-                for (int i = 0; i < actionsList.Count; i++)
-                {
-                    try
-                    {
-                        actionsList[i]();
-
-                        log.Operations.Add(CreateActionLogOp(criteriaList is null ? (() => true) : criteriaList[i], operationsParametersList[i].Type, operationsParametersList[i].ItemPath));
-                    }
-                    catch (Exception)
-                    {
-                        log.Operations.Add(CreateFailedLogOp(operationsParametersList[i].Type, operationsParametersList[i].ItemPath));
-                    }
-                }
-
-                log.EndTimestamp = DateTime.Now;
-
-                await LogRepo.AddAsync(log);
-
                 return new(log);
             }
         }
@@ -505,11 +440,8 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
     /// Initializes a new instance of the <see cref="ActionsAsyncState"/> class with the specified asynchronous actions and log repository.
     /// </remarks>
     /// <param name="funcs">The asynchronous actions to be executed.</param>
-    /// <param name="logRepo">The repository for logging.</param>
-    public class ActionsAsyncState(IEnumerable<Func<Task>> funcs, ILogRepo logRepo) : IActionsAsyncState
+    public class ActionsAsyncState(IEnumerable<Func<Task>> funcs) : IActionsAsyncState
     {
-        protected ILogRepo LogRepo { get; } = logRepo;
-
         /// <summary>
         /// Gets or sets the asynchronous actions to be executed.
         /// </summary>
@@ -523,40 +455,45 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
         /// <summary>
         /// Gets or sets the parameters for the actions.
         /// </summary>
-        public LogOpsParams? Parameters { get; set; }
+        public LogBuilderOpsParams? Parameters { get; set; }
 
         /// <inheritdoc/>
-        IActionsAsyncState.IExecutableState IActionsAsyncState.WithParameters(LogOpsParams parameters)
+        IActionsAsyncState.IBuildableState IActionsAsyncState.WithParameters(LogBuilderOpsParams parameters)
         {
             Parameters = parameters;
-            return new ExecutableState(Actions, Criteria, parameters, LogRepo);
+            return new BuildableState(Actions, Criteria, parameters);
         }
 
         /// <summary>
         /// Represents the executable state of logging multiple asynchronous actions.
         /// </summary>
-        public class ExecutableState : ActionsAsyncState, IActionsAsyncState.IExecutableState
+        public class BuildableState : ActionsAsyncState, IActionsAsyncState.IBuildableState
         {
             /// <summary>
-            /// Initializes a new instance of the <see cref="ExecutableState"/> class with the specified asynchronous actions, criteria, parameters, and log repository.
+            /// Initializes a new instance of the <see cref="BuildableState"/> class with the specified asynchronous actions, criteria, parameters, and log repository.
             /// </summary>
             /// <param name="funcs">The asynchronous actions to be executed.</param>
             /// <param name="criteria">The criteria for executing each action.</param>
             /// <param name="parameters">The parameters for the actions.</param>
-            /// <param name="logRepo">The repository for logging.</param>
-            public ExecutableState(IEnumerable<Func<Task>> funcs, IEnumerable<Func<bool>>? criteria, LogOpsParams parameters, ILogRepo logRepo) : base(funcs, logRepo)
+            public BuildableState(IEnumerable<Func<Task>> funcs, IEnumerable<Func<bool>>? criteria, LogBuilderOpsParams parameters) : base(funcs)
             {
                 Criteria = criteria;
                 Parameters = parameters;
             }
 
             /// <inheritdoc/>
-            async Task<ResultEntity> IActionsAsyncState.IExecutableState.ExecuteAsync()
+            async Task<LogBuilderResult> IActionsAsyncState.IBuildableState.BuildAsync()
             {
                 LogModel log = InitStartLog(Parameters!.VirtualSafeDetailsId);
 
                 var actionsList = Actions.ToList();
-                var criteriaList = Criteria!.ToList();
+                var criteriaList = Criteria?.ToList() ?? [];
+
+                if (criteriaList.Count is 0)
+                {
+                    criteriaList.AddRange(actionsList.Select(el => new Func<bool>(() => true)));
+                }
+
                 var operationsParametersList = Parameters.Operations.ToList();
 
                 for (int i = 0; i < actionsList.Count; i++)
@@ -575,8 +512,6 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
 
                 log.EndTimestamp = DateTime.Now;
 
-                await LogRepo.AddAsync(log);
-
                 return new(log);
             }
         }
@@ -591,11 +526,8 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
     /// Initializes a new instance of the <see cref="FuncState{FuncReturnType}"/> class with the specified synchronous function and log repository.
     /// </remarks>
     /// <param name="func">The synchronous function to be executed.</param>
-    /// <param name="logRepo">The repository for logging.</param>
-    public class FuncState<FuncReturnType>(Func<FuncReturnType> func, ILogRepo logRepo) : IFuncState<FuncReturnType> where FuncReturnType : class
+    public class FuncState<FuncReturnType>(Func<FuncReturnType> func) : IFuncState<FuncReturnType> where FuncReturnType : class
     {
-        protected ILogRepo LogRepo { get; } = logRepo;
-
         /// <inheritdoc/>
         public Func<FuncReturnType> Func { get; set; } = func;
 
@@ -603,35 +535,34 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
         public Predicate<FuncReturnType>? Criterion { get; set; }
 
         /// <inheritdoc/>
-        public LogOpParams? Parameters { get; set; }
+        public LogBuilderOpParams? Parameters { get; set; }
 
         /// <inheritdoc/>
-        IFuncState<FuncReturnType>.IExecutableState IFuncState<FuncReturnType>.WithParameters(LogOpParams parameters)
+        IFuncState<FuncReturnType>.IBuildableState IFuncState<FuncReturnType>.WithParameters(LogBuilderOpParams parameters)
         {
             Parameters = parameters;
-            return new ExecutableState(Func, Criterion, parameters, LogRepo);
+            return new BuildableState(Func, Criterion, parameters);
         }
 
         /// <summary>
         /// Represents the executable state of logging a single synchronous function.
         /// </summary>
-        public class ExecutableState : FuncState<FuncReturnType>, IFuncState<FuncReturnType>.IExecutableState
+        public class BuildableState : FuncState<FuncReturnType>, IFuncState<FuncReturnType>.IBuildableState
         {
             /// <summary>
-            /// Initializes a new instance of the <see cref="ExecutableState"/> class with the specified synchronous function, criterion, parameters, and log repository.
+            /// Initializes a new instance of the <see cref="BuildableState"/> class with the specified synchronous function, criterion, parameters, and log repository.
             /// </summary>
             /// <param name="func">The synchronous function to be executed.</param>
             /// <param name="criterion">The criterion for executing the function.</param>
             /// <param name="parameters">The parameters for the function.</param>
-            /// <param name="logRepo">The repository for logging.</param>
-            public ExecutableState(Func<FuncReturnType> func, Predicate<FuncReturnType>? criterion, LogOpParams parameters, ILogRepo logRepo) : base(func, logRepo)
+            public BuildableState(Func<FuncReturnType> func, Predicate<FuncReturnType>? criterion, LogBuilderOpParams parameters) : base(func)
             {
                 Criterion = criterion;
                 Parameters = parameters;
             }
 
             /// <inheritdoc/>
-            ResultEntity<FuncReturnType> IFuncState<FuncReturnType>.IExecutableState.Execute()
+            LogBuilderResult<FuncReturnType> IFuncState<FuncReturnType>.IBuildableState.Build()
             {
                 LogModel log = InitStartLog(Parameters!.VirtualSafeDetailsId);
                 FuncReturnType? result = default;
@@ -647,29 +578,6 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
                 }
 
                 log.EndTimestamp = DateTime.Now;
-                LogRepo.Add(log);
-
-                return new(log, result);
-            }
-
-            /// <inheritdoc/>
-            async Task<ResultEntity<FuncReturnType>> IFuncState<FuncReturnType>.IExecutableState.ExecuteAsync()
-            {
-                LogModel log = InitStartLog(Parameters!.VirtualSafeDetailsId);
-                FuncReturnType? result = default;
-
-                try
-                {
-                    result = Func();
-                    log.Operations.Add(CreateFuncLogOp(result, Criterion, Parameters.Type, Parameters.ItemPath));
-                }
-                catch (Exception)
-                {
-                    log.Operations.Add(CreateFailedLogOp(Parameters.Type, Parameters.ItemPath));
-                }
-
-                log.EndTimestamp = DateTime.Now;
-                await LogRepo.AddAsync(log);
 
                 return new(log, result);
             }
@@ -685,10 +593,8 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
     /// Initializes a new instance of the <see cref="FuncAsyncState{FuncReturnType}"/> class with the specified asynchronous function and log repository.
     /// </remarks>
     /// <param name="func">The asynchronous function to be executed.</param>
-    /// <param name="logRepo">The repository for logging.</param>
-    public class FuncAsyncState<FuncReturnType>(Func<Task<FuncReturnType>> func, ILogRepo logRepo) : IFuncAsyncState<FuncReturnType> where FuncReturnType : class
+    public class FuncAsyncState<FuncReturnType>(Func<Task<FuncReturnType>> func) : IFuncAsyncState<FuncReturnType> where FuncReturnType : class
     {
-        protected ILogRepo LogRepo { get; } = logRepo;
 
         /// <inheritdoc/>
         public Func<Task<FuncReturnType>> Func { get; set; } = func;
@@ -697,35 +603,35 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
         public Predicate<FuncReturnType>? Criterion { get; set; }
 
         /// <inheritdoc/>
-        public LogOpParams? Parameters { get; set; }
+        public LogBuilderOpParams? Parameters { get; set; }
 
         /// <inheritdoc/>
-        IFuncAsyncState<FuncReturnType>.IExecutableState IFuncAsyncState<FuncReturnType>.WithParameters(LogOpParams parameters)
+        IFuncAsyncState<FuncReturnType>.IBuildableState IFuncAsyncState<FuncReturnType>.WithParameters(LogBuilderOpParams parameters)
         {
             Parameters = parameters;
-            return new ExecutableState(Func, Criterion, parameters, LogRepo);
+            return new BuildableState(Func, Criterion, parameters);
         }
 
         /// <summary>
         /// Represents the executable state of logging a single asynchronous function.
         /// </summary>
-        public class ExecutableState : FuncAsyncState<FuncReturnType>, IFuncAsyncState<FuncReturnType>.IExecutableState
+        public class BuildableState : FuncAsyncState<FuncReturnType>, IFuncAsyncState<FuncReturnType>.IBuildableState
         {
             /// <summary>
-            /// Initializes a new instance of the <see cref="ExecutableState"/> class with the specified asynchronous function, criterion, parameters, and log repository.
+            /// Initializes a new instance of the <see cref="BuildableState"/> class with the specified asynchronous function, criterion, parameters, and log repository.
             /// </summary>
             /// <param name="func">The asynchronous function to be executed.</param>
             /// <param name="criterion">The criterion for executing the function.</param>
             /// <param name="parameters">The parameters for the function.</param>
             /// <param name="logRepo">The repository for logging.</param>
-            public ExecutableState(Func<Task<FuncReturnType>> func, Predicate<FuncReturnType>? criterion, LogOpParams parameters, ILogRepo logRepo) : base(func, logRepo)
+            public BuildableState(Func<Task<FuncReturnType>> func, Predicate<FuncReturnType>? criterion, LogBuilderOpParams parameters) : base(func)
             {
                 Criterion = criterion;
                 Parameters = parameters;
             }
 
             /// <inheritdoc/>
-            async Task<ResultEntity<FuncReturnType>> IFuncAsyncState<FuncReturnType>.IExecutableState.ExecuteAsync()
+            async Task<LogBuilderResult<FuncReturnType>> IFuncAsyncState<FuncReturnType>.IBuildableState.BuildAsync()
             {
                 LogModel log = InitStartLog(Parameters!.VirtualSafeDetailsId);
                 FuncReturnType? result = default;
@@ -742,7 +648,6 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
                 }
 
                 log.EndTimestamp = DateTime.Now;
-                await LogRepo.AddAsync(log);
 
                 return new(log, result);
             }
@@ -758,11 +663,8 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
     /// Initializes a new instance of the <see cref="FuncsState{FuncReturnType}"/> class with the specified synchronous functions and log repository.
     /// </remarks>
     /// <param name="funcs">The collection of synchronous functions to be executed.</param>
-    /// <param name="logRepo">The repository for logging.</param>
-    public class FuncsState<FuncReturnType>(IEnumerable<Func<FuncReturnType>> funcs, ILogRepo logRepo) : IFuncsState<FuncReturnType> where FuncReturnType : class
+    public class FuncsState<FuncReturnType>(IEnumerable<Func<FuncReturnType>> funcs) : IFuncsState<FuncReturnType> where FuncReturnType : class
     {
-        protected ILogRepo LogRepo { get; } = logRepo;
-
         /// <inheritdoc/>
         public IEnumerable<Func<FuncReturnType>> Funcs { get; set; } = funcs;
 
@@ -770,40 +672,46 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
         public IEnumerable<Predicate<FuncReturnType>>? Criteria { get; set; }
 
         /// <inheritdoc/>
-        public LogOpsParams? Parameters { get; set; }
+        public LogBuilderOpsParams? Parameters { get; set; }
 
         /// <inheritdoc/>
-        IFuncsState<FuncReturnType>.IExecutableState IFuncsState<FuncReturnType>.WithParameters(LogOpsParams parameters)
+        IFuncsState<FuncReturnType>.IBuildableState IFuncsState<FuncReturnType>.WithParameters(LogBuilderOpsParams parameters)
         {
             Parameters = parameters;
-            return new ExecutableState(Funcs, Criteria, parameters, LogRepo);
+            return new BuildableState(Funcs, Criteria, parameters);
         }
 
         /// <summary>
         /// Represents the executable state of logging multiple synchronous functions.
         /// </summary>
-        public class ExecutableState : FuncsState<FuncReturnType>, IFuncsState<FuncReturnType>.IExecutableState
+        public class BuildableState : FuncsState<FuncReturnType>, IFuncsState<FuncReturnType>.IBuildableState
         {
             /// <summary>
-            /// Initializes a new instance of the <see cref="ExecutableState"/> class with the specified synchronous functions, criteria, parameters, and log repository.
+            /// Initializes a new instance of the <see cref="BuildableState"/> class with the specified synchronous functions, criteria, parameters, and log repository.
             /// </summary>
             /// <param name="funcs">The collection of synchronous functions to be executed.</param>
             /// <param name="criteria">The collection of criteria for executing the functions.</param>
             /// <param name="parameters">The parameters for the functions.</param>
             /// <param name="logRepo">The repository for logging.</param>
-            public ExecutableState(IEnumerable<Func<FuncReturnType>> funcs, IEnumerable<Predicate<FuncReturnType>>? criteria, LogOpsParams parameters, ILogRepo logRepo) : base(funcs, logRepo)
+            public BuildableState(IEnumerable<Func<FuncReturnType>> funcs, IEnumerable<Predicate<FuncReturnType>>? criteria, LogBuilderOpsParams parameters) : base(funcs)
             {
                 Criteria = criteria;
                 Parameters = parameters;
             }
 
             /// <inheritdoc/>
-            ResultsEntity<FuncReturnType> IFuncsState<FuncReturnType>.IExecutableState.Execute()
+            LogsBuilderResult<FuncReturnType> IFuncsState<FuncReturnType>.IBuildableState.Build()
             {
                 LogModel log = InitStartLog(Parameters!.VirtualSafeDetailsId);
 
                 var funcsList = Funcs.ToList();
-                var criteriaList = Criteria!.ToList();
+                var criteriaList = Criteria?.ToList() ?? [];
+
+                if (criteriaList.Count is 0)
+                {
+                    criteriaList.AddRange(funcsList.Select(el => new Predicate<FuncReturnType>(sunEl => true)));
+                }
+
                 var operationsParametersList = Parameters.Operations.ToList();
                 var resultsList = new List<FuncReturnType?>();
 
@@ -825,42 +733,6 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
                 }
 
                 log.EndTimestamp = DateTime.Now;
-
-                LogRepo.Add(log);
-
-                return new(log, resultsList);
-            }
-
-            /// <inheritdoc/>
-            async Task<ResultsEntity<FuncReturnType>> IFuncsState<FuncReturnType>.IExecutableState.ExecuteAsync()
-            {
-                LogModel log = InitStartLog(Parameters!.VirtualSafeDetailsId);
-
-                var funcsList = Funcs.ToList();
-                var criteriaList = Criteria!.ToList();
-                var operationsParametersList = Parameters.Operations.ToList();
-                var resultsList = new List<FuncReturnType?>();
-
-                for (int i = 0; i < funcsList.Count; i++)
-                {
-                    FuncReturnType? result = default;
-
-                    try
-                    {
-                        result = funcsList[i]();
-
-                        log.Operations.Add(CreateFuncLogOp(result, criteriaList[i], operationsParametersList[i].Type, operationsParametersList[i].ItemPath));
-                    }
-                    catch (Exception)
-                    {
-                        log.Operations.Add(CreateFailedLogOp(operationsParametersList[i].Type, operationsParametersList[i].ItemPath));
-                    }
-                    resultsList.Add(result);
-                }
-
-                log.EndTimestamp = DateTime.Now;
-
-                await LogRepo.AddAsync(log);
 
                 return new(log, resultsList);
             }
@@ -875,11 +747,8 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
     /// Initializes a new instance of the <see cref="FuncsAsyncState{FuncReturnType}"/> class with the specified asynchronous functions and log repository.
     /// </remarks>
     /// <param name="funcs">The asynchronous functions to be executed.</param>
-    /// <param name="logRepo">The repository for logging.</param>
-    public class FuncsAsyncState<FuncReturnType>(IEnumerable<Func<Task<FuncReturnType>>> funcs, ILogRepo logRepo) : IFuncsAsyncState<FuncReturnType> where FuncReturnType : class
+    public class FuncsAsyncState<FuncReturnType>(IEnumerable<Func<Task<FuncReturnType>>> funcs) : IFuncsAsyncState<FuncReturnType> where FuncReturnType : class
     {
-        protected ILogRepo LogRepo { get; } = logRepo;
-
         /// <inheritdoc/>
         public IEnumerable<Func<Task<FuncReturnType>>> Funcs { get; set; } = funcs;
 
@@ -887,40 +756,45 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
         public IEnumerable<Predicate<FuncReturnType>>? Criteria { get; set; }
 
         /// <inheritdoc/>
-        public LogOpsParams? Parameters { get; set; }
+        public LogBuilderOpsParams? Parameters { get; set; }
 
         /// <inheritdoc/>
-        IFuncsAsyncState<FuncReturnType>.IExecutableState IFuncsAsyncState<FuncReturnType>.WithParameters(LogOpsParams parameters)
+        IFuncsAsyncState<FuncReturnType>.IBuildableState IFuncsAsyncState<FuncReturnType>.WithParameters(LogBuilderOpsParams parameters)
         {
             Parameters = parameters;
-            return new ExecutableState(Funcs, Criteria, parameters, LogRepo);
+            return new BuildableState(Funcs, Criteria, parameters);
         }
 
         /// <summary>
         /// Represents the executable state of logging multiple asynchronous functions.
         /// </summary>
-        public class ExecutableState : FuncsAsyncState<FuncReturnType>, IFuncsAsyncState<FuncReturnType>.IExecutableState
+        public class BuildableState : FuncsAsyncState<FuncReturnType>, IFuncsAsyncState<FuncReturnType>.IBuildableState
         {
             /// <summary>
-            /// Initializes a new instance of the <see cref="ExecutableState"/> class with the specified asynchronous functions, criteria, parameters, and log repository.
+            /// Initializes a new instance of the <see cref="BuildableState"/> class with the specified asynchronous functions, criteria, parameters, and log repository.
             /// </summary>
             /// <param name="funcs">The asynchronous functions to be executed.</param>
             /// <param name="criteria">The criteria for executing the functions.</param>
             /// <param name="parameters">The parameters for the functions.</param>
-            /// <param name="logRepo">The repository for logging.</param>
-            public ExecutableState(IEnumerable<Func<Task<FuncReturnType>>> funcs, IEnumerable<Predicate<FuncReturnType>>? criteria, LogOpsParams parameters, ILogRepo logRepo) : base(funcs, logRepo)
+            public BuildableState(IEnumerable<Func<Task<FuncReturnType>>> funcs, IEnumerable<Predicate<FuncReturnType>>? criteria, LogBuilderOpsParams parameters) : base(funcs)
             {
                 Criteria = criteria;
                 Parameters = parameters;
             }
 
             /// <inheritdoc/>
-            async Task<ResultsEntity<FuncReturnType>> IFuncsAsyncState<FuncReturnType>.IExecutableState.ExecuteAsync()
+            async Task<LogsBuilderResult<FuncReturnType>> IFuncsAsyncState<FuncReturnType>.IBuildableState.BuildAsync()
             {
                 LogModel log = InitStartLog(Parameters!.VirtualSafeDetailsId);
 
                 var funcsList = Funcs.ToList();
-                var criteriaList = Criteria!.ToList();
+                var criteriaList = Criteria?.ToList() ?? [];
+
+                if (criteriaList.Count is 0)
+                {
+                    criteriaList.AddRange(funcsList.Select(el => new Predicate<FuncReturnType>(sunEl => true)));
+                }
+
                 var operationsParametersList = Parameters.Operations.ToList();
                 var resultsList = new List<FuncReturnType?>();
 
@@ -938,12 +812,10 @@ public class LoggerService(ILogRepo LogRepo) : ILoggerService
                     {
                         log.Operations.Add(CreateFailedLogOp(operationsParametersList[i].Type, operationsParametersList[i].ItemPath));
                     }
+
                     resultsList.Add(result);
+
                 }
-
-                log.EndTimestamp = DateTime.Now;
-
-                await LogRepo.AddAsync(log);
 
                 return new(log, resultsList);
             }
