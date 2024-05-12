@@ -1,31 +1,25 @@
 ﻿@page "/virtual-safe/details/{id}"
 
-@using CommunityToolkit.Maui.Storage
 @using FilesSafeReserve.App.Builders.IBuilders
 @using FilesSafeReserve.App.Entities
 @using FilesSafeReserve.App.Entities.Params.ILogBuilder
 @using FilesSafeReserve.App.Models
-@using FilesSafeReserve.App.Services.IServices
-@using FilesSafeReserve.Domain.Entities
 @using FilesSafeReserve.Domain.Extensions
-@using FilesSafeReserve.Domain.Interfaces
+@using FilesSafeReserve.Infra.Extensions
 @using FilesSafeReserve.Infra.Repositories.IRepositories
 @using FilesSafeReserve.Infra.Services.IServices
-@using FilesSafeReserve.Infra.Extensions;
 @using FilesSafeReserve.UI.Data.Stores
 
-@implements IDisposable
-
+@inject NavigationManager Navigation
 @inject IVirtualSafeRepo VirtualSafeRepo
+@inject IVirtualSafeDetailsRepo VirtualSafeDetailsRepo
 @inject IReservationRepo ReservationRepo
-@inject IFileRepo FileRepo
-@inject IDirectoryRepo DirectoryRepo
-@inject IFileOpenerService FileExplorerService
-@inject ILogBuilder LogBuilder
 @inject ILogRepo LogRepo
 @inject IShortcutRepo ShortcutRepo
-@inject KeyUpStore KeyUpStore
-@inject NavigationManager Navigation
+@inject IFileOpenerService FileOpenerService
+@inject ILogBuilder LogBuilder
+
+@implements IDisposable
 
 <Modal @ref="ViewModel.DeleteModal" title="Virtual Safe Delete" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
     <BodyTemplate>
@@ -64,39 +58,14 @@
     </FooterTemplate>
 </Modal>
 
-<Modal @ref="ViewModel.UnknownFileModal" title="Unknown File" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+<Modal @ref="ViewModel.ReservationProgress" title="Reservation Progress" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
     <BodyTemplate>
-        File type is unknown, so it can't be open.
+        Please wait for the reservation to complete.
     </BodyTemplate>
     <FooterTemplate>
-        <Button Color="ButtonColor.Primary" @onclick="async () => await ViewModel.UnknownFileModal.HideAsync()">OK</Button>
-    </FooterTemplate>
-</Modal>
-
-<Modal @ref="ViewModel.AlreadyInReservationModal" title="Unknown File" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
-    <BodyTemplate>
-        Picked item already exist in virtual safe reservation items, so it can't be saved as new reservation item.
-    </BodyTemplate>
-    <FooterTemplate>
-        <Button Color="ButtonColor.Primary" @onclick="async () => await ViewModel.AlreadyInReservationModal.HideAsync()">Understood</Button>
-    </FooterTemplate>
-</Modal>
-
-<Modal @ref="ViewModel.IsInSafeDirectoryModal" title="Unknown File" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
-    <BodyTemplate>
-        Picked item is in virtual safe directory, so it can't be saved as new reservation item.
-    </BodyTemplate>
-    <FooterTemplate>
-        <Button Color="ButtonColor.Primary" @onclick="async () => await ViewModel.IsInSafeDirectoryModal.HideAsync()">Understood</Button>
-    </FooterTemplate>
-</Modal>
-
-<Modal @ref="ViewModel.NoItemWasPickedModal" title="Unknown File" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
-    <BodyTemplate>
-        No item was picked to be saved as reservation item.
-    </BodyTemplate>
-    <FooterTemplate>
-        <Button Color="ButtonColor.Primary" @onclick="async () => await ViewModel.NoItemWasPickedModal.HideAsync()">Understood</Button>
+        <div class="loader-container">
+            <span class="loader"></span>
+        </div>
     </FooterTemplate>
 </Modal>
 
@@ -114,168 +83,82 @@
 
             <div class="virtual-safe-container">
                 <div class="description-container">
-                    <p>@ViewModel.VirtualSafe.Description</p>
+                    <div class="description-text-container">
+                        <div class="description-text-key">
+                            Description
+                        </div>
+                        <span class="description-text-value">
+                            @ViewModel.VirtualSafe.Description
+                        </span>
+                    </div>
 
-                    <p>Path: @ViewModel.VirtualSafe.Path</p>
+
+                    <div class="description-path-container">
+                        <div class="description-path-key">
+                            Path:
+                        </div>
+                        <span class="description-path-value">
+                            @ViewModel.VirtualSafe.Path
+                        </span>
+                    </div>
                 </div>
 
                 <div class="timestamp-container">
                     <div class="timestamp-item">
-                        <p>Created On: @ViewModel.VirtualSafe.Details.CreatedTimestamp</p>
+                        <div class="timestamp-item-key">
+                            Created On:
+                        </div>
+                        <span class="timestamp-item-value">
+                            @ViewModel.VirtualSafe.Details.CreatedTimestamp
+                        </span>
                     </div>
                     <div class="timestamp-item">
-                        <p>Last Updated On: @ViewModel.VirtualSafe.Details.UpdatedTimestamp</p>
+                        <div class="timestamp-item-key">
+                            Updated On:
+                        </div>
+                        <span class="timestamp-item-value">
+                            @ViewModel.VirtualSafe.Details.UpdatedTimestamp
+                        </span>
                     </div>
                     <div class="timestamp-item">
-                        <p>Last Reservation On: @ViewModel.VirtualSafe.Details.ReservedTimestamp</p>
+                        <div class="timestamp-item-key">
+                            Reserved On:
+                        </div>
+                        <span class="timestamp-item-value">
+                            @ViewModel.VirtualSafe.Details.ReservedTimestamp
+                        </span>
                     </div>
                 </div>
             </div>
 
-            <div class="btns-container">
-                <div class="btns-item">
-                    <Button @onclick='() => Navigation.NavigateTo($"/virtual-safe/edit/{Id}")' Color="ButtonColor.Primary"> Edit </Button>
-                </div>
+            <div class="btns-container btns-container-grid">
+                <Button @onclick='() => Navigation.NavigateTo($"/virtual-safe/edit/{Id}")' Color="ButtonColor.Primary" Style="width: 120px"> Edit </Button>
 
-                <div class="btns-item">
-                    <Button @onclick='() => FileExplorerService.Open(ViewModel.VirtualSafe.Directory)' Color="ButtonColor.Primary"> Open </Button>
-                </div>
+                <Button @onclick='() => Navigation.NavigateTo($"/virtual-safe/reservation/{Id}")' Color="ButtonColor.Primary" Style="width: 120px"> Reservation </Button>
 
-                <div class="btns-item">
-                    <Button @onclick='() => OnReserveSafeClick()' Color="ButtonColor.Primary"> Reserve </Button>
-                </div>
+                <Button @onclick='() => FileOpenerService.Open(ViewModel.VirtualSafe.Directory)' Color="ButtonColor.Primary" Style="width: 120px"> Open </Button>
 
-                <div class="btns-item">
-                    <Button @onclick='async () => await ViewModel.DeleteModal.ShowAsync()' Color="ButtonColor.Danger"> Delete </Button>
-                </div>
+                <Button @onclick='OnReserveSafeClick' Color="ButtonColor.Primary" Style="width: 120px"> Reserve </Button>
 
-                <div class="btns-item">
-                    <Button onclick="history.back();" Color="ButtonColor.Secondary"> Go Back </Button>
-                </div>
+                <Button @onclick='async () => await ViewModel.DeleteModal.ShowAsync()' Color="ButtonColor.Danger" Style="width: 120px"> Delete </Button>
+
+                <Button onclick="history.back();" Color="ButtonColor.Secondary" Style="width: 120px"> Go Back </Button>
             </div>
 
             <div class="reserve-time-container">
                 <div class="reserve-time-header-container">
                     <h5> Reservation time </h5>
                 </div>
-                <div class="reserve-time-elements-container">
+                <div class="reserve-time-input-container">
                     <div class="form-floating mb-3 input-container">
-                        <InputText @bind-Value="ViewModel.ReservationTimeOfDay" type="text" class="form-control" id="floatingInput" placeholder="hours:minutes:seconds" />
-                        <label for="floatingInput">hours:minutes:seconds</label>
+                        <TimeInput TValue="TimeOnly?" @bind-Value="@ViewModel.ReservationTimeOnly" />
+                        <label for="floatingInput">hours:minutes</label>
                     </div>
                 </div>
                 <div class="reserve-time-btns-container">
-                    <div class="reserves-btns-item">
-                        <Button @onclick='async () => await OnSaveTimeClick()' Color="ButtonColor.Primary"> Save Time </Button>
-                        <Button @onclick='async () => await OnClearTimeClick()' Color="ButtonColor.Danger"> Clear Time </Button>
-                    </div>
-                </div>
-                @if (ViewModel.TimeOfDayErrorMessage != string.Empty)
-                {
-                    <div class="alert-container">
-                        <Alert Color="AlertColor.Danger"> <Icon Name="IconName.ExclamationTriangleFill" class="me-2"></Icon> @ViewModel.TimeOfDayErrorMessage </Alert>
-                    </div>
-                }
-            </div>
+                    <Button @onclick='async () => await OnSaveTimeClick()' Color="ButtonColor.Primary" Style="width: 120px"> Save Time </Button>
 
-            <div class="directory-container">
-                <div class="directory-header-container">
-                    <h5> Items in virtual safe </h5>
-                </div>
-                <div class="directory-elements-container">
-                    @if (ViewModel.VirtualSafe.Directory.Patheds.Count is not 0)
-                    {
-                        @foreach (var item in ViewModel.VirtualSafe.Directory.Patheds)
-                        {
-                            <div class="directory-element-container">
-                                <div class="directory-element-data gradient-background">
-                                    <div class="directory-element-icon">
-                                        @if (item.Type is ShyFsType.Directory)
-                                        {
-                                            <Icon Name="IconName.Folder" @onclick='() => FileExplorerService.Open(item)' />
-                                        }
-                                        else if (item.Type is ShyFsType.File)
-                                        {
-                                            <Icon Name="IconName.File" @onclick='() => FileExplorerService.Open(item)' />
-                                        }
-                                        else
-                                        {
-                                            <Icon Name="IconName.Question" @onclick='async () => await ViewModel.UnknownFileModal.ShowAsync()' />
-                                        }
-                                    </div>
-                                    <div class="directory-element-name">
-                                        <span>@item.Name</span>
-                                    </div>
-                                </div>
-                                <div class="directory-element-btns">
-                                    <div class="directory-element-delete">
-                                        <Button Color="ButtonColor.Danger" @onclick='async () => item.Delete()'> Delete </Button>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                    }
-                    else
-                    {
-                        <div class="alert-container">
-                            <Alert Color="AlertColor.Info"> <Icon Name="IconName.InfoCircleFill" class="me-2"></Icon> Not a single item in virtual safe was found. </Alert>
-                        </div>
-                    }
-                </div>
-            </div>
-
-            <div class="reservation-container">
-                <div class="reservation-header-container">
-                    <h5> Virtual safe items to reserve </h5>
-                </div>
-                <div class="reservation-elements-container">
-                    @if (ViewModel.VirtualSafe.Reservation.Patheds.Count is not 0)
-                    {
-                        @foreach (var item in ViewModel.VirtualSafe.Reservation.IdsPathedsPair)
-                        {
-                            <div class="reservation-element-container">
-                                <div class="reservation-element-data gradient-background">
-                                    <div class="reservation-element-icon">
-                                        @if (item.Value.Type is ShyFsType.Directory)
-                                        {
-                                            <Icon Name="IconName.Folder" @onclick='() => FileExplorerService.Open(item.Value)' />
-                                        }
-                                        else if (item.Value.Type is ShyFsType.File)
-                                        {
-                                            <Icon Name="IconName.File" @onclick='() => FileExplorerService.Open(item.Value)' />
-                                        }
-                                        else
-                                        {
-                                            <Icon Name="IconName.Question" @onclick='async () => await ViewModel.UnknownFileModal.ShowAsync()' />
-                                        }
-                                    </div>
-                                    <div class="reservation-element-name">
-                                        <span>@item.Value.Name</span>
-                                    </div>
-                                </div>
-                                <div class="reservation-element-btns">
-                                    <div class="reservation-element-reserve">
-                                        <Button Color="ButtonColor.Primary" @onclick='() => OnReserveClick(item)'> Reserve </Button>
-                                    </div>
-                                    <div class="reservation-element-delete">
-                                        <Button Color="ButtonColor.Danger" @onclick='async () => await OnRemoveClick(item)'> Remove </Button>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                    }
-                    else
-                    {
-                        <div class="alert-container">
-                            <Alert Color="AlertColor.Info"> <Icon Name="IconName.InfoCircleFill" class="me-2"></Icon> Not a single item to reserve was found. </Alert>
-                        </div>
-                    }
-                </div>
-                <div class="reserves-btns-container">
-                    <div class="reserves-btns-item">
-                        <Button @onclick='OnPickFolderToReserveClick' Color="ButtonColor.Primary"> Pick Folder </Button>
-                        <Button @onclick='OnPickFileToReserveClick' Color="ButtonColor.Primary"> Pick File </Button>
-                    </div>
+                    <Button @onclick='async () => await OnClearTimeClick()' Color="ButtonColor.Danger" Style="width: 120px"> Clear Time </Button>
                 </div>
             </div>
         }
@@ -284,14 +167,26 @@
 
 
 @code {
+
     protected async override void OnInitialized()
     {
         var safeResult = await VirtualSafeRepo.GetByIdAsync(new Guid(Id));
 
         if (safeResult.IsSucceeded is false)
+        {
             await ViewModel.NotFoundModal.ShowAsync();
+            return;
+        }
 
         ViewModel.VirtualSafe = safeResult.Value;
+        if (ViewModel.VirtualSafe.Reservation.ToReserveTimeSpan is not null)
+        {
+            ViewModel.ReservationTimeOnly = new
+            (
+                ViewModel.VirtualSafe.Reservation.ToReserveTimeSpan.Value.Hours,
+                ViewModel.VirtualSafe.Reservation.ToReserveTimeSpan.Value.Minutes
+            );
+        }
 
         var openSafeShortcutResult = await ShortcutRepo.GetByTypeAsync(ShortcutModel.Types.OpenVirtualSafe);
         var reserveSafeShortcutResult = await ShortcutRepo.GetByTypeAsync(ShortcutModel.Types.ReserveVirtualSafe);
@@ -325,7 +220,7 @@
         if (ViewModel.OpenSafeShortcut is null || ViewModel.VirtualSafe is null) return Task.CompletedTask;
         if (shortcut != ViewModel.OpenSafeShortcut) return Task.CompletedTask;
 
-        FileExplorerService.Open(ViewModel.VirtualSafe.Directory);
+        FileOpenerService.Open(ViewModel.VirtualSafe.Directory);
 
         return Task.CompletedTask;
     }
@@ -335,6 +230,8 @@
         if (ViewModel.ReserveSafeShortcut is null || ViewModel.VirtualSafe is null) return;
         if (shortcut != ViewModel.ReserveSafeShortcut) return;
 
+        await ViewModel.ReservationProgress.ShowAsync();
+
         await LogBuilder
                 .WithDelegate(ViewModel.VirtualSafe.Reservation.Patheds
                     .Select(el => new Action(() => el.CopyToAsSub(ViewModel.VirtualSafe.Path))))
@@ -352,11 +249,26 @@
                 .Build()
                 .LogResultAsync(LogRepo);
 
+        ViewModel.VirtualSafe.Details.ReservedTimestamp = DateTime.Now;
+        await VirtualSafeDetailsRepo.UpdateAsync(ViewModel.VirtualSafe.Details);
+
         StateHasChanged();
+
+        await Task.Delay(1000);
+
+        await ViewModel.ReservationProgress.HideAsync();
     }
 
     private async Task OnReserveSafeClick()
     {
+        if (ViewModel.VirtualSafe is null)
+        {
+            await ViewModel.NotFoundModal.ShowAsync();
+            return;
+        }
+
+        await ViewModel.ReservationProgress.ShowAsync();
+
         await LogBuilder
                 .WithDelegate(ViewModel.VirtualSafe.Reservation.Patheds
                     .Select(el => new Action(() => el.CopyToAsSub(ViewModel.VirtualSafe.Path))))
@@ -374,54 +286,14 @@
                 .Build()
                 .LogResultAsync(LogRepo);
 
+        ViewModel.VirtualSafe.Details.ReservedTimestamp = DateTime.Now;
+        await VirtualSafeDetailsRepo.UpdateAsync(ViewModel.VirtualSafe.Details);
+
         StateHasChanged();
-    }
 
-    private async void OnReserveClick(KeyValuePair<Guid, IShyPathed> item)
-    {
-        if (ViewModel.VirtualSafe is null) return;
+        await Task.Delay(1000);
 
-        await LogBuilder
-                 .WithDelegate(() => item.Value.CopyToAsSub(ViewModel.VirtualSafe.Path))
-                 .WithParameters(new()
-                 {
-                     VirtualSafeDetailsId = ViewModel.VirtualSafe.Details.Id,
-                     Type = LogOperationModel.Types.TransferToVirtualSafe,
-                     ItemPath = item.Value.Path,
-                 })
-                 .Build()
-                 .LogResultAsync(LogRepo);
-    }
-
-    private async Task OnRemoveClick(KeyValuePair<Guid, IShyPathed> item)
-    {
-        if (ViewModel.VirtualSafe is null) return;
-        @if (item.Value.Type is ShyFsType.Directory)
-        {
-            await LogBuilder
-                    .WithDelegate(async () => await DirectoryRepo.RemoveByIdAsync(item.Key))
-                    .WithCriterion(res => res.IsSucceeded)
-                    .WithParameters(new()
-                    {
-                        VirtualSafeDetailsId = ViewModel.VirtualSafe.Details.Id,
-                        Type = LogOperationModel.Types.RemoveFromReservation,
-                        ItemPath = item.Value.Path,
-                    })
-                    .BuildAsync();
-        }
-        else if (item.Value.Type is ShyFsType.File)
-        {
-            await LogBuilder
-                    .WithDelegate(async () => await FileRepo.RemoveByIdAsync(item.Key))
-                    .WithCriterion(res => res.IsSucceeded)
-                    .WithParameters(new()
-                    {
-                        VirtualSafeDetailsId = ViewModel.VirtualSafe.Details.Id,
-                        Type = LogOperationModel.Types.RemoveFromReservation,
-                        ItemPath = item.Value.Path,
-                    })
-                    .BuildAsync();
-        }
+        await ViewModel.ReservationProgress.HideAsync();
     }
 
     private async Task OnDeleteSafeClick()
@@ -442,92 +314,12 @@
             await ViewModel.DeleteFailedModal.ShowAsync();
     }
 
-    private async Task OnPickFolderToReserveClick()
-    {
-        var result = await FolderPicker.PickAsync(default);
-
-        if (result.Folder is null || ViewModel.VirtualSafe is null)
-        {
-            await ViewModel.NoItemWasPickedModal.ShowAsync();
-            return;
-        }
-
-        if (result.Folder.Path.Contains(ViewModel.VirtualSafe.Path))
-        {
-            await ViewModel.IsInSafeDirectoryModal.ShowAsync();
-            return;
-        }
-
-        if (ViewModel.VirtualSafe.Reservation.Directories.Any(el => el.Path == result.Folder.Path))
-        {
-            await ViewModel.AlreadyInReservationModal.ShowAsync();
-            return;
-        }
-
-        await LogBuilder
-                .WithDelegate(async () =>
-                {
-                    await DirectoryRepo.AddAsync(
-                        new()
-                        {
-                            Path = result.Folder.Path,
-                            ReservationId = ViewModel.VirtualSafe.Reservation.Id
-                        });
-                })
-                .WithParameters(new()
-                {
-                    VirtualSafeDetailsId = ViewModel.VirtualSafe!.Details.Id,
-                    Type = LogOperationModel.Types.AddToReservation,
-                    ItemPath = result.Folder.Path
-                })
-                .BuildAsync();
-    }
-
-    private async Task OnPickFileToReserveClick()
-    {
-        var result = await FilePicker.PickAsync(default);
-
-        if (result is null || ViewModel.VirtualSafe is null)
-        {
-            await ViewModel.NoItemWasPickedModal.ShowAsync();
-            return;
-        }
-
-        if (result.FullPath.Contains(ViewModel.VirtualSafe.Path))
-        {
-            await ViewModel.IsInSafeDirectoryModal.ShowAsync();
-            return;
-        }
-
-        if (ViewModel.VirtualSafe.Reservation.Files.Any(el => el.Path == result.FullPath))
-        {
-            await ViewModel.AlreadyInReservationModal.ShowAsync();
-            return;
-        }
-        await LogBuilder
-                .WithDelegate(async () =>
-                {
-                    await FileRepo.AddAsync(
-                        new()
-                        {
-                            Path = result.FullPath,
-                            ReservationId = ViewModel.VirtualSafe.Reservation.Id
-                        });
-                })
-                .WithParameters(new()
-                {
-                    VirtualSafeDetailsId = ViewModel.VirtualSafe!.Details.Id,
-                    Type = LogOperationModel.Types.AddToReservation,
-                    ItemPath = result.FullPath
-                })
-                .BuildAsync();
-    }
-
     private async Task OnSaveTimeClick()
     {
         if (ViewModel.VirtualSafe is null) return;
+        if (ViewModel.ReservationTimeOnly is null) return;
 
-        ViewModel.VirtualSafe.Reservation.ToReserveTimeSpan = TimeSpan.Parse(ViewModel.ReservationTimeOfDay);
+        ViewModel.VirtualSafe.Reservation.ToReserveTimeSpan = TimeSpan.Parse($"{ViewModel.ReservationTimeOnly.Value.Hour}:{ViewModel.ReservationTimeOnly.Value.Minute}:00");
 
         await ReservationRepo.UpdateAsync(ViewModel.VirtualSafe.Reservation);
     }

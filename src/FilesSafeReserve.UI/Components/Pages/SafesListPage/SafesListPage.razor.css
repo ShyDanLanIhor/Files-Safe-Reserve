@@ -5,18 +5,23 @@
     align-items: center;
 }
 
-    .main-container h3 {
-        color: white;
-        border-radius: 10px;
-        padding: 10px 10px 10px 10px;
-        width: fit-content;
-    }
+.header-container {
+    padding-top: 15px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 10px;
+    color: white;
+    margin-bottom: 20px;
+}
 
 .list-container {
     width: 100%;
     border-radius: 10px;
     overflow: hidden;
     margin-top: 10px;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -46,4 +51,99 @@
 .alert-container {
     width: 90%;
     margin: 20px;
+}
+
+.btns-container {
+    padding-top: 10px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 10px;
+    border-radius: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background: white;
+    max-width: 350px;
+}
+
+.btns-container-grid {
+    display: grid;
+    width: 90%;
+    grid-template-columns: repeat(auto-fit, 120px);
+    grid-column-gap: 30px;
+    grid-row-gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+.description-text-container {
+    width: 100%;
+    border: 1px solid royalblue;
+    border-radius: 11px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.description-text-key {
+    background-color: royalblue;
+    color: white;
+    padding: 5px 10px 5px 10px;
+    border-top-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    width: max-content;
+}
+
+.description-text-value {
+    margin-left: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.timestamp-item {
+    width: 100%;
+    border: 1px solid royalblue;
+    border-radius: 11px;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    margin-bottom: 20px;
+    background-color: white;
+}
+
+.timestamp-item-key {
+    background-color: royalblue;
+    color: white;
+    padding: 10px;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.timestamp-item-value {
+    padding-left: 10px;
+    padding-right: 10px;
+    overflow-x: auto;
+    white-space: nowrap;
+    background-color: white;
+}
+
+.safe-btns-container {
+    padding-top: 10px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 10px;
+    border-radius: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    max-width: 350px;
+}
+
+.safe-btns-container-grid {
+    display: grid;
+    width: 90%;
+    grid-template-columns: repeat(auto-fit, 120px);
+    grid-column-gap: 30px;
+    grid-row-gap: 10px;
+    justify-content: center;
+    align-items: center;
 }

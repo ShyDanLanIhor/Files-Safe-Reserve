@@ -52,9 +52,10 @@ public class ReservationWorker(ILogger<ReservationWorker> logger, IServiceProvid
 
             var reservationRepo = services.GetService<IReservationRepo>();
             var logRepo = services.GetService<ILogRepo>();
+            var virtualSafeDetailsRepo = services.GetService<IVirtualSafeDetailsRepo>();
             var logBuilder = services.GetService<ILogBuilder>();
 
-            if (reservationRepo is null || logBuilder is null || logRepo is null)
+            if (reservationRepo is null || logBuilder is null || logRepo is null || virtualSafeDetailsRepo is null)
                 _logger.LogInformation("Service provider returned null running at: {time}", DateTimeOffset.Now);
             else
             {
@@ -63,7 +64,7 @@ public class ReservationWorker(ILogger<ReservationWorker> logger, IServiceProvid
                 var selectedReservation = reservations
                                             .Where(el => el.ReservedTimestamp.Date != DateTime.Now.Date)
                                             .Where(el => el.ToReserveTimeSpan < DateTime.Now.TimeOfDay)
-                                            .Where(el => el.ToReserveTimeSpan != TimeSpan.Zero);
+                                            .Where(el => el.ToReserveTimeSpan is not null);
 
                 foreach (var reservation in selectedReservation)
                 {
@@ -87,6 +88,9 @@ public class ReservationWorker(ILogger<ReservationWorker> logger, IServiceProvid
                     reservation.ReservedTimestamp = DateTime.Now;
 
                     await reservationRepo.UpdateAsync(reservation);
+
+                    reservation.Safe.Details.ReservedTimestamp = reservation.ReservedTimestamp;
+                    await virtualSafeDetailsRepo.UpdateAsync(reservation.Safe.Details);
 
                     _logger.LogInformation("Reservation worker reserved virtual safe '{name}' running at: {time}", reservation.Safe.Name, DateTimeOffset.Now);
                 }
