@@ -1,23 +1,97 @@
 ﻿@page "/virtual-safes"
 
+@using FilesSafeReserve.App.Builders.IBuilders
+@using FilesSafeReserve.App.Entities
+@using FilesSafeReserve.App.Entities.Params.ILogBuilder
+@using FilesSafeReserve.App.Models
+@using FilesSafeReserve.Domain.Extensions
+@using FilesSafeReserve.Infra.Extensions
 @using FilesSafeReserve.Infra.Repositories.IRepositories
+@using FilesSafeReserve.UI.Data.Stores
 
 @inject IVirtualSafeRepo VirtualSafeRepo
+@inject IVirtualSafeDetailsRepo VirtualSafeDetailsRepo
+@inject ILogRepo LogRepo
+@inject ILogBuilder LogBuilder
+@inject IShortcutRepo ShortcutRepo
 @inject NavigationManager Navigation
 
+@implements IDisposable
+
+<Modal @ref="ViewModel.DeleteModal" title="Virtual Safe Delete" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Are you sure that you want delete "@ViewModel.SelectedToDeleteVirtualSafe!.Name"
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Danger" @onclick='async () => await OnDeleteSafeClick(ViewModel.SelectedToDeleteVirtualSafe!)'>Delete</Button>
+        <Button Color="ButtonColor.Secondary" @onclick='async () => await ViewModel.DeleteModal.HideAsync()'>Cancel</Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.DeleteSucceededModal" title="Virtual Safe Deleting" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Virtual safe was deleted.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick='async () => { await ViewModel.DeleteSucceededModal.HideAsync(); StateHasChanged(); } '>OK</Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.DeleteFailedModal" title="Virtual Safe Deleting" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Virtual safe was not deleted.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick='async () => await ViewModel.DeleteFailedModal.HideAsync()'>OK</Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.ReservationProgress" title="Reservation Progress" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Please wait for the reservation to complete.
+    </BodyTemplate>
+    <FooterTemplate>
+        <div class="loader-container">
+            <span class="loader"></span>
+        </div>
+    </FooterTemplate>
+</Modal>
+
 <div class="main-container">
-    <h3 class="gradient-background">Safes List Page</h3>
+    <h3 class="header-container gradient-background">Safes List Page</h3>
     <div class="list-container gradient-background">
+        <div class="btns-container btns-container-grid">
+            <Button @onclick='() => Navigation.NavigateTo($"/virtual-safe/create")' Color="ButtonColor.Primary"> Create New </Button>
+
+            <Button @onclick='OnReserveSafesClick' Color="ButtonColor.Primary"> Reserve All </Button>
+        </div>
+
         @if (ViewModel.VirtualSafes.Count is not 0)
         {
             @foreach (var safe in ViewModel.VirtualSafes)
             {
                 <div class="item-container">
                     <div class="name-part gradient-background">@safe.Name</div>
-                    <p>@safe.Description</p>
-                    <p>Last Reservation: @safe.Details.ReservedTimestamp.ToString("dd/MM/yyyy HH:mm:ss")</p>
-                    <div style="text-align: center;">
+                    <div class="description-text-container">
+                        <div class="description-text-key gradient-background">
+                            Description
+                        </div>
+                        <span class="description-text-value">
+                            @safe.Description
+                        </span>
+                    </div>
+                    <div class="timestamp-item">
+                        <div class="timestamp-item-key gradient-background">
+                            Last Reservation:
+                        </div>
+                        <span class="timestamp-item-value">
+                            @safe.Details.ReservedTimestamp
+                        </span>
+                    </div>
+                    <div class="safe-btns-container safe-btns-container-grid" style="align-self: center; justify-self: center;">
                         <Button @onclick='() => Navigation.NavigateTo($"/virtual-safe/details/{safe.Id.ToString()}")' Color="ButtonColor.Primary"> Details </Button>
+
+                        <Button @onclick='async () => { ViewModel.SelectedToDeleteVirtualSafe = safe; await ViewModel.DeleteModal.ShowAsync(); }' Color="ButtonColor.Danger"> Delete </Button>
                     </div>
                     @if (safe.Directory.Exists is false)
                     {
@@ -34,7 +108,6 @@
                 <Alert Color="AlertColor.Info"> <Icon Name="IconName.InfoCircleFill" class="me-2"></Icon> Not a single virtual safe was found. </Alert>
             </div>
         }
-        <Button @onclick='() => Navigation.NavigateTo($"/virtual-safe/create")' Color="ButtonColor.Primary" Style="margin: 20px;"> Create New </Button>
     </div>
 </div>
 
@@ -44,5 +117,106 @@
     protected override async void OnInitialized()
     {
         ViewModel.VirtualSafes = await VirtualSafeRepo.ToListAsync();
+
+        var reserveSafeShortcutResult = await ShortcutRepo.GetByTypeAsync(ShortcutModel.Types.ReserveVirtualSafes);
+
+        if (reserveSafeShortcutResult.IsSucceeded)
+        {
+            ViewModel.ReserveSafesShortcut = reserveSafeShortcutResult.Value;
+
+            KeyUpStore
+                .WithName($"{nameof(SafesListPage)}_{nameof(OnReserveSafesShortcut)}")
+                .Add(OnReserveSafesShortcut);
+        }
+    }
+
+    public void Dispose()
+    {
+        KeyUpStore.Remove(shortcut => shortcut.Key.Contains(nameof(SafesListPage)));
+    }
+
+    private async Task OnReserveSafesShortcut(ShortcutEntity shortcut)
+    {
+        if (ViewModel.ReserveSafesShortcut is null) return;
+        if (shortcut != ViewModel.ReserveSafesShortcut) return;
+
+        await ViewModel.ReservationProgress.ShowAsync();
+
+        foreach (var safe in ViewModel.VirtualSafes)
+        {
+            await LogBuilder
+                    .WithDelegate(safe.Reservation.Patheds
+                                        .Select(el => new Action(() => el.CopyToAsSub(safe.Path))))
+                    .WithParameters(new()
+                    {
+                        VirtualSafeDetailsId = safe.Details.Id,
+                        Operations = safe.Reservation.Patheds
+                                            .Select(el => new LogBuilderOpsParams.OperationsParams()
+                                            {
+                                                ItemPath = el.Path,
+                                                Type = LogOperationModel.Types.TransferToVirtualSafe
+                                            })
+                                            .ToList()
+                    })
+                    .Build()
+                    .LogResultAsync(LogRepo);
+
+            safe.Details.ReservedTimestamp = DateTime.Now;
+            await VirtualSafeDetailsRepo.UpdateAsync(safe.Details);
+        }
+
+        await Task.Delay(1000);
+
+        await ViewModel.ReservationProgress.HideAsync();
+    }
+
+    private async Task OnReserveSafesClick()
+    {
+        await ViewModel.ReservationProgress.ShowAsync();
+
+        foreach (var safe in ViewModel.VirtualSafes)
+        {
+            await LogBuilder
+                    .WithDelegate(safe.Reservation.Patheds
+                                        .Select(el => new Action(() => el.CopyToAsSub(safe.Path))))
+                    .WithParameters(new()
+                    {
+                        VirtualSafeDetailsId = safe.Details.Id,
+                        Operations = safe.Reservation.Patheds
+                                            .Select(el => new LogBuilderOpsParams.OperationsParams()
+                                            {
+                                                ItemPath = el.Path,
+                                                Type = LogOperationModel.Types.TransferToVirtualSafe
+                                            })
+                                            .ToList()
+                    })
+                    .Build()
+                    .LogResultAsync(LogRepo);
+
+            safe.Details.ReservedTimestamp = DateTime.Now;
+            await VirtualSafeDetailsRepo.UpdateAsync(safe.Details);
+        }
+
+        await Task.Delay(1000);
+
+        await ViewModel.ReservationProgress.HideAsync();
+    }
+
+    private async Task OnDeleteSafeClick(VirtualSafeModel safe)
+    {
+        await ViewModel.DeleteModal.HideAsync();
+
+        if (safe is null)
+        {
+            await ViewModel.DeleteFailedModal.ShowAsync();
+            return;
+        }
+
+        var result = await VirtualSafeRepo.RemoveAsync(safe);
+
+        if (result.IsSucceeded)
+            await ViewModel.DeleteSucceededModal.ShowAsync();
+        else
+            await ViewModel.DeleteFailedModal.ShowAsync();
     }
 }

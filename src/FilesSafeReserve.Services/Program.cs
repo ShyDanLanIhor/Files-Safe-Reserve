@@ -20,6 +20,7 @@ builder.Services.AddDbContext<FsrDbContext>();
 
 builder.Services.AddScoped<ILogRepo, LogRepo>();
 builder.Services.AddScoped<IReservationRepo, ReservationRepo>();
+builder.Services.AddScoped<IVirtualSafeDetailsRepo, VirtualSafeDetailsRepo>();
 
 builder.Services.AddScoped<ILogBuilder, LogBuilder>();
 

@@ -1,0 +1,580 @@
+﻿@page "/virtual-safe/reservation/{id}"
+
+@using CommunityToolkit.Maui.Storage
+@using FilesSafeReserve.App.Builders.IBuilders
+@using FilesSafeReserve.App.Entities
+@using FilesSafeReserve.App.Entities.Params.ILogBuilder
+@using FilesSafeReserve.App.Entities.Results.Basic
+@using FilesSafeReserve.App.Models
+@using FilesSafeReserve.Domain.Entities
+@using FilesSafeReserve.Domain.Extensions
+@using FilesSafeReserve.Domain.Interfaces
+@using FilesSafeReserve.Domain.Mappers
+@using FilesSafeReserve.Infra.Extensions
+@using FilesSafeReserve.Infra.Repositories.IRepositories
+@using FilesSafeReserve.Infra.Services.IServices
+@using FilesSafeReserve.UI.Data.Stores
+@using System.Diagnostics
+
+@inject IFileOpenerService FileOpenerService
+@inject IVirtualSafeRepo VirtualSafeRepo
+@inject ILogRepo LogRepo
+@inject IVirtualSafeDetailsRepo VirtualSafeDetailsRepo
+@inject IDirectoryRepo DirectoryRepo
+@inject IFileRepo FileRepo
+@inject IShortcutRepo ShortcutRepo
+@inject ILogBuilder LogBuilder
+
+@implements IDisposable
+
+<Modal @ref="ViewModel.AlreadyInReservationModal" title="Unknown File" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Picked item already exist in virtual safe reservation items, so it can't be saved as new reservation item.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick="async () => await ViewModel.AlreadyInReservationModal.HideAsync()">Understood</Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.IsInSafeDirectoryModal" title="Unknown File" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Picked item is in virtual safe directory, so it can't be saved as new reservation item.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick="async () => await ViewModel.IsInSafeDirectoryModal.HideAsync()">Understood</Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.NoItemWasPickedModal" title="Unknown File" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        No item was picked to be saved as reservation item.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick="async () => await ViewModel.NoItemWasPickedModal.HideAsync()">Understood</Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.ReservationProgress" title="Reservation Progress" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Please wait for the reservation to complete.
+    </BodyTemplate>
+    <FooterTemplate>
+        <div class="loader-container">
+            <span class="loader"></span>
+        </div>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.FilterProgress" title="Filter Progress" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Please wait for the filter to complete.
+    </BodyTemplate>
+    <FooterTemplate>
+        <div class="loader-container">
+            <span class="loader"></span>
+        </div>
+    </FooterTemplate>
+</Modal>
+
+<div class="main-container">
+    <div class="header-container gradient-background">
+        <h3>Reservation Page</h3>
+    </div>
+
+    <div class="body-container gradient-background">
+        @if (ViewModel.VirtualSafe is not null)
+        {
+            <div class="name-container">
+                <h4>@ViewModel.VirtualSafe.Name</h4>
+            </div>
+
+            <div class="btns-container btns-container-grid">
+                <Button @onclick='() => FileOpenerService.Open(ViewModel.VirtualSafe.Directory)' Color="ButtonColor.Primary" Style="width: 120px"> Open </Button>
+
+                <Button @onclick='OnReserveSafeClick' Color="ButtonColor.Primary" Style="width: 120px"> Reserve </Button>
+
+                <Button onclick="history.back();" Color="ButtonColor.Secondary" Style="width: 120px"> Go Back </Button>
+            </div>
+
+            <div class="reservation-container">
+                <div class="reservation-header-container">
+                    <h5> Virtual safe items to reserve </h5>
+                </div>
+
+                <div>
+                    <div class="input-group mb-3">
+                        <InputText @bind-Value="ViewModel.SearchText" type="text" class="form-control" placeholder="Search" aria-label="Path to safe" aria-describedby="basic-addon2" />
+                        <div class="input-group-append">
+                            <Button @onclick="OnSearchClick" Color="ButtonColor.Secondary"><Icon Name="IconName.Search"></Icon></Button>
+                            @if (ViewModel.IsSearched)
+                            {
+                                <Button @onclick="OnClearClick" Color="ButtonColor.Danger"><Icon Name="IconName.XCircle"></Icon></Button>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reservation-switches-container">
+                    <Switch @bind-Value="ViewModel.IncludeFiles" Label="Include Files" @onclick="ToggleFilesSwitch" />
+
+                    <Switch @bind-Value="ViewModel.IncludeDirectories" Label="Include Directories" @onclick="ToggleDirectoriesSwitch" />
+                </div>
+
+                <div class="reservation-btns-container">
+                    <Button @onclick='OnPickFolderToReserveClick' Color="ButtonColor.Primary" Style="width: 120px"> Pick Folder </Button>
+
+                    <Button @onclick='OnPickFileToReserveClick' Color="ButtonColor.Primary" Style="width: 120px"> Pick File </Button>
+                </div>
+
+                <div class="reservation-elements-container">
+                    @if (ViewModel.ItemsList.Count is not 0)
+                    {
+                        @foreach (var item in ViewModel.ItemsList)
+                        {
+                            <div class="reservation-element-container">
+                                <div class="reservation-element-data gradient-background">
+                                    <div class="reservation-element-icon">
+                                        @if (item.Value.Type is ShyFsType.Directory)
+                                        {
+                                            <Icon Name="IconName.Folder" @onclick='() => FileOpenerService.Open(item.Value)' />
+                                        }
+                                        else if (item.Value.Type is ShyFsType.File)
+                                        {
+                                            <Icon Name="IconName.FileEarmark" @onclick='() => FileOpenerService.Open(item.Value)' />
+                                        }
+                                        else
+                                        {
+                                            <Icon Name="IconName.Question" @onclick='async () => await ViewModel.UnknownFileModal.ShowAsync()' />
+                                        }
+                                    </div>
+                                    <div class="reservation-element-name">
+                                        <span>@item.Value.Name</span>
+                                    </div>
+                                </div>
+                                <div class="reservation-element-btns">
+                                    @if (item.Value.Type is ShyFsType.Directory)
+                                    {
+                                        <Button Color="ButtonColor.Primary" @onclick='async () => OnReserveClick(item)'> <Icon Name="IconName.FolderSymlink"></Icon> </Button>
+
+                                        <Button Color="ButtonColor.Secondary" @onclick='() => FileOpenerService.Open(item.Value.ToShyDirectory().Info.Parent!.FullName)'> <Icon Name="IconName.Folder2Open"></Icon> </Button>
+
+                                        <Button Color="ButtonColor.Danger" @onclick='async () => await OnRemoveClick(item)'> <Icon Name="IconName.FolderX"></Icon> </Button>
+                                    }
+                                    else if (item.Value.Type is ShyFsType.File)
+                                    {
+                                        <Button Color="ButtonColor.Primary" @onclick='async () => OnReserveClick(item)'> <Icon Name="IconName.FileEarmarkArrowUp"></Icon> </Button>
+
+                                        <Button Color="ButtonColor.Secondary" @onclick='() => FileOpenerService.Open(item.Value.ToShyFile().Info.DirectoryName!)'> <Icon Name="IconName.Folder2Open"></Icon> </Button>
+
+                                        <Button Color="ButtonColor.Danger" @onclick='async () => await OnRemoveClick(item)'> <Icon Name="IconName.FileX"></Icon> </Button>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="alert-container">
+                            <Alert Color="AlertColor.Info"> <Icon Name="IconName.InfoCircleFill" class="me-2"></Icon> Not a single item to reserve was found. </Alert>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    protected async override void OnInitialized()
+    {
+        var safeResult = await VirtualSafeRepo.GetByIdAsync(new Guid(Id));
+
+        if (safeResult.IsSucceeded is false)
+        {
+            await ViewModel.NotFoundModal.ShowAsync();
+            return;
+        }
+
+        ViewModel.VirtualSafe = safeResult.Value;
+
+        ViewModel.ItemsList = ViewModel.VirtualSafe.Reservation.IdsPathedsPair;
+
+        var openSafeShortcutResult = await ShortcutRepo.GetByTypeAsync(ShortcutModel.Types.OpenVirtualSafe);
+        var reserveSafeShortcutResult = await ShortcutRepo.GetByTypeAsync(ShortcutModel.Types.ReserveVirtualSafe);
+
+        if (openSafeShortcutResult.IsSucceeded)
+        {
+            ViewModel.OpenSafeShortcut = openSafeShortcutResult.Value;
+
+            KeyUpStore
+                .WithName($"{nameof(ReservationPage)}_{nameof(OnOpenSafeShortcut)}")
+                .Add(OnOpenSafeShortcut);
+        }
+
+        if (reserveSafeShortcutResult.IsSucceeded)
+        {
+            ViewModel.ReserveSafeShortcut = reserveSafeShortcutResult.Value;
+
+            KeyUpStore
+                .WithName($"{nameof(ReservationPage)}_{nameof(OnReserveSafeShortcut)}")
+                .Add(OnReserveSafeShortcut);
+        }
+    }
+
+    public void Dispose()
+    {
+        KeyUpStore.Remove(shortcut => shortcut.Key.Contains(nameof(ReservationPage)));
+    }
+
+    private Task OnOpenSafeShortcut(ShortcutEntity shortcut)
+    {
+        if (ViewModel.OpenSafeShortcut is null || ViewModel.VirtualSafe is null) return Task.CompletedTask;
+        if (shortcut != ViewModel.OpenSafeShortcut) return Task.CompletedTask;
+
+        FileOpenerService.Open(ViewModel.VirtualSafe.Directory);
+
+        return Task.CompletedTask;
+    }
+
+    private async Task OnReserveSafeShortcut(ShortcutEntity shortcut)
+    {
+        if (ViewModel.ReserveSafeShortcut is null || ViewModel.VirtualSafe is null) return;
+        if (shortcut != ViewModel.ReserveSafeShortcut) return;
+
+        await ViewModel.ReservationProgress.ShowAsync();
+
+        await LogBuilder
+                .WithDelegate(ViewModel.VirtualSafe.Reservation.Patheds
+                    .Select(el => new Action(() => el.CopyToAsSub(ViewModel.VirtualSafe.Path))))
+                .WithParameters(new()
+                {
+                    VirtualSafeDetailsId = ViewModel.VirtualSafe.Details.Id,
+                    Operations = ViewModel.VirtualSafe.Reservation.Patheds
+                                    .Select(el => new LogBuilderOpsParams.OperationsParams()
+                                    {
+                                        ItemPath = el.Path,
+                                        Type = LogOperationModel.Types.TransferToVirtualSafe
+                                    })
+                                    .ToList()
+                })
+                .Build()
+                .LogResultAsync(LogRepo);
+
+        ViewModel.VirtualSafe.Details.ReservedTimestamp = DateTime.Now;
+        await VirtualSafeDetailsRepo.UpdateAsync(ViewModel.VirtualSafe.Details);
+
+        StateHasChanged();
+
+        await Task.Delay(1000);
+
+        await ViewModel.ReservationProgress.HideAsync();
+    }
+
+
+    private async Task ToggleDirectoriesSwitch()
+    {
+        if (ViewModel.VirtualSafe is null)
+        {
+            await ViewModel.NotFoundModal.ShowAsync();
+            return;
+        }
+
+        ViewModel.ItemsList = await FilterPathedsAsync
+        (
+            ViewModel.VirtualSafe.Reservation.IdsPathedsPair,
+            ViewModel.SearchText,
+            ViewModel.IncludeFiles,
+            !ViewModel.IncludeDirectories
+        );
+    }
+
+    private async Task ToggleFilesSwitch()
+    {
+        if (ViewModel.VirtualSafe is null)
+        {
+            await ViewModel.NotFoundModal.ShowAsync();
+            return;
+        }
+
+        ViewModel.ItemsList = await FilterPathedsAsync
+        (
+            ViewModel.VirtualSafe.Reservation.IdsPathedsPair,
+            ViewModel.SearchText,
+            !ViewModel.IncludeFiles,
+            ViewModel.IncludeDirectories
+        );
+    }
+
+    private async Task OnSearchClick()
+    {
+        if (ViewModel.VirtualSafe is null)
+        {
+            await ViewModel.NotFoundModal.ShowAsync();
+            return;
+        }
+
+        ViewModel.ItemsList = await FilterPathedsAsync
+        (
+            ViewModel.VirtualSafe.Reservation.IdsPathedsPair,
+            ViewModel.SearchText,
+            ViewModel.IncludeFiles,
+            ViewModel.IncludeDirectories
+        );
+
+        ViewModel.IsSearched = true;
+    }
+
+    private async Task OnClearClick()
+    {
+        if (ViewModel.VirtualSafe is null)
+        {
+            await ViewModel.NotFoundModal.ShowAsync();
+            return;
+        }
+
+        ViewModel.SearchText = string.Empty;
+
+        ViewModel.ItemsList = await FilterPathedsAsync
+        (
+            ViewModel.VirtualSafe.Reservation.IdsPathedsPair,
+            ViewModel.SearchText,
+            ViewModel.IncludeFiles,
+            ViewModel.IncludeDirectories
+        );
+
+        ViewModel.IsSearched = false;
+    }
+
+    private async Task OnReserveSafeClick()
+    {
+        if (ViewModel.VirtualSafe is null)
+        {
+            await ViewModel.NotFoundModal.ShowAsync();
+            return;
+        }
+
+        await ViewModel.ReservationProgress.ShowAsync();
+
+        await LogBuilder
+                .WithDelegate(ViewModel.ItemsList.Select(el => new Action(() => el.Value.CopyToAsSub(ViewModel.VirtualSafe.Path))))
+                .WithParameters(new()
+                {
+                    VirtualSafeDetailsId = ViewModel.VirtualSafe.Details.Id,
+                    Operations = ViewModel.ItemsList
+                                    .Select(el => new LogBuilderOpsParams.OperationsParams()
+                                    {
+                                        ItemPath = el.Value.Path,
+                                        Type = LogOperationModel.Types.TransferToVirtualSafe
+                                    })
+                                    .ToList()
+                })
+                .Build()
+                .LogResultAsync(LogRepo);
+
+        ViewModel.VirtualSafe.Details.ReservedTimestamp = DateTime.Now;
+        await VirtualSafeDetailsRepo.UpdateAsync(ViewModel.VirtualSafe.Details);
+
+        StateHasChanged();
+
+        await Task.Delay(1000);
+
+        await ViewModel.ReservationProgress.HideAsync();
+    }
+
+    private async void OnReserveClick(KeyValuePair<Guid, IShyPathed> item)
+    {
+        if (ViewModel.VirtualSafe is null) return;
+
+        await ViewModel.ReservationProgress.ShowAsync();
+
+        await LogBuilder
+                 .WithDelegate(() => item.Value.CopyToAsSub(ViewModel.VirtualSafe.Path))
+                 .WithParameters(new()
+                 {
+                     VirtualSafeDetailsId = ViewModel.VirtualSafe.Details.Id,
+                     Type = LogOperationModel.Types.TransferToVirtualSafe,
+                     ItemPath = item.Value.Path,
+                 })
+                 .Build()
+                 .LogResultAsync(LogRepo);
+
+        ViewModel.VirtualSafe.Details.ReservedTimestamp = DateTime.Now;
+        await VirtualSafeDetailsRepo.UpdateAsync(ViewModel.VirtualSafe.Details);
+
+        await Task.Delay(1000);
+
+        await ViewModel.ReservationProgress.HideAsync();
+    }
+
+    private async Task OnRemoveClick(KeyValuePair<Guid, IShyPathed> item)
+    {
+        if (ViewModel.VirtualSafe is null) return;
+
+        await LogBuilder
+                .WithDelegate(async () =>
+                {
+                    ResultEntity result;
+
+                    if (item.Value.Type is ShyFsType.Directory)
+                        result = await DirectoryRepo.RemoveByIdAsync(item.Key);
+                    else if (item.Value.Type is ShyFsType.File)
+                        result = await FileRepo.RemoveByIdAsync(item.Key);
+                    else
+                        result = false;
+
+                    return result;
+                })
+                .WithCriterion(res => res.IsSucceeded)
+                .WithParameters(new()
+                {
+                    VirtualSafeDetailsId = ViewModel.VirtualSafe.Details.Id,
+                    Type = LogOperationModel.Types.RemoveFromReservation,
+                    ItemPath = item.Value.Path,
+                })
+                .BuildAsync();
+
+        ViewModel.ItemsList = await FilterPathedsAsync
+        (
+            ViewModel.VirtualSafe.Reservation.IdsPathedsPair,
+            ViewModel.SearchText,
+            ViewModel.IncludeFiles,
+            ViewModel.IncludeDirectories
+        );
+    }
+
+    private async Task OnPickFolderToReserveClick()
+    {
+        var result = await FolderPicker.PickAsync(default);
+
+        if (result.Folder is null || ViewModel.VirtualSafe is null)
+        {
+            await ViewModel.NoItemWasPickedModal.ShowAsync();
+            return;
+        }
+
+        if (result.Folder.Path.Contains(ViewModel.VirtualSafe.Path))
+        {
+            await ViewModel.IsInSafeDirectoryModal.ShowAsync();
+            return;
+        }
+
+        if (ViewModel.VirtualSafe.Reservation.Directories.Any(el => el.Path == result.Folder.Path))
+        {
+            await ViewModel.AlreadyInReservationModal.ShowAsync();
+            return;
+        }
+
+        await LogBuilder
+                .WithDelegate(async () =>
+                {
+                    await DirectoryRepo.AddAsync(new()
+                    {
+                        Path = result.Folder.Path,
+                        ReservationId = ViewModel.VirtualSafe.Reservation.Id
+                    });
+                })
+                .WithParameters(new()
+                {
+                    VirtualSafeDetailsId = ViewModel.VirtualSafe!.Details.Id,
+                    Type = LogOperationModel.Types.AddToReservation,
+                    ItemPath = result.Folder.Path
+                })
+                .BuildAsync();
+
+        ViewModel.ItemsList = await FilterPathedsAsync
+        (
+            ViewModel.VirtualSafe.Reservation.IdsPathedsPair,
+            ViewModel.SearchText,
+            ViewModel.IncludeFiles,
+            ViewModel.IncludeDirectories
+        );
+    }
+
+    private async Task OnPickFileToReserveClick()
+    {
+        var result = await FilePicker.PickAsync(default);
+
+        if (result is null || ViewModel.VirtualSafe is null)
+        {
+            await ViewModel.NoItemWasPickedModal.ShowAsync();
+            return;
+        }
+
+        if (result.FullPath.Contains(ViewModel.VirtualSafe.Path))
+        {
+            await ViewModel.IsInSafeDirectoryModal.ShowAsync();
+            return;
+        }
+
+        if (ViewModel.VirtualSafe.Reservation.Files.Any(el => el.Path == result.FullPath))
+        {
+            await ViewModel.AlreadyInReservationModal.ShowAsync();
+            return;
+        }
+
+        await LogBuilder
+                .WithDelegate(async () =>
+                {
+                    await FileRepo.AddAsync(new()
+                    {
+                        Path = result.FullPath,
+                        ReservationId = ViewModel.VirtualSafe.Reservation.Id
+                    });
+                })
+                .WithParameters(new()
+                {
+                    VirtualSafeDetailsId = ViewModel.VirtualSafe!.Details.Id,
+                    Type = LogOperationModel.Types.AddToReservation,
+                    ItemPath = result.FullPath
+                })
+                .BuildAsync();
+
+        ViewModel.ItemsList = await FilterPathedsAsync
+        (
+            ViewModel.VirtualSafe.Reservation.IdsPathedsPair,
+            ViewModel.SearchText,
+            ViewModel.IncludeFiles,
+            ViewModel.IncludeDirectories
+        );
+    }
+
+    private async Task<ICollection<KeyValuePair<Guid, IShyPathed>>> FilterPathedsAsync(IEnumerable<KeyValuePair<Guid, IShyPathed>> enumerable, string searchText, bool includeFiles, bool includeDirectories)
+    {
+        Stopwatch stopwatch = new Stopwatch();
+
+        stopwatch.Start();
+
+        bool IsOneSecondElapsed = false;
+
+        if (searchText != string.Empty)
+            enumerable = enumerable.Where(el => el.Value.Name.Contains(searchText));
+
+        if (stopwatch.ElapsedMilliseconds >= 1000)
+        {
+            await ViewModel.FilterProgress.ShowAsync();
+            IsOneSecondElapsed = true;
+        }
+
+        if (includeFiles is false)
+            enumerable = enumerable.Where(el => el.Value.Type != ShyFsType.File);
+
+        if (stopwatch.ElapsedMilliseconds >= 1000)
+        {
+            await ViewModel.FilterProgress.ShowAsync();
+            IsOneSecondElapsed = true;
+        }
+
+        if (includeDirectories is false)
+            enumerable = enumerable.Where(el => el.Value.Type != ShyFsType.Directory);
+
+        if (IsOneSecondElapsed)
+        {
+            await Task.Delay(1000);
+            await ViewModel.FilterProgress.HideAsync();
+        }
+
+        stopwatch.Stop();
+
+        return enumerable.ToList();
+    }
+}

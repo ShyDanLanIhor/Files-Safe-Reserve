@@ -24,7 +24,7 @@ public class ReservationModel : IModelBase<Guid>
     /// <summary>
     /// Gets or sets the time of day when reservation takes place.
     /// </summary>
-    public TimeSpan ToReserveTimeSpan { get; set; } = TimeSpan.Zero;
+    public TimeSpan? ToReserveTimeSpan { get; set; }
 
     /// <summary>
     /// Gets or sets the collection of files associated with this reservation.
