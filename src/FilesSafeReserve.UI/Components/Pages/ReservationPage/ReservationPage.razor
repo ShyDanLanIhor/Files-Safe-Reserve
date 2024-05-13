@@ -27,7 +27,7 @@
 
 @implements IDisposable
 
-<Modal @ref="ViewModel.AlreadyInReservationModal" title="Unknown File" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+<Modal @ref="ViewModel.AlreadyInReservationModal" title="Already In Reservation" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
     <BodyTemplate>
         Picked item already exist in virtual safe reservation items, so it can't be saved as new reservation item.
     </BodyTemplate>
@@ -36,7 +36,7 @@
     </FooterTemplate>
 </Modal>
 
-<Modal @ref="ViewModel.IsInSafeDirectoryModal" title="Unknown File" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+<Modal @ref="ViewModel.IsInSafeDirectoryModal" title="Is In Safe Directory" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
     <BodyTemplate>
         Picked item is in virtual safe directory, so it can't be saved as new reservation item.
     </BodyTemplate>
@@ -45,7 +45,7 @@
     </FooterTemplate>
 </Modal>
 
-<Modal @ref="ViewModel.NoItemWasPickedModal" title="Unknown File" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+<Modal @ref="ViewModel.NoItemWasPickedModal" title="No Item Was Picked" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
     <BodyTemplate>
         No item was picked to be saved as reservation item.
     </BodyTemplate>

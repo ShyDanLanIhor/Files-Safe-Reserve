@@ -5,6 +5,10 @@ namespace FilesSafeReserve.UI.Data.ViewModels;
 
 public class SafeDetailsViewModel
 {
+    public Modal ReserveTimeChangingSucceededModal { get; set; } = default!;
+    public Modal ReserveTimeClearingConfirmModal { get; set; } = default!;
+    public Modal ReserveTimeChangingConfirmModal { get; set; } = default!;
+    public Modal NotEnteredReserveTimeModal { get; set; } = default!;
     public Modal DeleteSucceededModal { get; set; } = default!;
     public Modal DeleteFailedModal { get; set; } = default!;
     public Modal DeleteModal { get; set; } = default!;
