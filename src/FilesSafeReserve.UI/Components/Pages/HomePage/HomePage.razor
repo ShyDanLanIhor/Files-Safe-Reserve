@@ -4,7 +4,51 @@
 
 @inject IKeyUpManager KeyUpManager
 
-<p>Home Page</p>
+<div class="main-container">
+    <div class="header-container gradient-background">
+        <h3>Home Page</h3>
+    </div>
+
+    <div class="body-container gradient-background">
+        <div class="app-description">
+            <div class="app-description-key gradient-background">
+                Description
+            </div>
+            <span class="app-description-value" style="text-align: justify;">
+                <p>
+                    Data backup is a critically important procedure to ensure the security and availability of important user information. People may accidentally delete or damage files without warning. Hard drives, flash drives, and other equipment may fail due to random malfunctions or breakdowns. Backup allows for the restoration of data that was saved on damaged media or accidentally deleted.
+                </p>
+                <p>
+                    A data backup program, along with virtual vault management, automates a range of processes for convenient and secure file management by the user.
+                </p>
+            </span>
+        </div>
+        <div class="app-features">
+            <div class="app-features-key gradient-background">
+                Features
+            </div>
+            <span class="app-features-value" style="text-align: justify;">
+                <ul>
+                    <li>Create virtual vaults either locally on your computer or external drives</li>
+                    <li>Manage virtual safes, such as editing, copying, deleting, and more</li>
+                    <li>Set up the time of automatic reservation of a virtual safe</li>
+                    <li>Add files or folders for backup, with the ability to view, open, delete, and so on</li>
+                    <li>Back up photos and videos from your phone directly to a virtual safe</li>
+                    <li>Use keyboard shortcuts for faster and more convenient experience</li>
+                </ul>
+            </span>
+        </div>
+        <div class="app-feedback">
+            <div class="app-feedback-key gradient-background">
+                Feedback
+            </div>
+            <span class="app-feedback-value" style="text-align: justify;">
+                <p><Icon Name="IconName.Github"></Icon> GitHub: <a href="https://github.com/ShyDanLanIhor/Files-Safe-Reserve" target="_blank">Files-Safe-Reserve</a></p>
+                <p><Icon Name="IconName.Mailbox"></Icon> Email: <a href="mailto:bohdan.shyryi@gmail.com" target="_blank">bohdan.shyryi@gmail.com</a></p>
+            </span>
+        </div>
+    </div>
+</div>
 
 @code {
     protected override async Task OnAfterRenderAsync(bool firstRender)

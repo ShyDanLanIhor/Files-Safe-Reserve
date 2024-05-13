@@ -1,1 +1,109 @@
-﻿
+﻿.main-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.header-container {
+    padding-top: 15px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 10px;
+    color: white;
+    margin-bottom: 20px;
+}
+
+.body-container {
+    width: 100%;
+    padding-top: 15px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.app-description {
+    width: 100%;
+    border: 1px solid royalblue;
+    border-radius: 11px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    background-color: white;
+}
+
+.app-description-key {
+    background-color: royalblue;
+    color: white;
+    padding: 5px 10px 5px 10px;
+    border-top-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    width: max-content;
+}
+
+.app-description-value {
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.app-features {
+    width: 100%;
+    border: 1px solid royalblue;
+    border-radius: 11px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    background-color: white;
+}
+
+.app-features-key {
+    background-color: royalblue;
+    color: white;
+    padding: 5px 10px 5px 10px;
+    border-top-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    width: max-content;
+}
+
+.app-features-value {
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.app-feedback {
+    width: 100%;
+    border: 1px solid royalblue;
+    border-radius: 11px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    background-color: white;
+}
+
+.app-feedback-key {
+    background-color: royalblue;
+    color: white;
+    padding: 5px 10px 5px 10px;
+    border-top-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    width: max-content;
+}
+
+.app-feedback-value {
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
