@@ -1,3 +1,276 @@
-﻿@page "/SettingsPage"
+﻿@page "/settings"
 
-<p>Settings Page</p>
+@using FilesSafeReserve.App.Entities
+@using FilesSafeReserve.App.Models
+@using FilesSafeReserve.Infra.Repositories.IRepositories
+@using FilesSafeReserve.UI.Data.Stores
+
+@inject IShortcutRepo ShortcutRepo
+@inject IReservationRepo ReservationRepo
+
+<Modal @ref="ViewModel.ReserveTimeChangingSucceededModal" title="Reservation Time Changed" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        The reservation time of virtual safes has been changed successfully.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick='async () => await ViewModel.ReserveTimeChangingSucceededModal.HideAsync()'>Understood</Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.ReserveTimeClearingConfirmModal" title="Reservation Time Changing" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Are you sure you want to clear the reservation time of virtual safes?
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick='async () => await OnClearReservationTimeClick()'>Yes</Button>
+        <Button Color="ButtonColor.Danger" @onclick='async () => await ViewModel.ReserveTimeClearingConfirmModal.HideAsync()'>No</Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.ReserveTimeChangingConfirmModal" title="Reservation Time Changing" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Are you sure you want to change the reservation time of virtual safes?
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick='async () => await OnSaveReservationTimeClick()'>Yes</Button>
+        <Button Color="ButtonColor.Danger" @onclick='async () => await ViewModel.ReserveTimeChangingConfirmModal.HideAsync()'>No</Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.NotEnteredReserveTimeModal" title="Reservation Time Changing" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Please enter a time first to update your virtual safes reservation time.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick='async () => await ViewModel.NotEnteredReserveTimeModal.HideAsync()'>Understood</Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.ShortcutInputAwaiterModal" title="Shortcut Changing" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Please type the keyboard shortcut to save it.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Secondary" @onclick='OnShortcutChangeCancelClickAsync'>Cancel</Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.ShortcutSavingSucceededModal" title="Shortcut Saving" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Shortcut changes were saved successfully.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick='async () => await ViewModel.ShortcutSavingSucceededModal.HideAsync()'>Understood</Button>
+    </FooterTemplate>
+</Modal>
+
+<div class="main-container">
+    <div class="header-container gradient-background">
+        <h3>Settings Page</h3>
+    </div>
+
+    <div class="body-container gradient-background">
+        <div class="reserve-time-header">
+            <h4>Global Reservation Time</h4>
+        </div>
+        <div class="reserve-time-body">
+            <div class="reserve-time-description">
+                <div class="reserve-time-description-key gradient-background">
+                    Description
+                </div>
+                <span class="reserve-time-description-value">
+                    Here you can change global reservation time of every virtual safe
+                </span>
+            </div>
+            <div class="reserve-time-switches">
+                <div class="reserve-time-switch">
+                    <Switch @bind-Value="ViewModel.ChangeExistingReservationTime" />
+                    <span>
+                        @if (ViewModel.ChangeExistingReservationTime)
+                        {
+                            <span>Change</span>
+                        }
+                        else
+                        {
+                            <span>Don't change</span>
+                        }
+                        <span> existing reservation time of virtual safe.</span>
+                    </span>
+                </div>
+            </div>
+            <div class="reserve-time-container">
+                <div class="reserve-time-header-container">
+                    <h5> Reservation time </h5>
+                </div>
+                <div class="reserve-time-input-container">
+                    <div class="form-floating mb-3 input-container">
+                        <TimeInput TValue="TimeOnly?" @bind-Value="@ViewModel.ReservationTimeOnly" />
+                        <label for="floatingInput">hours:minutes</label>
+                    </div>
+                </div>
+                <div class="reserve-time-btns-container">
+                    <Button @onclick='async () => await ViewModel.ReserveTimeChangingConfirmModal.ShowAsync()' Color="ButtonColor.Primary" Style="width: 120px"> Save Time </Button>
+
+                    <Button @onclick='async () => await ViewModel.ReserveTimeClearingConfirmModal.ShowAsync()' Color="ButtonColor.Danger" Style="width: 120px"> Clear Time </Button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="body-container gradient-background">
+        <div class="shortcut-header">
+            <h4>Shortcuts</h4>
+        </div>
+        @if (ViewModel.Shortcuts.Count is not 0)
+        {
+            @foreach (var shortcut in ViewModel.Shortcuts.OrderByDescending(el => el.Name))
+            {
+                <div class="shortcut-body">
+                    <div class="shortcut-name gradient-background">@shortcut.Name</div>
+                    <div class="shortcut-description">
+                        <div class="shortcut-description-key gradient-background">
+                            Description
+                        </div>
+                        <span class="shortcut-description-value">
+                            @shortcut.Description
+                        </span>
+                    </div>
+                    <div class="shortcut-key-code-container">
+                        <div class="shortcut-key-container">
+                            <div class="shortcut-key-key">
+                                Shortcut:
+                            </div>
+                            <span class="shortcut-key-value">
+                                @shortcut.KeyValue
+                                @if(shortcut.AltPressed) {<span> + Alt</span>}
+                                @if(shortcut.ControlPressed) {<span> + Ctrl</span>}
+                                @if(shortcut.ShiftPressed) {<span> + Shift</span>}
+                                @if(shortcut.MetaPressed) {
+                                    <span> + 
+                                        @if (DeviceInfo.Current.Platform == DevicePlatform.WinUI)
+                                        {
+                                            <span>Win</span>
+                                        }
+                                        else
+                                        {
+                                            <span>Meta</span>
+                                        }
+                                    </span>
+                                }
+                            </span>
+                        </div>
+                        <div class="shortcut-code-container">
+                            <div class="shortcut-code-key">
+                                Key Code:
+                            </div>
+                            <span class="shortcut-code-value">
+                                @shortcut.KeyCode
+                            </span>
+                        </div>
+                        <button class="shortcut-key-code-btn" @onclick="async () => await OnShortcutChangeClickAsync(shortcut)"> Change </button>
+                    </div>
+                    <div class="shortcut-btns-container shortcut-btns-container-grid" style="align-self: center; justify-self: center;">
+                        <Button Color="ButtonColor.Primary" @onclick='async () => await OnSaveShortcutChangesClickAsync(shortcut)' Style="width: max-content; padding: 10px 15px 10px 15px"> Save Changes </Button>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="alert-container">
+                <Alert Color="AlertColor.Info"> <Icon Name="IconName.InfoCircleFill" class="me-2"></Icon> Not a single shortcut was found. </Alert>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    protected async override void OnInitialized()
+    {
+        ViewModel.Shortcuts = await ShortcutRepo.ToListAsync();
+        ViewModel.Reservations = await ReservationRepo.ToListAsync();
+    }
+
+    private async Task OnShortcutChangeClickAsync(ShortcutModel shortcutModel)
+    {
+        KeyUpStore
+            .WithName($"{nameof(SettingsPage)}_{nameof(OnShortcutChangeShortcutAsync)}")
+            .Add(shortcutEntity => OnShortcutChangeShortcutAsync(shortcutEntity, shortcutModel));
+
+        await ViewModel.ShortcutInputAwaiterModal.ShowAsync();
+    }
+
+    private async Task OnShortcutChangeCancelClickAsync()
+    {
+        KeyUpStore.Remove(shortcut => shortcut.Key.Contains(nameof(SettingsPage)));
+
+        await ViewModel.ShortcutInputAwaiterModal.HideAsync();
+    }
+
+    private async Task OnShortcutChangeShortcutAsync(ShortcutEntity shortcutEntity, ShortcutModel shortcutModel)
+    {
+
+        shortcutModel.KeyValue = shortcutEntity.Key.Value;
+        shortcutModel.KeyCode = shortcutEntity.Key.Code;
+
+        shortcutModel.AltPressed = shortcutEntity.Modifiers.Alt.IsPressed;
+        shortcutModel.ControlPressed = shortcutEntity.Modifiers.Control.IsPressed;
+        shortcutModel.ShiftPressed = shortcutEntity.Modifiers.Shift.IsPressed;
+        shortcutModel.MetaPressed = shortcutEntity.Modifiers.Meta.IsPressed;
+
+        KeyUpStore.Remove(shortcut => shortcut.Key.Contains(nameof(SettingsPage)));
+
+        StateHasChanged();
+
+        await ViewModel.ShortcutInputAwaiterModal.HideAsync();
+    }
+
+    private async Task OnSaveShortcutChangesClickAsync(ShortcutModel shortcut)
+    {
+        await ShortcutRepo.UpdateAsync(shortcut);
+
+        await ViewModel.ShortcutSavingSucceededModal.ShowAsync();
+    }
+
+    private async Task OnSaveReservationTimeClick()
+    {
+        await ViewModel.ReserveTimeChangingConfirmModal.HideAsync();
+
+        if (ViewModel.ReservationTimeOnly is null)
+        {
+            await ViewModel.NotEnteredReserveTimeModal.ShowAsync();
+            return;
+        }
+
+        var reservations = ViewModel.ChangeExistingReservationTime 
+                            ? ViewModel.Reservations 
+                            : ViewModel.Reservations.Where(el => el.ToReserveTimeSpan is null);
+
+        foreach (var reservation in reservations)
+        {
+            reservation.ToReserveTimeSpan = TimeSpan.Parse($"{ViewModel.ReservationTimeOnly.Value.Hour}:{ViewModel.ReservationTimeOnly.Value.Minute}:00");
+
+            await ReservationRepo.UpdateAsync(reservation);
+        }
+
+        ViewModel.ReservationTimeOnly = null;
+
+        await ViewModel.ReserveTimeChangingSucceededModal.ShowAsync();
+    }
+
+    private async Task OnClearReservationTimeClick()
+    {
+        await ViewModel.ReserveTimeClearingConfirmModal.HideAsync();
+
+        foreach (var reservation in ViewModel.Reservations)
+        {
+            reservation.ToReserveTimeSpan = null;
+
+            await ReservationRepo.UpdateAsync(reservation);
+        }
+
+        ViewModel.ReservationTimeOnly = null;
+
+        await ViewModel.ReserveTimeChangingSucceededModal.ShowAsync();
+    }
+}

@@ -1,1 +1,264 @@
-﻿
+﻿.main-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.header-container {
+    padding-top: 10px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 10px;
+    color: white;
+    margin-bottom: 20px;
+}
+
+.body-container {
+    width: 100%;
+    padding-top: 15px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.alert-container {
+    width: 90%;
+    margin: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.reserve-time-header {
+    padding-top: 15px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 10px;
+    background-color: white;
+    margin-bottom: 20px;
+}
+
+.reserve-time-description {
+    width: 100%;
+    border: 1px solid royalblue;
+    border-radius: 11px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    background-color: white;
+}
+
+.reserve-time-description-key {
+    background-color: royalblue;
+    color: white;
+    padding: 5px 10px 5px 10px;
+    border-top-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    width: max-content;
+}
+
+.reserve-time-description-value {
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.reserve-time-switches {
+    border: 1px solid royalblue;
+    border-radius: 11px;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: white;
+    justify-content: center;
+    align-items: start;
+}
+
+.reserve-time-switch {
+    display: flex;
+    flex-direction: row;
+}
+
+.reserve-time-container {
+    background: white;
+    width: 100%;
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.reserve-time-header-container {
+    margin: 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.reserve-time-input-container {
+    width: 80%;
+    max-width: 270px;
+}
+
+.reserve-time-btns-container {
+    display: grid;
+    width: 90%;
+    grid-template-columns: repeat(auto-fit, 120px);
+    justify-content: center;
+    align-items: center;
+    grid-column-gap: 30px;
+    grid-row-gap: 10px;
+}
+
+.shortcut-header {
+    padding-top: 15px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 10px;
+    background-color: white;
+    margin-bottom: 20px;
+}
+
+.shortcut-body {
+    width: 100%;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    padding-left: 20px;
+    padding-right: 20px;
+    background-color: white;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.shortcut-name {
+    font-size: large;
+    color: white;
+    border-radius: 10px;
+    padding: 10px 10px 10px 10px;
+    margin-bottom: 20px;
+    width: fit-content;
+}
+
+.shortcut-description {
+    width: 100%;
+    border: 1px solid royalblue;
+    border-radius: 11px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.shortcut-description-key {
+    background-color: royalblue;
+    color: white;
+    padding: 5px 10px 5px 10px;
+    border-top-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    width: max-content;
+}
+
+.shortcut-description-value {
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.shortcut-key-code-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+    border: 1px solid royalblue;
+    border-radius: 11px;
+    margin-bottom: 20px;
+}
+
+.shortcut-key-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: max-content;
+}
+
+.shortcut-code-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: max-content;
+}
+
+.shortcut-key-key {
+    background-color: royalblue;
+    color: white;
+    padding: 10px;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.shortcut-key-value {
+    margin-left: 10px;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.shortcut-code-key {
+    background-color: royalblue;
+    color: white;
+    padding: 10px;
+}
+
+.shortcut-code-value {
+    margin-left: 10px;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.shortcut-key-code-btn {
+    background-color: royalblue;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    transition: background-color 0.5s ease;
+}
+
+    .shortcut-key-code-btn:hover {
+        background-color: blue;
+    }
+
+    .shortcut-key-code-btn:active {
+        background-color: cornflowerblue;
+    }
+
+.shortcut-btns-container {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

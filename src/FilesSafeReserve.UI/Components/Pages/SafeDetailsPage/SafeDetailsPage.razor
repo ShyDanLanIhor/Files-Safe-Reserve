@@ -21,6 +21,44 @@
 
 @implements IDisposable
 
+<Modal @ref="ViewModel.ReserveTimeChangingSucceededModal" title="Reservation Time Changed" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        The reservation time of virtual safe has been changed successfully.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick='async () => await ViewModel.ReserveTimeChangingSucceededModal.HideAsync()'>Understood</Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.ReserveTimeClearingConfirmModal" title="Reservation Time Changing" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Are you sure you want to clear the reservation time of virtual safe?
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick='async () => await OnClearTimeClick()'>Yes</Button>
+        <Button Color="ButtonColor.Danger" @onclick='async () => await ViewModel.ReserveTimeClearingConfirmModal.HideAsync()'>No</Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.ReserveTimeChangingConfirmModal" title="Reservation Time Changing" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Are you sure you want to change the reservation time of virtual safe?
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick='async () => await OnSaveTimeClick()'>Yes</Button>
+        <Button Color="ButtonColor.Danger" @onclick='async () => await ViewModel.ReserveTimeChangingConfirmModal.HideAsync()'>No</Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.NotEnteredReserveTimeModal" title="Reservation Time Changing" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Please enter a time first to update your virtual safe reservation time.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick='async () => await ViewModel.NotEnteredReserveTimeModal.HideAsync()'>Understood</Button>
+    </FooterTemplate>
+</Modal>
+
 <Modal @ref="ViewModel.DeleteModal" title="Virtual Safe Delete" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
     <BodyTemplate>
         Are you sure that you want delete "@ViewModel.VirtualSafe!.Name"
@@ -156,9 +194,9 @@
                     </div>
                 </div>
                 <div class="reserve-time-btns-container">
-                    <Button @onclick='async () => await OnSaveTimeClick()' Color="ButtonColor.Primary" Style="width: 120px"> Save Time </Button>
+                    <Button @onclick='async () => await ViewModel.ReserveTimeChangingConfirmModal.ShowAsync()' Color="ButtonColor.Primary" Style="width: 120px"> Save Time </Button>
 
-                    <Button @onclick='async () => await OnClearTimeClick()' Color="ButtonColor.Danger" Style="width: 120px"> Clear Time </Button>
+                    <Button @onclick='async () => await ViewModel.ReserveTimeClearingConfirmModal.ShowAsync()' Color="ButtonColor.Danger" Style="width: 120px"> Clear Time </Button>
                 </div>
             </div>
         }
@@ -316,21 +354,35 @@
 
     private async Task OnSaveTimeClick()
     {
+        await ViewModel.ReserveTimeChangingConfirmModal.HideAsync();
+
         if (ViewModel.VirtualSafe is null) return;
-        if (ViewModel.ReservationTimeOnly is null) return;
+        if (ViewModel.ReservationTimeOnly is null)
+        {
+            await ViewModel.NotEnteredReserveTimeModal.ShowAsync();
+            return;
+        }
 
         ViewModel.VirtualSafe.Reservation.ToReserveTimeSpan = TimeSpan.Parse($"{ViewModel.ReservationTimeOnly.Value.Hour}:{ViewModel.ReservationTimeOnly.Value.Minute}:00");
 
         await ReservationRepo.UpdateAsync(ViewModel.VirtualSafe.Reservation);
+
+        await ViewModel.ReserveTimeChangingSucceededModal.ShowAsync();
     }
 
     private async Task OnClearTimeClick()
     {
+        await ViewModel.ReserveTimeClearingConfirmModal.HideAsync();
+
         if (ViewModel.VirtualSafe is null) return;
 
-        ViewModel.VirtualSafe.Reservation.ToReserveTimeSpan = TimeSpan.Zero;
+        ViewModel.VirtualSafe.Reservation.ToReserveTimeSpan = null;
 
         await ReservationRepo.UpdateAsync(ViewModel.VirtualSafe.Reservation);
+
+        ViewModel.ReservationTimeOnly = null;
+
+        await ViewModel.ReserveTimeChangingSucceededModal.ShowAsync();
     }
 }
 

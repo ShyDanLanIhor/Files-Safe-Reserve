@@ -13,5 +13,5 @@ public class SafesListViewModel
     public VirtualSafeModel? SelectedToDeleteVirtualSafe { get; set; }
     public ShortcutModel? ReserveSafesShortcut { get; set; }
 
-    public List<VirtualSafeModel> VirtualSafes { get; set; } = [];
+    public ICollection<VirtualSafeModel> VirtualSafes { get; set; } = [];
 }
