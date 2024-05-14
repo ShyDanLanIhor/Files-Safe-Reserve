@@ -47,13 +47,10 @@
                     <Button @onclick="OnPickClick" Color="ButtonColor.Secondary">Pick</Button>
                 </div>
             </div>
-            <div class="btns-container">
-                <div class="btns-container-item">
-                    <Button Type="ButtonType.Submit" Color="ButtonColor.Success"> Create </Button>
-                </div>
-                <div class="btns-container-item">
-                    <Button onclick="history.back();" Color="ButtonColor.Secondary"> Go Back </Button>
-                </div>
+            <div class="btns-container btns-container-grid">
+                <Button Type="ButtonType.Submit" Color="ButtonColor.Success" Style="width: 100px"> Create </Button>
+
+                <Button onclick="history.back();" Color="ButtonColor.Secondary" Style="width: 100px"> Go Back </Button>
             </div>
 
             @if (ViewModel.EditContext.Validate() is false)

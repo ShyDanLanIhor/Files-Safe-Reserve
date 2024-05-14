@@ -218,4 +218,12 @@
     .reserves-btns-container {
         flex-direction: column;
     }
+
+    .description-container {
+        font-size: small;
+    }
+
+    .timestamp-container {
+        font-size: small;
+    }
 }

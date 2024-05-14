@@ -147,3 +147,19 @@
     justify-content: center;
     align-items: center;
 }
+
+@media (max-width: 855px) {
+    .description-text-container {
+        font-size: small;
+        overflow-x: auto;
+    }
+
+    .timestamp-item {
+        font-size: small;
+        overflow-x: auto;
+    }
+
+    .alert-container {
+        font-size: small;
+    }
+}

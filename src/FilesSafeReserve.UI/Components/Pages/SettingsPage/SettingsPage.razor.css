@@ -262,3 +262,70 @@
     justify-content: center;
     align-items: center;
 }
+
+@media (max-width: 855px) {
+    .shortcut-key-code-container {
+        flex-direction: column;
+        font-size: small;
+    }
+
+    .shortcut-key-container {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .shortcut-code-container {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .shortcut-key-key {
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        border-bottom-left-radius: 0px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .shortcut-key-code-btn {
+        border-top-right-radius: 0px;
+        border-bottom-right-radius: 10px;
+        border-bottom-left-radius: 10px;
+        width: 100%;
+    }
+
+    .shortcut-key-value {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    .shortcut-code-value {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    .shortcut-code-key {
+        width: 100%;
+        text-align: center;
+    }
+
+    .reserve-time-container {
+        font-size: small;
+    }
+
+    .reserve-time-switches {
+        font-size: small;
+    }
+
+    .reserve-time-description {
+        font-size: small;
+    }
+
+    .shortcut-description {
+        font-size: small;
+    }
+
+    .alert-container {
+        font-size: small;
+    }
+}

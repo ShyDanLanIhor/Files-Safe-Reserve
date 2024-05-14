@@ -13,6 +13,7 @@ public class ReservationViewModel
     public Modal NoItemWasPickedModal { get; set; } = default!;
     public Modal ReservationProgress { get; set; } = default!;
     public Modal FilterProgress { get; set; } = default!;
+    public Modal EmptySearchFieldModal { get; set; } = default!;
 
     public bool IncludeFiles { get; set; } = true;
     public bool IncludeDirectories { get; set; } = true;
