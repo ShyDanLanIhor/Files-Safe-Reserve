@@ -1,0 +1,356 @@
+﻿@page "/virtual-safe/logs/{id}"
+
+@using CommunityToolkit.Maui.Storage
+@using FilesSafeReserve.App.Models
+@using FilesSafeReserve.Infra.Repositories.IRepositories
+@using System.Diagnostics
+@using System.Text
+@using FilesSafeReserve.UI.Data.ViewModels
+@using Newtonsoft.Json
+@using Newtonsoft.Json.Serialization
+@using static FilesSafeReserve.UI.Data.ViewModels.LogsViewModel
+
+@inject IVirtualSafeRepo VirtualSafeRepo
+@inject IFileSaver FileSaver
+
+<Modal @ref="ViewModel.NotFoundModal" title="Virtual Safe Finding" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Virtual safe was not found by id: @Id.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" onclick="history.back()">OK</Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.FilterProgress" title="Filter Progress" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Please wait for the filter to complete.
+    </BodyTemplate>
+    <FooterTemplate>
+        <div class="loader-container">
+            <span class="loader"></span>
+        </div>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.EmptySearchFieldModal" title="Empty Search Field" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Please enter the text in the search field first, and then search.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick="async () => await ViewModel.EmptySearchFieldModal.HideAsync()">Understood</Button>
+    </FooterTemplate>
+</Modal>
+
+<div class="main-container">
+    <div class="header-container gradient-background">
+        <h3>Logs Page</h3>
+    </div>
+
+    <div class="body-container gradient-background">
+        @if (ViewModel.VirtualSafe is not null)
+        {
+            <div class="name-container">
+                <h4>@ViewModel.VirtualSafe.Name Logs</h4>
+            </div>
+
+            <div class="btns-container btns-container-grid">
+                <Button @onclick='async () => await OnSaveFileClick()' Color="ButtonColor.Primary" Style="width: 120px"> Save File </Button>
+
+                <Button onclick="history.back();" Color="ButtonColor.Secondary" Style="width: 120px"> Go Back </Button>
+            </div>
+
+            <div class="logs-container">
+                <div class="logs-header-container">
+                    <h5> Logs list </h5>
+                </div>
+
+                <div>
+                    <div class="input-group mb-3">
+                        <InputText @bind-Value="ViewModel.SearchText" type="text" class="form-control" placeholder="Search" aria-label="Path to safe" aria-describedby="basic-addon2" />
+                        <div class="input-group-append">
+                            <Button @onclick="OnSearchClick" Color="ButtonColor.Secondary" Style="border-radius: 0px;"><Icon Name="IconName.Search"></Icon></Button>
+                            @if (ViewModel.IsSearched)
+                            {
+                                <Button @onclick="OnClearSearchClick" Color="ButtonColor.Danger" Style="border-radius: 0px;"><Icon Name="IconName.XCircle"></Icon></Button>
+                            }
+                            <Button @onclick="() => ViewModel.IsShowFilter = !ViewModel.IsShowFilter" Color="ButtonColor.Secondary" Style="border-bottom-left-radius: 0px; border-top-left-radius: 0px;">
+                                @if (ViewModel.IsShowFilter)
+                                {
+                                    <Icon Name="IconName.FilterSquareFill"></Icon>
+                                }
+                                else
+                                {
+                                    <Icon Name="IconName.FilterSquare"></Icon>
+                                }
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+
+                @if (ViewModel.IsShowFilter)
+                {
+                    <div class="filters-container">
+                        <div class="filters-key gradient-background">
+                            <span>Filters</span>
+                        </div>
+                        <div class="filters-value">
+                            <div class="time-filter-container">
+                                <div class="time-filter-key gradient-background">
+                                    Time filter
+                                </div>
+                                <div class="time-filter-value">
+                                    <div class="time-filter-value-container">
+                                        <div class="container-time-filter-container">
+                                            <div class="container-time-filter-key">
+                                                Start Time:
+                                            </div>
+                                            <div class="container-time-filter-value">
+                                                <input type="datetime-local" @bind="ViewModel.StartTimestamp" class="time-filter-value-datetime-input" />
+                                            </div>
+                                        </div>
+                                        @if (ViewModel.StartTimestamp is not null)
+                                        {
+                                            <button class="time-filter-value-btn-delete" @onclick="() => ViewModel.StartTimestamp = null"><Icon Name="IconName.XCircle"></Icon></button>
+                                        }
+                                    </div>
+                                    <div class="time-filter-value-container">
+                                        <div class="container-time-filter-container">
+                                            <div class="container-time-filter-key">
+                                                End Time:
+                                            </div>
+                                            <span class="container-time-filter-value">
+                                                <input type="datetime-local" @bind="ViewModel.EndTimestamp" class="time-filter-value-datetime-input" />
+                                            </span>
+                                        </div>
+                                        @if (ViewModel.EndTimestamp is not null)
+                                        {
+                                            <button class="time-filter-value-btn-delete" @onclick="() => ViewModel.EndTimestamp = null"><Icon Name="IconName.XCircle"></Icon></button>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="filters-btns-container filters-btns-container-grid">
+                                <Button @onclick='async () => await OnFilterClick()' Color="ButtonColor.Primary" Style="width: 80px"> Filter </Button>
+
+                                <Button @onclick='async () => await OnClearFilterClick()' Color="ButtonColor.Secondary" Style="width: 80px"> Clear </Button>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @foreach (var log in ViewModel.LogsList.OrderByDescending(el => el.EndTimestamp))
+                {
+                    <div class="logs-element-container gradient-background">
+                        <div class="logs-element-description-container">
+                            <div class="logs-element-description-key gradient-background">
+                                Description
+                            </div>
+                            <span class="logs-element-description-value">
+                                @log.Description
+                            </span>
+                        </div>
+                        <div class="logs-element-operations-container">
+                            <div class="logs-element-operations-key gradient-background">
+                                Operations
+                            </div>
+                            <div class="logs-element-operations-value">
+                                <ol>
+                                    @foreach (var operation in log.Operations.OrderBy(el => el.PerformTimestamp))
+                                    {
+                                        <li>@operation.Message</li>
+                                    }
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="alert-container">
+                <Alert Color="AlertColor.Info"> <Icon Name="IconName.InfoCircleFill" class="me-2"></Icon> Not a single log was found. </Alert>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    protected async override void OnInitialized()
+    {
+        var safeResult = await VirtualSafeRepo.GetByIdAsync(new Guid(Id));
+
+        if (safeResult.IsSucceeded is false)
+        {
+            await ViewModel.NotFoundModal.ShowAsync();
+            return;
+        }
+
+        ViewModel.VirtualSafe = safeResult.Value;
+
+        ViewModel.LogsList = ViewModel.VirtualSafe.Details.Logs;
+    }
+
+    private async Task OnSaveFileClick()
+    {
+        if (ViewModel.VirtualSafe is null)
+        {
+            await ViewModel.NotFoundModal.ShowAsync();
+            return;
+        }
+
+        List<FileLogsEntity> fileLogs = ViewModel.LogsList
+                                        .OrderByDescending(el => el.EndTimestamp)
+                                        .Select(log => new FileLogsEntity()
+                                        {
+                                            Description = log.Description,
+                                            Operations = log.Operations
+                                                            .OrderBy(el => el.PerformTimestamp)
+                                                            .Select(el => el.Message)
+                                        })
+                                        .ToList();
+
+        string json = JsonConvert.SerializeObject(fileLogs,
+            new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented,
+                ContractResolver = new DefaultContractResolver
+                {
+                    NamingStrategy = new CamelCaseNamingStrategy()
+                }
+            });
+
+        using var stream = new MemoryStream(Encoding.Default.GetBytes(json));
+        var path = await FileSaver.SaveAsync($"{ViewModel.VirtualSafe.Name} Logs.txt", stream);
+    }
+
+    private async Task OnSearchClick()
+    {
+        if (ViewModel.SearchText == string.Empty)
+        {
+            await ViewModel.EmptySearchFieldModal.ShowAsync();
+            return;
+        }
+
+        if (ViewModel.VirtualSafe is null)
+        {
+            await ViewModel.NotFoundModal.ShowAsync();
+            return;
+        }
+
+        ViewModel.LogsList = await FilterLogsAsync
+        (
+            ViewModel.VirtualSafe.Details.Logs,
+            ViewModel.SearchText,
+            ViewModel.StartTimestamp,
+            ViewModel.EndTimestamp
+        );
+
+        ViewModel.IsSearched = true;
+    }
+
+    private async Task OnClearSearchClick()
+    {
+        if (ViewModel.VirtualSafe is null)
+        {
+            await ViewModel.NotFoundModal.ShowAsync();
+            return;
+        }
+
+        ViewModel.SearchText = string.Empty;
+
+        ViewModel.LogsList = await FilterLogsAsync
+        (
+            ViewModel.VirtualSafe.Details.Logs,
+            ViewModel.SearchText,
+            ViewModel.StartTimestamp,
+            ViewModel.EndTimestamp
+        );
+
+        ViewModel.IsSearched = false;
+    }
+
+    private async Task OnFilterClick()
+    {
+        if (ViewModel.VirtualSafe is null)
+        {
+            await ViewModel.NotFoundModal.ShowAsync();
+            return;
+        }
+
+        ViewModel.LogsList = await FilterLogsAsync
+        (
+            ViewModel.VirtualSafe.Details.Logs,
+            ViewModel.SearchText,
+            ViewModel.StartTimestamp,
+            ViewModel.EndTimestamp
+        );
+
+        ViewModel.IsFiltered = true;
+        ViewModel.IsShowFilter = false;
+    }
+
+    private async Task OnClearFilterClick()
+    {
+        if (ViewModel.VirtualSafe is null)
+        {
+            await ViewModel.NotFoundModal.ShowAsync();
+            return;
+        }
+
+        ViewModel.StartTimestamp = null;
+        ViewModel.EndTimestamp = null;
+
+        ViewModel.LogsList = await FilterLogsAsync
+        (
+            ViewModel.VirtualSafe.Details.Logs,
+            ViewModel.SearchText,
+            ViewModel.StartTimestamp,
+            ViewModel.EndTimestamp
+        );
+
+        ViewModel.IsFiltered = false;
+        ViewModel.IsShowFilter = false;
+    }
+
+    private async Task<ICollection<LogModel>> FilterLogsAsync(IEnumerable<LogModel> enumerable, string searchText, DateTime? startTimestamp, DateTime? endTimestamp)
+    {
+        Stopwatch stopwatch = new Stopwatch();
+
+        stopwatch.Start();
+
+        bool IsOneSecondElapsed = false;
+
+        if (searchText != string.Empty)
+            enumerable = enumerable.Where(el => el.Description.Contains(searchText) || el.Operations.Any(el => el.Message.Contains(searchText)));
+
+        if (stopwatch.ElapsedMilliseconds >= 1000)
+        {
+            await ViewModel.FilterProgress.ShowAsync();
+            IsOneSecondElapsed = true;
+        }
+
+        if (startTimestamp is not null && ViewModel.IsFiltered)
+            enumerable = enumerable.Where(el => el.StartTimestamp > startTimestamp);
+
+        if (stopwatch.ElapsedMilliseconds >= 1000)
+        {
+            await ViewModel.FilterProgress.ShowAsync();
+            IsOneSecondElapsed = true;
+        }
+
+        if (endTimestamp is not null && ViewModel.IsFiltered)
+            enumerable = enumerable.Where(el => el.EndTimestamp < endTimestamp);
+
+        if (IsOneSecondElapsed)
+        {
+            await Task.Delay(1000);
+            await ViewModel.FilterProgress.HideAsync();
+        }
+
+        stopwatch.Stop();
+
+        return enumerable.ToList();
+    }
+}

@@ -174,6 +174,8 @@
 
                 <Button @onclick='() => Navigation.NavigateTo($"/virtual-safe/reservation/{Id}")' Color="ButtonColor.Primary" Style="width: 120px"> Reservation </Button>
 
+                <Button @onclick='() => Navigation.NavigateTo($"/virtual-safe/logs/{Id}")' Color="ButtonColor.Primary" Style="width: 120px"> Logs </Button>
+
                 <Button @onclick='() => FileOpenerService.Open(ViewModel.VirtualSafe.Directory)' Color="ButtonColor.Primary" Style="width: 120px"> Open </Button>
 
                 <Button @onclick='OnReserveSafeClick' Color="ButtonColor.Primary" Style="width: 120px"> Reserve </Button>

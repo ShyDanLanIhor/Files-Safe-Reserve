@@ -137,6 +137,8 @@
 
 .reservation-element-name {
     margin-left: 5px;
+    overflow-x: auto;
+    white-space: nowrap;
 }
 
 .reservation-element-btns {
@@ -166,4 +168,23 @@
     justify-content: center;
     align-items: start;
     margin-bottom: 10px;
+}
+
+@media (max-width: 855px) {
+    .reservation-element-container {
+        font-size: small;
+    }
+
+    .reservation-element-btn {
+        font-size: small;
+    }
+
+    .reservation-element-btns {
+        grid-template-columns: repeat(auto-fit, 40px);
+        width: 37%;
+    }
+
+    .alert-container {
+        font-size: small;
+    }
 }

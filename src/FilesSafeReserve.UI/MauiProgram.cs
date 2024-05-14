@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Storage;
 using FilesSafeReserve.App.Builders.IBuilders;
 using FilesSafeReserve.App.Services.IServices;
 using FilesSafeReserve.Infra.Builders;
@@ -13,7 +14,8 @@ using FilesSafeReserve.UI.Data.Managers.IManagers;
 using FilesSafeReserve.UI.Data.Stores;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.JSInterop;
+using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace FilesSafeReserve.UI;
 public static class MauiProgram
@@ -61,6 +63,8 @@ public static class MauiProgram
         builder.Services.AddScoped<IKeyUpManager, KeyUpManager>();
 
         builder.Services.AddSingleton<KeyUpStore>();
+
+        builder.Services.AddSingleton(FileSaver.Default);
 
         builder.Services.AddDbContext<FsrDbContext>();
         builder.Services.AddTransient<MainPage>();

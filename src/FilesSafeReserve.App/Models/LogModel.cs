@@ -37,7 +37,7 @@ public class LogModel : IModelBase<Guid>
     /// This property is not mapped to a database column.
     /// </summary>
     [NotMapped]
-    public string Name
+    public string Description
     {
         get
         {
@@ -49,7 +49,7 @@ public class LogModel : IModelBase<Guid>
                     name = $"Log of type '{opType.GetName()}'";
             }
 
-            return $"{name} in time frame '{StartTimestamp:dd/MM/yyyy HH:mm:ss}'-'{EndTimestamp:dd/MM/yyyy HH:mm:ss}'";
+            return $"{name} in time frame from '{StartTimestamp:dd/MM/yyyy HH:mm:ss}' to '{EndTimestamp:dd/MM/yyyy HH:mm:ss}'";
         }
     }
 

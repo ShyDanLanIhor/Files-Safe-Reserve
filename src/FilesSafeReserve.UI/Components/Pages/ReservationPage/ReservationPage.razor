@@ -76,6 +76,15 @@
     </FooterTemplate>
 </Modal>
 
+<Modal @ref="ViewModel.EmptySearchFieldModal" title="Empty Search Field" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Please enter the text in the search field first, and then search.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick="async () => await ViewModel.EmptySearchFieldModal.HideAsync()">Understood</Button>
+    </FooterTemplate>
+</Modal>
+
 <div class="main-container">
     <div class="header-container gradient-background">
         <h3>Reservation Page</h3>
@@ -105,10 +114,10 @@
                     <div class="input-group mb-3">
                         <InputText @bind-Value="ViewModel.SearchText" type="text" class="form-control" placeholder="Search" aria-label="Path to safe" aria-describedby="basic-addon2" />
                         <div class="input-group-append">
-                            <Button @onclick="OnSearchClick" Color="ButtonColor.Secondary"><Icon Name="IconName.Search"></Icon></Button>
+                            <Button @onclick="OnSearchClick" Color="ButtonColor.Secondary" Style="@SearchButtonStyle"><Icon Name="IconName.Search"></Icon></Button>
                             @if (ViewModel.IsSearched)
                             {
-                                <Button @onclick="OnClearClick" Color="ButtonColor.Danger"><Icon Name="IconName.XCircle"></Icon></Button>
+                                <Button @onclick="OnClearClick" Color="ButtonColor.Danger" Style="border-bottom-left-radius: 0px; border-top-left-radius: 0px;"><Icon Name="IconName.XCircle"></Icon></Button>
                             }
                         </div>
                     </div>
@@ -154,19 +163,19 @@
                                 <div class="reservation-element-btns">
                                     @if (item.Value.Type is ShyFsType.Directory)
                                     {
-                                        <Button Color="ButtonColor.Primary" @onclick='async () => OnReserveClick(item)'> <Icon Name="IconName.FolderSymlink"></Icon> </Button>
+                                        <Button Color="ButtonColor.Primary" @onclick='async () => OnReserveClick(item)'> <i class="bi bi-folder-symlink reservation-element-btn" /> </Button>
 
-                                        <Button Color="ButtonColor.Secondary" @onclick='() => FileOpenerService.Open(item.Value.ToShyDirectory().Info.Parent!.FullName)'> <Icon Name="IconName.Folder2Open"></Icon> </Button>
+                                        <Button Color="ButtonColor.Secondary" @onclick='() => FileOpenerService.Open(item.Value.ToShyDirectory().Info.Parent!.FullName)'> <i class="bi bi-folder2-open reservation-element-btn" /> </Button>
 
-                                        <Button Color="ButtonColor.Danger" @onclick='async () => await OnRemoveClick(item)'> <Icon Name="IconName.FolderX"></Icon> </Button>
+                                        <Button Color="ButtonColor.Danger" @onclick='async () => await OnRemoveClick(item)'> <i class="bi bi-folder-x reservation-element-btn" /> </Button>
                                     }
                                     else if (item.Value.Type is ShyFsType.File)
                                     {
-                                        <Button Color="ButtonColor.Primary" @onclick='async () => OnReserveClick(item)'> <Icon Name="IconName.FileEarmarkArrowUp"></Icon> </Button>
+                                        <Button Color="ButtonColor.Primary" @onclick='async () => OnReserveClick(item)'> <i class="bi bi-file-earmark-arrow-up reservation-element-btn"/> </Button>
 
-                                        <Button Color="ButtonColor.Secondary" @onclick='() => FileOpenerService.Open(item.Value.ToShyFile().Info.DirectoryName!)'> <Icon Name="IconName.Folder2Open"></Icon> </Button>
+                                        <Button Color="ButtonColor.Secondary" @onclick='() => FileOpenerService.Open(item.Value.ToShyFile().Info.DirectoryName!)'> <i class="bi bi-folder2-open reservation-element-btn"/> </Button>
 
-                                        <Button Color="ButtonColor.Danger" @onclick='async () => await OnRemoveClick(item)'> <Icon Name="IconName.FileX"></Icon> </Button>
+                                        <Button Color="ButtonColor.Danger" @onclick='async () => await OnRemoveClick(item)'> <i class="bi bi-file-x reservation-element-btn"/> </Button>
                                     }
                                 </div>
                             </div>
@@ -185,6 +194,8 @@
 </div>
 
 @code {
+    public string SearchButtonStyle = "border-bottom-left-radius: 0px; border-top-left-radius: 0px;";
+
     protected async override void OnInitialized()
     {
         var safeResult = await VirtualSafeRepo.GetByIdAsync(new Guid(Id));
@@ -307,6 +318,12 @@
 
     private async Task OnSearchClick()
     {
+        if (ViewModel.SearchText == string.Empty)
+        {
+            await ViewModel.EmptySearchFieldModal.ShowAsync();
+            return;
+        }
+
         if (ViewModel.VirtualSafe is null)
         {
             await ViewModel.NotFoundModal.ShowAsync();
@@ -322,6 +339,8 @@
         );
 
         ViewModel.IsSearched = true;
+
+        SearchButtonStyle = "border-radius: 0px;";
     }
 
     private async Task OnClearClick()
@@ -343,6 +362,8 @@
         );
 
         ViewModel.IsSearched = false;
+
+        SearchButtonStyle = "border-bottom-left-radius: 0px; border-top-left-radius: 0px;";
     }
 
     private async Task OnReserveSafeClick()
