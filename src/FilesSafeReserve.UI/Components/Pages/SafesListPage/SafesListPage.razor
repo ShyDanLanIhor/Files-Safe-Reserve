@@ -89,7 +89,15 @@
                         </span>
                     </div>
                     <div class="safe-btns-container safe-btns-container-grid" style="align-self: center; justify-self: center;">
-                        <Button @onclick='() => Navigation.NavigateTo($"/virtual-safe/details/{safe.Id.ToString()}")' Color="ButtonColor.Primary"> Details </Button>
+                        @if (safe.Directory.Exists is false)
+                        {
+                            <Button @onclick='() => safe.Directory.Create()' Color="ButtonColor.Info"> Restore </Button>
+                        }
+
+                        @if (safe.Directory.Exists)
+                        {
+                            <Button @onclick='() => Navigation.NavigateTo($"/virtual-safe/details/{safe.Id.ToString()}")' Color="ButtonColor.Primary"> Details </Button>
+                        }
 
                         <Button @onclick='async () => { ViewModel.SelectedToDeleteVirtualSafe = safe; await ViewModel.DeleteModal.ShowAsync(); }' Color="ButtonColor.Danger"> Delete </Button>
                     </div>
@@ -114,6 +122,8 @@
 
 
 @code{
+    public List<FileSystemWatcher> watchers = [];
+
     protected override async void OnInitialized()
     {
         ViewModel.VirtualSafes = await VirtualSafeRepo.ToListAsync();
@@ -128,11 +138,30 @@
                 .WithName($"{nameof(SafesListPage)}_{nameof(OnReserveSafesShortcut)}")
                 .Add(OnReserveSafesShortcut);
         }
+
+        watchers.AddRange(ViewModel.VirtualSafes
+                   .Select(safe => new FileSystemWatcher()
+                       {
+                           Path = safe.Directory.Info.Parent?.FullName is null 
+                                ? safe.Directory.Info.Root.FullName 
+                                : safe.Directory.Info.Parent.FullName,
+                           Filter = safe.Directory.Name,
+                           NotifyFilter = NotifyFilters.DirectoryName,
+                           EnableRaisingEvents = true,
+                       })
+         );
+
+        watchers.ForEach(watcher => watcher.Deleted += OnSafeChangedEvent);
     }
+
+    public async void OnSafeChangedEvent(object sender, FileSystemEventArgs e)
+        => await InvokeAsync(StateHasChanged);
 
     public void Dispose()
     {
         KeyUpStore.Remove(shortcut => shortcut.Key.Contains(nameof(SafesListPage)));
+        watchers.ForEach(watcher => watcher.Deleted -= OnSafeChangedEvent);
+        watchers.Clear();
     }
 
     private async Task OnReserveSafesShortcut(ShortcutEntity shortcut)
@@ -214,9 +243,21 @@
 
         var result = await VirtualSafeRepo.RemoveAsync(safe);
 
-        if (result.IsSucceeded)
+        ViewModel.VirtualSafes = await VirtualSafeRepo.ToListAsync();
+
+        StateHasChanged();
+
+        if (!result.IsSucceeded) await ViewModel.DeleteFailedModal.ShowAsync();
+
+        try
+        {
+            safe.Directory.Delete();
+
             await ViewModel.DeleteSucceededModal.ShowAsync();
-        else
+        }
+        catch (Exception)
+        {
             await ViewModel.DeleteFailedModal.ShowAsync();
+        }
     }
 }

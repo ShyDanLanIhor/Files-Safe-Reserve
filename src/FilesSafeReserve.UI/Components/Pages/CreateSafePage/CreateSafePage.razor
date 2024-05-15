@@ -44,7 +44,7 @@
             <div class="input-group mb-3 input-container">
                 <InputText @bind-Value="ViewModel.VirtualSafe.Path" type="text" class="form-control" placeholder="Path to safe" aria-label="Path to safe" aria-describedby="basic-addon2" />
                 <div class="input-group-append">
-                    <Button @onclick="OnPickClick" Color="ButtonColor.Secondary">Pick</Button>
+                    <Button @onclick="OnPickClick" Color="ButtonColor.Secondary" Style="border-bottom-left-radius: 0px; border-top-left-radius: 0px;">Pick</Button>
                 </div>
             </div>
             <div class="btns-container btns-container-grid">
@@ -91,45 +91,44 @@
     {
         if (VirtualSafeRepo.ToList()
                            .Where(s => s.Path.Contains(ViewModel.VirtualSafe.Path))
-                           .Count() is 0)
-        {
-            await VirtualSafeRepo.AddAsync(
-                new()
-                {
-                    Name = ViewModel.VirtualSafe.Name,
-                    Description = ViewModel.VirtualSafe.Description,
-                    Path = ViewModel.VirtualSafe.Path,
-                    Details =
-                    new()
-                    {
-                        Logs =
-                        [
-                            new()
-                            {
-                                StartTimestamp = DateTime.Now,
-                                EndTimestamp = DateTime.Now,
-                                Operations =
-                                [
-                                    new()
-                                    {
-                                        IsSucceeded = true,
-                                        ItemPath = ViewModel.VirtualSafe.Path,
-                                        Type = LogOperationModel.Types.CreateVirtualSafe,
-                                        PerformTimestamp = DateTime.Now,
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    Reservation = new()
-                });
-
-            await ViewModel.SuccessModal.ShowAsync();
-        }
-        else
+                           .Count() is not 0)
         {
             await ViewModel.DuplicateModal.ShowAsync();
         }
+
+        Directory.CreateDirectory(ViewModel.VirtualSafe.Path);
+
+        await VirtualSafeRepo.AddAsync(new()
+        {
+            Name = ViewModel.VirtualSafe.Name,
+            Description = ViewModel.VirtualSafe.Description,
+            Path = ViewModel.VirtualSafe.Path,
+            Details =
+            new()
+            {
+                Logs =
+                [
+                    new()
+                    {
+                        StartTimestamp = DateTime.Now,
+                        EndTimestamp = DateTime.Now,
+                        Operations =
+                        [
+                            new()
+                            {
+                                IsSucceeded = true,
+                                ItemPath = ViewModel.VirtualSafe.Path,
+                                Type = LogOperationModel.Types.CreateVirtualSafe,
+                                PerformTimestamp = DateTime.Now,
+                            }
+                        ]
+                    }
+                ]
+            },
+            Reservation = new()
+        });
+
+        await ViewModel.SuccessModal.ShowAsync();
     }
 }
 

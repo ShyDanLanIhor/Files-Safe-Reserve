@@ -20,8 +20,8 @@ public static class LogOperationTypeExtensions
             LogOperationModel.Types.DeleteVirtualSafe => "Delete virtual safe",
             LogOperationModel.Types.TransferToVirtualSafe => "Transfer to virtual safe",
             LogOperationModel.Types.RemoveFromReservation => "Remove from reservation",
-            LogOperationModel.Types.DeleteFromVirtualSafe => "Delete from virtual safe",
             LogOperationModel.Types.ReserveSmartphone => "Reserve smartphone",
+            LogOperationModel.Types.CopyVirtualSafe => "Copy virtual safe",
             _ => "Unknown"
         };
 
@@ -38,8 +38,8 @@ public static class LogOperationTypeExtensions
             LogOperationModel.Types.DeleteVirtualSafe => "Virtual safe deletion",
             LogOperationModel.Types.TransferToVirtualSafe => "Transferring to virtual safe",
             LogOperationModel.Types.RemoveFromReservation => "Removing from reservation",
-            LogOperationModel.Types.DeleteFromVirtualSafe => "Deletion from virtual safe",
             LogOperationModel.Types.ReserveSmartphone => "Smartphone reservation",
+            LogOperationModel.Types.CopyVirtualSafe => "Virtual safe сopying",
             _ => "Unknown"
         };
 }

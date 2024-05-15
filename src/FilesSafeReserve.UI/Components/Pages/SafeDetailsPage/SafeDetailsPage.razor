@@ -176,6 +176,8 @@
 
                 <Button @onclick='() => Navigation.NavigateTo($"/virtual-safe/logs/{Id}")' Color="ButtonColor.Primary" Style="width: 120px"> Logs </Button>
 
+                <Button @onclick='() => Navigation.NavigateTo($"/virtual-safe/copy/{Id}")' Color="ButtonColor.Primary" Style="width: 120px"> Copy </Button>
+
                 <Button @onclick='() => FileOpenerService.Open(ViewModel.VirtualSafe.Directory)' Color="ButtonColor.Primary" Style="width: 120px"> Open </Button>
 
                 <Button @onclick='OnReserveSafeClick' Color="ButtonColor.Primary" Style="width: 120px"> Reserve </Button>
@@ -348,10 +350,18 @@
 
         var result = await VirtualSafeRepo.RemoveAsync(ViewModel.VirtualSafe);
 
-        if (result.IsSucceeded)
+        if (!result.IsSucceeded) await ViewModel.DeleteFailedModal.ShowAsync();
+
+        try
+        {
+            ViewModel.VirtualSafe.Directory.Delete();
+
             await ViewModel.DeleteSucceededModal.ShowAsync();
-        else
+        }
+        catch (Exception)
+        {
             await ViewModel.DeleteFailedModal.ShowAsync();
+        }
     }
 
     private async Task OnSaveTimeClick()
