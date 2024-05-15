@@ -1,0 +1,318 @@
+﻿@page "/virtual-safe/copy/{id}"
+
+@using CommunityToolkit.Maui.Storage
+@using FilesSafeReserve.App.Builders.IBuilders
+@using FilesSafeReserve.App.Models
+@using FilesSafeReserve.Infra.Repositories.IRepositories
+@using Microsoft.AspNetCore.WebUtilities
+@using FilesSafeReserve.Domain.Extensions
+
+@inject IVirtualSafeRepo VirtualSafeRepo
+@inject ILogRepo LogRepo
+@inject ILogBuilder LogBuilder
+@inject NavigationManager Navigation
+
+<Modal @ref="ViewModel.ConfirmCopying" title="Copying confirmation" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Are you sure you want to copy virtual safe '@ViewModel.PrevVirtualSafe!.Name' to '@ViewModel.NewVirtualSafe.Path'?
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick='async () => await OnConfirmClick()'> Confirm </Button>
+        <Button Color="ButtonColor.Secondary" @onclick='async () => await ViewModel.ConfirmCopying.HideAsync()'> Cancel </Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.CopyingProgress" title="Copying Progress" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Please wait for the copying of '@ViewModel.PrevVirtualSafe!.Name' to complete.
+    </BodyTemplate>
+    <FooterTemplate>
+        <div class="loader-container">
+            <span class="loader"></span>
+        </div>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.CopyingCompleted" title="Copying Progress" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Copying of virtual safe '@ViewModel.PrevVirtualSafe!.Name' completed.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Secondary" @onclick='() => Navigation.NavigateTo($"/virtual-safes")'> Understood </Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.DuplicateModal" title="Coping Progress" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Virtual Safe in picked directory already exists.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick='async () => await ViewModel.DuplicateModal.HideAsync()'> Understood </Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.CannotCopyContentModal" title="Coping Progress" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Content of the virtual safe '@ViewModel.PrevVirtualSafe!.Name' could not be completely copied.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick='async () => await ViewModel.CannotCopyContentModal.HideAsync()'> Understood </Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.CannotDeletePrevSafeModal" title="Coping Progress" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Virtual safe '@ViewModel.PrevVirtualSafe!.Name' could not be completely deleted
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" @onclick='async () => await ViewModel.CannotDeletePrevSafeModal.HideAsync()'> Understood </Button>
+    </FooterTemplate>
+</Modal>
+
+<Modal @ref="ViewModel.NotFoundModal" title="Virtual Safe Finding" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Virtual safe was not found.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Primary" onclick="history.back()">OK</Button>
+    </FooterTemplate>
+</Modal>
+
+<div class="main-container">
+    <div class="header-container gradient-background">
+        <h3>Copy Virtual Safe Page</h3>
+    </div>
+
+    @if (ViewModel.PrevVirtualSafe is not null)
+    {
+        <EditForm EditContext="ViewModel.EditContext" OnValidSubmit="OnCopyClick" style="width: 100%">
+            <DataAnnotationsValidator />
+
+            <div class="copy-container gradient-background">
+                <div class="virtual-safe-header-container">
+                    <h5> Virtual Safe for copy </h5>
+                </div>
+
+                <div class="virtual-safe-name-container">
+                    <div class="virtual-safe-name-key gradient-background">
+                        Selected virtual safe
+                    </div>
+                    <span class="virtual-safe-name-value">
+                        @ViewModel.PrevVirtualSafe.Name
+                    </span>
+                </div>
+                <div class="form-floating mb-3 input-container">
+                    <InputText @bind-Value="ViewModel.NewVirtualSafe.Name" type="text" class="form-control" id="floatingInput" placeholder="Safe Name" />
+                    <label for="floatingInput">New safe name</label>
+                </div>
+                <div class="form-floating input-container">
+                    <InputTextArea @bind-Value="ViewModel.NewVirtualSafe.Description" class="form-control" placeholder="Leave a description here" id="floatingTextarea2" style="height: 200px"></InputTextArea>
+                    <label for="floatingTextarea2">New safe description</label>
+                </div>
+                <div class="input-group mb-3 input-container">
+                    <InputText @bind-Value="ViewModel.NewVirtualSafe.Path" type="text" class="form-control" placeholder="Path to new safe" aria-label="Path to safe" aria-describedby="basic-addon2" />
+                    <div class="input-group-append">
+                        <Button @onclick="OnPickClick" Color="ButtonColor.Secondary" Style="border-bottom-left-radius: 0px; border-top-left-radius: 0px;">Pick</Button>
+                    </div>
+                </div>
+                <div class="copy-switches">
+                    <div class="copy-switch">
+                        <Switch @bind-Value="ViewModel.IsCopyOriginalSafeInnerContent" />
+                        <span>
+                            @if (ViewModel.IsCopyOriginalSafeInnerContent)
+                            {
+                                <span>Copy</span>
+                            }
+                            else
+                            {
+                                <span>Don't copy</span>
+                            }
+                            <span> original virtual safe inner content (files and folders).</span>
+                        </span>
+                    </div>
+                    <div class="copy-switch">
+                        <Switch @bind-Value="ViewModel.IsDeleteOriginalSafe" />
+                        <span>
+                            @if (ViewModel.IsDeleteOriginalSafe)
+                            {
+                                <span>Delete</span>
+                            }
+                            else
+                            {
+                                <span>Don't delete</span>
+                            }
+                            <span> original virtual safe after copying.</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="btns-container btns-container-grid">
+                    <Button Type="ButtonType.Submit" Color="ButtonColor.Success" Style="width: 100px"> Copy </Button>
+
+                    <Button onclick="history.back();" Color="ButtonColor.Secondary" Style="width: 100px"> Go Back </Button>
+                </div>
+
+                @if (ViewModel.EditContext.Validate() is false)
+                {
+                    <div style="width: 90%;">
+                        <Alert Color="AlertColor.Danger">
+                            <div class="danger-container">
+                                <strong>Danger!</strong>
+                                <div class="messages-container">
+                                    @foreach (var message in ViewModel.EditContext.GetValidationMessages())
+                                    {
+                                        <div class="message-container">
+                                            <Icon Name="IconName.ExclamationTriangleFill" class="me-2"></Icon>
+                                            @message
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </Alert>
+                    </div>
+                }
+            </div>
+        </EditForm>
+    }
+</div>
+
+@code {
+
+    protected async override void OnInitialized()
+    {
+        var result = await VirtualSafeRepo.GetByIdAsync(new Guid(Id));
+
+        if (result.IsSucceeded) ViewModel.PrevVirtualSafe = result.Value;
+        else await ViewModel.NotFoundModal.ShowAsync();
+    }
+
+    private async Task OnConfirmClick()
+    {
+
+        await ViewModel.ConfirmCopying.HideAsync();
+
+        LogModel copyLog = new()
+        {
+            StartTimestamp = DateTime.Now,
+            Operations =
+            [
+                new LogOperationModel() 
+                {
+                    Type = LogOperationModel.Types.CopyVirtualSafe,
+                }
+            ]
+        };
+
+        await ViewModel.CopyingProgress.ShowAsync();
+
+        await Task.Delay(1000);
+
+        if (VirtualSafeRepo.ToList()
+                           .Where(s => s.Path.Contains(ViewModel.NewVirtualSafe.Path))
+                           .Count() is not 0)
+        {
+            await ViewModel.DuplicateModal.ShowAsync();
+        }
+
+        Directory.CreateDirectory(ViewModel.NewVirtualSafe.Path);
+
+        VirtualSafeModel newVirtualSafe = new()
+            {
+                Name = ViewModel.NewVirtualSafe.Name,
+                Description = ViewModel.NewVirtualSafe.Description,
+                Path = ViewModel.NewVirtualSafe.Path,
+                Details = new()
+                {
+                    CreatedTimestamp = ViewModel.PrevVirtualSafe!.Details.CreatedTimestamp,
+                    UpdatedTimestamp = ViewModel.PrevVirtualSafe.Details.UpdatedTimestamp,
+                    ReservedTimestamp = ViewModel.PrevVirtualSafe.Details.ReservedTimestamp,
+                    Logs = ViewModel.PrevVirtualSafe.Details.Logs
+                                        .Select(log => new LogModel()
+                                        {
+                                            StartTimestamp = log.StartTimestamp,
+                                            EndTimestamp = log.EndTimestamp,
+                                            Operations = log.Operations
+                                                            .Select(op => new LogOperationModel()
+                                                            {
+                                                                IsSucceeded = op.IsSucceeded,
+                                                                ItemPath = op.ItemPath,
+                                                                PerformTimestamp = op.PerformTimestamp,
+                                                                Type = op.Type
+                                                            })
+                                                           .ToList()
+                                        })
+                                        .ToList()
+                },
+                Reservation = new()
+                {
+                    ReservedTimestamp = ViewModel.PrevVirtualSafe.Reservation.ReservedTimestamp,
+                    ToReserveTimeSpan = ViewModel.PrevVirtualSafe.Reservation.ToReserveTimeSpan,
+                    Directories = ViewModel.PrevVirtualSafe.Reservation.Directories
+                                           .Select(dir => new DirectoryModel()
+                                           {
+                                               Path = dir.Path
+                                           })
+                                           .ToList(),
+                    Files = ViewModel.PrevVirtualSafe.Reservation.Files
+                                     .Select(file => new FileModel()
+                                     {
+                                         Path = file.Path
+                                     })
+                                     .ToList()
+                }
+        };
+
+        if (ViewModel.IsCopyOriginalSafeInnerContent)
+        {
+            try
+            {
+                foreach (var item in ViewModel.PrevVirtualSafe.Directory.Patheds)
+                    item.CopyToAsSub(newVirtualSafe.Path);
+            }
+            catch (Exception)
+            {
+                await ViewModel.CannotCopyContentModal.ShowAsync();
+            }
+        }
+
+        if (ViewModel.IsDeleteOriginalSafe)
+        {
+            try
+            {
+                await VirtualSafeRepo.RemoveAsync(ViewModel.PrevVirtualSafe);
+
+                ViewModel.PrevVirtualSafe.Directory.Delete();
+            }
+            catch (Exception)
+            {
+                await ViewModel.CannotDeletePrevSafeModal.ShowAsync();
+            }
+        }
+
+        copyLog.Operations.First().IsSucceeded = true;
+        copyLog.Operations.First().PerformTimestamp = DateTime.Now;
+        copyLog.Operations.First().ItemPath = ViewModel.PrevVirtualSafe.Path;
+        copyLog.EndTimestamp= DateTime.Now;
+
+        newVirtualSafe.Details.Logs.Add(copyLog);
+
+        await VirtualSafeRepo.AddAsync(newVirtualSafe);
+
+        await ViewModel.CopyingProgress.HideAsync();
+
+        await ViewModel.CopyingCompleted.ShowAsync();
+    }
+
+    private async Task OnCopyClick()
+    {
+        await ViewModel.ConfirmCopying.ShowAsync();
+    }
+
+    private async Task OnPickClick()
+    {
+        var result = await FolderPicker.PickAsync(default);
+
+        if (result.Folder is null) return;
+
+        ViewModel.NewVirtualSafe.Path = result.Folder.Path;
+    }
+}

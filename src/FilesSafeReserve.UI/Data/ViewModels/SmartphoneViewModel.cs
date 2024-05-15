@@ -1,6 +1,5 @@
 ﻿using BlazorBootstrap;
 using FilesSafeReserve.App.Models;
-using ProgressBar = BlazorBootstrap.ProgressBar;
 
 namespace FilesSafeReserve.UI.Data.ViewModels;
 
