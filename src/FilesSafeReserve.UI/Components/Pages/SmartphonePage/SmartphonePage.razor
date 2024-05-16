@@ -15,7 +15,7 @@
 
 <Modal @ref="ViewModel.ConfirmReservation" title="Reservation confirmation" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
     <BodyTemplate>
-        Are you sure you want to reserve files from phone '@ViewModel.SelectedSmartphoneName' to virtual safe '@ViewModel.SelectedVirtualSafe.Name'?
+        Are you sure you want to reserve files from phone '@ViewModel.SelectedSmartphoneName' to virtual safe '@ViewModel.SelectedVirtualSafe!.Name'?
     </BodyTemplate>
     <FooterTemplate>
         <Button Color="ButtonColor.Primary" @onclick='async () => await OnConfirmClick()'> Confirm </Button>
@@ -71,7 +71,7 @@
         </div>
 
         <div class="virtual-safes-elements-container">
-            @if (ViewModel.VirtualSafes.Count is not 0)
+            @if (ViewModel.VirtualSafes.Where(safe => safe.Directory.Exists).Count() is not 0)
             {
                 @foreach (var safe in ViewModel.VirtualSafes.Where(safe => safe.Directory.Exists).OrderBy(safe => safe.Name))
                 {
@@ -105,7 +105,7 @@
             else
             {
                 <div class="alert-container">
-                    <Alert Color="AlertColor.Info"> <Icon Name="IconName.InfoCircleFill" class="me-2"></Icon> Not a single item in virtual safe was found. </Alert>
+                    <Alert Color="AlertColor.Info"> <Icon Name="IconName.InfoCircleFill" class="me-2"></Icon> Not a single virtual safe was found. </Alert>
                 </div>
             }
         </div>
@@ -144,7 +144,7 @@
             else
             {
                 <div class="alert-container">
-                    <Alert Color="AlertColor.Info"> <Icon Name="IconName.InfoCircleFill" class="me-2"></Icon> Not a single item in connected smartphone was found. </Alert>
+                    <Alert Color="AlertColor.Info"> <Icon Name="IconName.InfoCircleFill" class="me-2"></Icon> Not a single connected smartphone was found. </Alert>
                 </div>
 
             }

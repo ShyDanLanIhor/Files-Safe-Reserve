@@ -24,16 +24,6 @@ public class LogRepo(FsrDbContext dbContext) : ILogRepo
     {
         return await DbContext.Logs
             .Include(field => field.Operations)
-            .Include(field => field.VirtualSafeDetails)
-                .ThenInclude(field => field.RemovableDrive)
-            .Include(field => field.VirtualSafeDetails)
-                .ThenInclude(field => field.Safe)
-                    .ThenInclude(field => field.Reservation)
-                        .ThenInclude(field => field.Files)
-            .Include(field => field.VirtualSafeDetails)
-                 .ThenInclude(field => field.Safe)
-                     .ThenInclude(field => field.Reservation)
-                         .ThenInclude(field => field.Directories)
             .FirstOrDefaultAsync(el => el.Id == id);
     }
 
@@ -41,16 +31,6 @@ public class LogRepo(FsrDbContext dbContext) : ILogRepo
     {
         return DbContext.Logs
             .Include(field => field.Operations)
-            .Include(field => field.VirtualSafeDetails)
-                .ThenInclude(field => field.RemovableDrive)
-            .Include(field => field.VirtualSafeDetails)
-                .ThenInclude(field => field.Safe)
-                    .ThenInclude(field => field.Reservation)
-                        .ThenInclude(field => field.Files)
-            .Include(field => field.VirtualSafeDetails)
-                 .ThenInclude(field => field.Safe)
-                     .ThenInclude(field => field.Reservation)
-                         .ThenInclude(field => field.Directories)
             .FirstOrDefault(el => el.Id == id);
     }
 
@@ -58,32 +38,12 @@ public class LogRepo(FsrDbContext dbContext) : ILogRepo
     {
         return await DbContext.Logs
             .Include(field => field.Operations)
-            .Include(field => field.VirtualSafeDetails)
-                .ThenInclude(field => field.RemovableDrive)
-            .Include(field => field.VirtualSafeDetails)
-                .ThenInclude(field => field.Safe)
-                    .ThenInclude(field => field.Reservation)
-                        .ThenInclude(field => field.Files)
-            .Include(field => field.VirtualSafeDetails)
-                 .ThenInclude(field => field.Safe)
-                     .ThenInclude(field => field.Reservation)
-                         .ThenInclude(field => field.Directories)
             .ToListAsync();
     }
 
     public List<LogModel> ToList()
     {
         return [.. DbContext.Logs
-            .Include(field => field.Operations)
-            .Include(field => field.VirtualSafeDetails)
-                .ThenInclude(field => field.RemovableDrive)
-            .Include(field => field.VirtualSafeDetails)
-                .ThenInclude(field => field.Safe)
-                    .ThenInclude(field => field.Reservation)
-                        .ThenInclude(field => field.Files)
-            .Include(field => field.VirtualSafeDetails)
-                 .ThenInclude(field => field.Safe)
-                     .ThenInclude(field => field.Reservation)
-                         .ThenInclude(field => field.Directories)];
+            .Include(field => field.Operations)];
     }
 }

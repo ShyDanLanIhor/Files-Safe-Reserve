@@ -48,7 +48,7 @@ public class ReservationRepoTests
     /// Tests the asynchronous method ToListAsync to ensure it returns a list of ReservationModel objects.
     /// </summary>
     [Fact]
-    public async void ToListAsync_ReturnsListOfReservationModels()
+    public async Task ToListAsync_ReturnsListOfReservationModels()
     {
         // Arrange
         IReservationRepo repo = new ReservationRepo(await GetDbContextAsync());
@@ -65,7 +65,7 @@ public class ReservationRepoTests
     /// Tests the asynchronous method GetByIdAsync to ensure it returns a ReservationModel object.
     /// </summary>
     [Fact]
-    public async void GetByIdAsync_ReturnsReservationModel()
+    public async Task GetByIdAsync_ReturnsReservationModel()
     {
         // Arrange
         IReservationRepo repo = new ReservationRepo(await GetDbContextAsync());
@@ -83,7 +83,7 @@ public class ReservationRepoTests
     /// Tests the asynchronous method UpdateAsync to ensure it updates a ReservationModel object.
     /// </summary>
     [Fact]
-    public async void UpdateAsync_UpdatesReservationModel()
+    public async Task UpdateAsync_UpdatesReservationModel()
     {
         // Arrange
         IReservationRepo repo = new ReservationRepo(await GetDbContextAsync());
@@ -105,7 +105,7 @@ public class ReservationRepoTests
     /// Tests the asynchronous method AddAsync to ensure it adds a ReservationModel object.
     /// </summary>
     [Fact]
-    public async void AddAsync_AddsReservationModel()
+    public async Task AddAsync_AddsReservationModel()
     {
         // Arrange
         IReservationRepo repo = new ReservationRepo(await GetDbContextAsync());
@@ -127,7 +127,7 @@ public class ReservationRepoTests
     /// Tests the asynchronous method RemoveByIdAsync to ensure it removes a ReservationModel object by its Id.
     /// </summary>
     [Fact]
-    public async void RemoveByIdAsync_RemovesReservationModel()
+    public async Task RemoveByIdAsync_RemovesReservationModel()
     {
         // Arrange
         IReservationRepo repo = new ReservationRepo(await GetDbContextAsync());
@@ -144,7 +144,7 @@ public class ReservationRepoTests
     /// Tests the asynchronous method RemoveAsync to ensure it removes a ReservationModel object.
     /// </summary>
     [Fact]
-    public async void RemoveAsync_RemovesReservationModel()
+    public async Task RemoveAsync_RemovesReservationModel()
     {
         // Arrange
         IReservationRepo repo = new ReservationRepo(await GetDbContextAsync());

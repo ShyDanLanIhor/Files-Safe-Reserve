@@ -48,7 +48,7 @@ public class DirectoryRepoTests
     /// Tests the asynchronous method ToListAsync to ensure it returns a list of DirectoryModel objects.
     /// </summary>
     [Fact]
-    public async void ToListAsync_ReturnsListOfDirectoryModels()
+    public async Task ToListAsync_ReturnsListOfDirectoryModels()
     {
         // Arrange
         IDirectoryRepo repo = new DirectoryRepo(await GetDbContextAsync());
@@ -65,7 +65,7 @@ public class DirectoryRepoTests
     /// Tests the asynchronous method GetByIdAsync to ensure it returns a DirectoryModel object.
     /// </summary>
     [Fact]
-    public async void GetByIdAsync_ReturnsDirectoryModel()
+    public async Task GetByIdAsync_ReturnsDirectoryModel()
     {
         // Arrange
         IDirectoryRepo repo = new DirectoryRepo(await GetDbContextAsync());
@@ -83,7 +83,7 @@ public class DirectoryRepoTests
     /// Tests the asynchronous method UpdateAsync to ensure it updates a DirectoryModel object.
     /// </summary>
     [Fact]
-    public async void UpdateAsync_UpdatesDirectoryModel()
+    public async Task UpdateAsync_UpdatesDirectoryModel()
     {
         // Arrange
         IDirectoryRepo repo = new DirectoryRepo(await GetDbContextAsync());
@@ -105,7 +105,7 @@ public class DirectoryRepoTests
     /// Tests the asynchronous method AddAsync to ensure it adds a DirectoryModel object.
     /// </summary>
     [Fact]
-    public async void AddAsync_AddsDirectoryModel()
+    public async Task AddAsync_AddsDirectoryModel()
     {
         // Arrange
         IDirectoryRepo repo = new DirectoryRepo(await GetDbContextAsync());
@@ -127,7 +127,7 @@ public class DirectoryRepoTests
     /// Tests the asynchronous method RemoveByIdAsync to ensure it removes a DirectoryModel object by its Id.
     /// </summary>
     [Fact]
-    public async void RemoveByIdAsync_RemovesDirectoryModel()
+    public async Task RemoveByIdAsync_RemovesDirectoryModel()
     {
         // Arrange
         IDirectoryRepo repo = new DirectoryRepo(await GetDbContextAsync());
@@ -144,7 +144,7 @@ public class DirectoryRepoTests
     /// Tests the asynchronous method RemoveAsync to ensure it removes a DirectoryModel object.
     /// </summary>
     [Fact]
-    public async void RemoveAsync_RemovesDirectoryModel()
+    public async Task RemoveAsync_RemovesDirectoryModel()
     {
         // Arrange
         IDirectoryRepo repo = new DirectoryRepo(await GetDbContextAsync());

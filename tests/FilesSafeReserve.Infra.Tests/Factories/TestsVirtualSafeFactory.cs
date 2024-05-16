@@ -60,7 +60,8 @@ public abstract class TestsVirtualSafeFactory
             SafeId = virtualSafeId,
             CreatedTimestamp = DateTime.Now,
             UpdatedTimestamp = DateTime.Now,
-            ReservedTimestamp = DateTime.Now
+            ReservedTimestamp = DateTime.Now,
+            RemovableDrive = GenerateRandomRemovableDrive(virtualSafeDetailsId)
         };
 
         // Generate random logs
@@ -70,6 +71,21 @@ public abstract class TestsVirtualSafeFactory
         }
 
         return virtualSafeDetails;
+    }
+
+    private static RemovableDriveModel GenerateRandomRemovableDrive(Guid virtualSafeDetailsId)
+    {
+        var removableDriveId = Guid.NewGuid();
+
+        var removableDrive = new RemovableDriveModel
+        {
+            Id = removableDriveId,
+            Name = $"{Guid.NewGuid()}",
+            VolumeLabel = Guid.NewGuid().ToString(),
+            VirtualSafeDetailsId = virtualSafeDetailsId
+        };
+
+        return removableDrive;
     }
 
     private static LogModel GenerateRandomLog(Guid virtualSafeDetailsId)

@@ -16,12 +16,6 @@ public class VirtualSafeDetailsRepo(FsrDbContext dbContext) : IVirtualSafeDetail
             .Include(field => field.Logs)
                 .ThenInclude(field => field.Operations)
             .Include(field => field.RemovableDrive)
-            .Include(field => field.Safe)
-                .ThenInclude(field => field.Reservation)
-                    .ThenInclude(field => field.Files)
-            .Include(field => field.Safe)
-                .ThenInclude(field => field.Reservation)
-                    .ThenInclude(field => field.Directories)
             .FirstOrDefaultAsync(el => el.Id == id);
     }
 
@@ -31,12 +25,6 @@ public class VirtualSafeDetailsRepo(FsrDbContext dbContext) : IVirtualSafeDetail
             .Include(field => field.Logs)
                 .ThenInclude(field => field.Operations)
             .Include(field => field.RemovableDrive)
-            .Include(field => field.Safe)
-                .ThenInclude(field => field.Reservation)
-                    .ThenInclude(field => field.Files)
-            .Include(field => field.Safe)
-                .ThenInclude(field => field.Reservation)
-                    .ThenInclude(field => field.Directories)
             .FirstOrDefault(el => el.Id == id);
     }
 
@@ -46,12 +34,6 @@ public class VirtualSafeDetailsRepo(FsrDbContext dbContext) : IVirtualSafeDetail
             .Include(field => field.Logs)
                 .ThenInclude(field => field.Operations)
             .Include(field => field.RemovableDrive)
-            .Include(field => field.Safe)
-                .ThenInclude(field => field.Reservation)
-                    .ThenInclude(field => field.Files)
-            .Include(field => field.Safe)
-                .ThenInclude(field => field.Reservation)
-                    .ThenInclude(field => field.Directories)
             .ToListAsync();
     }
 
@@ -60,12 +42,6 @@ public class VirtualSafeDetailsRepo(FsrDbContext dbContext) : IVirtualSafeDetail
         return [.. DbContext.VirtualSafeDetails
             .Include(field => field.Logs)
                 .ThenInclude(field => field.Operations)
-            .Include(field => field.RemovableDrive)
-            .Include(field => field.Safe)
-                .ThenInclude(field => field.Reservation)
-                    .ThenInclude(field => field.Files)
-            .Include(field => field.Safe)
-                .ThenInclude(field => field.Reservation)
-                    .ThenInclude(field => field.Directories)];
+            .Include(field => field.RemovableDrive)];
     }
 }
