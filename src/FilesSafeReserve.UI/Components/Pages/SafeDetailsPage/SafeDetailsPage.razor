@@ -169,7 +169,38 @@
                 </div>
             </div>
 
+            @if (ViewModel.VirtualSafe.Directory.Exists is false)
+            {
+                @if (ViewModel.VirtualSafe.Details.IsRemovable)
+                {
+                    @if (ViewModel.VirtualSafe.Details.RemovableDrive.Info.IsReady)
+                    {
+                        <div class="alert-container">
+                            <Alert Color="AlertColor.Danger"> <Icon Name="IconName.ExclamationTriangleFill" class="me-2"></Icon> Virtual safe directory does not exist in the file system. </Alert>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert-container">
+                            <Alert Color="AlertColor.Info"> <Icon Name="IconName.InfoCircleFill" class="me-2"></Icon> Please insert a removable drive '@ViewModel.VirtualSafe.Details.RemovableDrive.VolumeLabel' to fully manage the virtual safe. </Alert>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="alert-container">
+                        <Alert Color="AlertColor.Danger"> <Icon Name="IconName.ExclamationTriangleFill" class="me-2"></Icon> Virtual safe directory does not exist in the file system. </Alert>
+                    </div>
+                }
+            }
+
             <div class="btns-container btns-container-grid">
+                @if (   ViewModel.VirtualSafe.Directory.Exists is false && !ViewModel.VirtualSafe.Details.IsRemovable
+                    ||  ViewModel.VirtualSafe.Directory.Exists is false && ViewModel.VirtualSafe.Details.IsRemovable && ViewModel.VirtualSafe.Details.RemovableDrive.Info.IsReady)
+                {
+                    <Button @onclick='() => ViewModel.VirtualSafe.Directory.Create()' Color="ButtonColor.Info"> Restore </Button>
+                }
+
                 <Button @onclick='() => Navigation.NavigateTo($"/virtual-safe/edit/{Id}")' Color="ButtonColor.Primary" Style="width: 120px"> Edit </Button>
 
                 <Button @onclick='() => Navigation.NavigateTo($"/virtual-safe/reservation/{Id}")' Color="ButtonColor.Primary" Style="width: 120px"> Reservation </Button>
@@ -178,11 +209,14 @@
 
                 <Button @onclick='() => Navigation.NavigateTo($"/virtual-safe/copy/{Id}")' Color="ButtonColor.Primary" Style="width: 120px"> Copy </Button>
 
-                <Button @onclick='() => FileOpenerService.Open(ViewModel.VirtualSafe.Directory)' Color="ButtonColor.Primary" Style="width: 120px"> Open </Button>
+                @if (ViewModel.VirtualSafe.Directory.Exists)
+                {
+                    <Button @onclick='() => FileOpenerService.Open(ViewModel.VirtualSafe.Directory)' Color="ButtonColor.Primary" Style="width: 120px"> Open </Button>
 
-                <Button @onclick='OnReserveSafeClick' Color="ButtonColor.Primary" Style="width: 120px"> Reserve </Button>
+                    <Button @onclick='OnReserveSafeClick' Color="ButtonColor.Primary" Style="width: 120px"> Reserve </Button>
 
-                <Button @onclick='async () => await ViewModel.DeleteModal.ShowAsync()' Color="ButtonColor.Danger" Style="width: 120px"> Delete </Button>
+                    <Button @onclick='async () => await ViewModel.DeleteModal.ShowAsync()' Color="ButtonColor.Danger" Style="width: 120px"> Delete </Button>
+                }
 
                 <Button onclick="history.back();" Color="ButtonColor.Secondary" Style="width: 120px"> Go Back </Button>
             </div>
@@ -250,17 +284,65 @@
                 .WithName($"{nameof(SafeDetailsPage)}_{nameof(OnReserveSafeShortcut)}")
                 .Add(OnReserveSafeShortcut);
         }
+
+        if (ViewModel.VirtualSafe.Details.IsRemovable)
+        {
+            ViewModel.DriveWatcher = new()
+            {
+                Types = [DriveType.Removable],
+                VolumesLabels = [ViewModel.VirtualSafe.Details.RemovableDrive.VolumeLabel],
+            };
+
+            ViewModel.DriveWatcher.DrivesChanged += async (ICollection<DriveInfo> drives) => await ResetFileSystemWatcher();
+
+            await ViewModel.DriveWatcher.EnsureStartedAsync();
+        }
+        else
+        {
+            await ResetFileSystemWatcher();
+        }
+    }
+
+    public async Task ResetFileSystemWatcher()
+    {
+        if (ViewModel.VirtualSafe is null)
+        {
+            await ViewModel.NotFoundModal.ShowAsync();
+            return;
+        }
+
+        if (    !ViewModel.VirtualSafe.Details.IsRemovable 
+            ||  ViewModel.VirtualSafe.Details.RemovableDrive.Info.IsReady)
+        {
+            ViewModel.FileSystemWatcher.Dispose();
+
+            ViewModel.FileSystemWatcher = new()
+                {
+                    Path = ViewModel.VirtualSafe.Directory.Info.Parent?.FullName is null
+                         ? ViewModel.VirtualSafe.Directory.Info.Root.FullName
+                         : ViewModel.VirtualSafe.Directory.Info.Parent!.FullName,
+                    Filter = ViewModel.VirtualSafe.Directory.Name,
+                    NotifyFilter = NotifyFilters.DirectoryName,
+                    EnableRaisingEvents = true,
+                };
+
+            ViewModel.FileSystemWatcher.Deleted += async (sender, e) => await InvokeAsync(StateHasChanged);
+        }
+
+        await InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()
     {
         KeyUpStore.Remove(shortcut => shortcut.Key.Contains(nameof(SafeDetailsPage)));
+        ViewModel.Dispose();
     }
 
     private Task OnOpenSafeShortcut(ShortcutEntity shortcut)
     {
         if (ViewModel.OpenSafeShortcut is null || ViewModel.VirtualSafe is null) return Task.CompletedTask;
         if (shortcut != ViewModel.OpenSafeShortcut) return Task.CompletedTask;
+        if (ViewModel.VirtualSafe.Directory.Exists is false) return Task.CompletedTask;
 
         FileOpenerService.Open(ViewModel.VirtualSafe.Directory);
 
@@ -271,6 +353,7 @@
     {
         if (ViewModel.ReserveSafeShortcut is null || ViewModel.VirtualSafe is null) return;
         if (shortcut != ViewModel.ReserveSafeShortcut) return;
+        if (ViewModel.VirtualSafe.Directory.Exists is false) return;
 
         await ViewModel.ReservationProgress.ShowAsync();
 

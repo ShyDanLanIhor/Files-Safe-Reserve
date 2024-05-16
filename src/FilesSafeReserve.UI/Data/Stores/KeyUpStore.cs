@@ -1,8 +1,10 @@
-﻿using static FilesSafeReserve.UI.Data.Handlers.KeyUpHandler;
+﻿using FilesSafeReserve.UI.Data.Handlers;
+using static FilesSafeReserve.App.Watchers.DriveWatcher;
+using static FilesSafeReserve.UI.Data.Handlers.KeyUpHandler;
 
 namespace FilesSafeReserve.UI.Data.Stores;
 
-public class KeyUpStore
+public class KeyUpStore : IDisposable
 {
     private static readonly Dictionary<string, KeyUpEventHandler> dictionary = [];
 
@@ -33,6 +35,8 @@ public class KeyUpStore
             }
         }
     }
+
+    public void Dispose() => KeyUpHandler.Dispose();
 
     public class ExecutableState(string name)
     {

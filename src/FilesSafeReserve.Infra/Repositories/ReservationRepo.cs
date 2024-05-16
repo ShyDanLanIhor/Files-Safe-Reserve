@@ -17,6 +17,9 @@ public class ReservationRepo(FsrDbContext dbContext) : IReservationRepo
                 .ThenInclude(field => field.Details)
                     .ThenInclude(field => field.Logs)
                         .ThenInclude(field => field.Operations)
+            .Include(field => field.Safe)
+                .ThenInclude(field => field.Details)
+                    .ThenInclude(field => field.RemovableDrive)
             .Include(field => field.Files)
             .Include(field => field.Directories)
             .FirstOrDefaultAsync(el => el.Id == id);
@@ -29,6 +32,9 @@ public class ReservationRepo(FsrDbContext dbContext) : IReservationRepo
                 .ThenInclude(field => field.Details)
                     .ThenInclude(field => field.Logs)
                         .ThenInclude(field => field.Operations)
+            .Include(field => field.Safe)
+                .ThenInclude(field => field.Details)
+                    .ThenInclude(field => field.RemovableDrive)
             .Include(field => field.Files)
             .Include(field => field.Directories)
             .FirstOrDefault(el => el.Id == id);
@@ -41,6 +47,9 @@ public class ReservationRepo(FsrDbContext dbContext) : IReservationRepo
                 .ThenInclude(field => field.Details)
                     .ThenInclude(field => field.Logs)
                         .ThenInclude(field => field.Operations)
+            .Include(field => field.Safe)
+                .ThenInclude(field => field.Details)
+                    .ThenInclude(field => field.RemovableDrive)
             .Include(field => field.Files)
             .Include(field => field.Directories)
             .ToListAsync();
@@ -53,6 +62,9 @@ public class ReservationRepo(FsrDbContext dbContext) : IReservationRepo
                 .ThenInclude(field => field.Details)
                     .ThenInclude(field => field.Logs)
                         .ThenInclude(field => field.Operations)
+            .Include(field => field.Safe)
+                .ThenInclude(field => field.Details)
+                    .ThenInclude(field => field.RemovableDrive)
             .Include(field => field.Files)
             .Include(field => field.Directories)];
     }

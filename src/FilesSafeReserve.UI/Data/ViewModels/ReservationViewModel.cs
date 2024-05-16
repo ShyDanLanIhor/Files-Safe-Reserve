@@ -1,11 +1,14 @@
 ﻿using BlazorBootstrap;
 using FilesSafeReserve.App.Models;
+using FilesSafeReserve.App.Watchers;
 using FilesSafeReserve.Domain.Interfaces;
 
 namespace FilesSafeReserve.UI.Data.ViewModels;
 
-public class ReservationViewModel
+public class ReservationViewModel : IDisposable
 {
+    public List<FileSystemWatcher> FileSystemWatchers = [];
+    public DriveWatcher DriveWatcher = new();
     public Modal UnknownFileModal { get; set; } = default!;
     public Modal NotFoundModal { get; set; } = default!;
     public Modal AlreadyInReservationModal { get; set; } = default!;
@@ -27,4 +30,11 @@ public class ReservationViewModel
     public ShortcutModel? ReserveSafeShortcut { get; set; }
 
     public VirtualSafeModel? VirtualSafe { get; set; }
+
+    public void Dispose()
+    {
+        FileSystemWatchers.ForEach(watcher => watcher.Dispose());
+        FileSystemWatchers.Clear();
+        DriveWatcher.Dispose();
+    }
 }

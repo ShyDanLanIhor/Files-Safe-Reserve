@@ -11,6 +11,8 @@ public class CreateSafeViewModel
 
     public EditContext EditContext { get; set; }
 
+    public bool IsRemovable { get; set; }
+
     public VirtualSafeForm VirtualSafe { get; set; } = new();
 
     public CreateSafeViewModel()

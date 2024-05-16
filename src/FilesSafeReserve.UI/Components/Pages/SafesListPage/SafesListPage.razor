@@ -4,6 +4,7 @@
 @using FilesSafeReserve.App.Entities
 @using FilesSafeReserve.App.Entities.Params.ILogBuilder
 @using FilesSafeReserve.App.Models
+@using FilesSafeReserve.App.Watchers
 @using FilesSafeReserve.Domain.Extensions
 @using FilesSafeReserve.Infra.Extensions
 @using FilesSafeReserve.Infra.Repositories.IRepositories
@@ -68,7 +69,7 @@
 
         @if (ViewModel.VirtualSafes.Count is not 0)
         {
-            @foreach (var safe in ViewModel.VirtualSafes)
+            @foreach (var safe in ViewModel.VirtualSafes.OrderBy(safe => safe.Name))
             {
                 <div class="item-container">
                     <div class="name-part gradient-background">@safe.Name</div>
@@ -89,23 +90,42 @@
                         </span>
                     </div>
                     <div class="safe-btns-container safe-btns-container-grid" style="align-self: center; justify-self: center;">
-                        @if (safe.Directory.Exists is false)
+                        @if (   safe.Directory.Exists is false && !safe.Details.IsRemovable
+                            ||  safe.Directory.Exists is false && safe.Details.IsRemovable && safe.Details.RemovableDrive.Info.IsReady)
                         {
                             <Button @onclick='() => safe.Directory.Create()' Color="ButtonColor.Info"> Restore </Button>
                         }
 
+                        <Button @onclick='() => Navigation.NavigateTo($"/virtual-safe/details/{safe.Id.ToString()}")' Color="ButtonColor.Primary"> Details </Button>
+
                         @if (safe.Directory.Exists)
                         {
-                            <Button @onclick='() => Navigation.NavigateTo($"/virtual-safe/details/{safe.Id.ToString()}")' Color="ButtonColor.Primary"> Details </Button>
+                            <Button @onclick='async () => { ViewModel.SelectedToDeleteVirtualSafe = safe; await ViewModel.DeleteModal.ShowAsync(); }' Color="ButtonColor.Danger"> Delete </Button>
                         }
-
-                        <Button @onclick='async () => { ViewModel.SelectedToDeleteVirtualSafe = safe; await ViewModel.DeleteModal.ShowAsync(); }' Color="ButtonColor.Danger"> Delete </Button>
                     </div>
                     @if (safe.Directory.Exists is false)
                     {
-                        <div class="alert-container">
-                            <Alert Color="AlertColor.Danger"> <Icon Name="IconName.ExclamationTriangleFill" class="me-2"></Icon> Virtual safe directory does not exist in the file system. </Alert>
-                        </div>
+                        @if (safe.Details.IsRemovable)
+                        {
+                            @if (safe.Details.RemovableDrive.Info.IsReady)
+                            {
+                                <div class="alert-container">
+                                    <Alert Color="AlertColor.Danger"> <Icon Name="IconName.ExclamationTriangleFill" class="me-2"></Icon> Virtual safe directory does not exist in the file system. </Alert>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert-container">
+                                    <Alert Color="AlertColor.Info"> <Icon Name="IconName.InfoCircleFill" class="me-2"></Icon> Please insert a removable drive '@safe.Details.RemovableDrive.VolumeLabel' to fully manage the virtual safe. </Alert>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="alert-container">
+                                <Alert Color="AlertColor.Danger"> <Icon Name="IconName.ExclamationTriangleFill" class="me-2"></Icon> Virtual safe directory does not exist in the file system. </Alert>
+                            </div>
+                        }
                     }
                 </div>
             }
@@ -122,8 +142,6 @@
 
 
 @code{
-    public List<FileSystemWatcher> watchers = [];
-
     protected override async void OnInitialized()
     {
         ViewModel.VirtualSafes = await VirtualSafeRepo.ToListAsync();
@@ -139,29 +157,46 @@
                 .Add(OnReserveSafesShortcut);
         }
 
-        watchers.AddRange(ViewModel.VirtualSafes
-                   .Select(safe => new FileSystemWatcher()
-                       {
-                           Path = safe.Directory.Info.Parent?.FullName is null 
-                                ? safe.Directory.Info.Root.FullName 
-                                : safe.Directory.Info.Parent.FullName,
-                           Filter = safe.Directory.Name,
-                           NotifyFilter = NotifyFilters.DirectoryName,
-                           EnableRaisingEvents = true,
-                       })
-         );
+        ViewModel.DriveWatcher = new()
+        {
+            Types = [DriveType.Removable],
+            VolumesLabels = ViewModel.VirtualSafes
+                                     .Where(safe => safe.Details.IsRemovable)
+                                     .Select(safe => safe.Details.RemovableDrive!.VolumeLabel),
+        };
 
-        watchers.ForEach(watcher => watcher.Deleted += OnSafeChangedEvent);
+        ViewModel.DriveWatcher.DrivesChanged += async (ICollection < DriveInfo > drives) => await ResetFileSystemWatchers();
+
+        await ViewModel.DriveWatcher.EnsureStartedAsync();
     }
 
-    public async void OnSafeChangedEvent(object sender, FileSystemEventArgs e)
-        => await InvokeAsync(StateHasChanged);
+    public async Task ResetFileSystemWatchers()
+    {
+        ViewModel.FileSystemWatchers.ForEach(watcher => watcher.Dispose());
+        ViewModel.FileSystemWatchers.Clear();
+
+        ViewModel.FileSystemWatchers.AddRange(ViewModel.VirtualSafes
+                                    .Where(safe => !safe.Details.IsRemovable || safe.Details.RemovableDrive.Info.IsReady)
+                                    .Select(safe => new FileSystemWatcher()
+                                        {
+                                            Path = safe.Directory.Info.Parent?.FullName is null
+                                                     ? safe.Directory.Info.Root.FullName
+                                                     : safe.Directory.Info.Parent.FullName,
+                                            Filter = safe.Directory.Name,
+                                            NotifyFilter = NotifyFilters.DirectoryName,
+                                            EnableRaisingEvents = true,
+                                        })
+        );
+
+        ViewModel.FileSystemWatchers.ForEach(watcher => watcher.Deleted += async (sender, e) => await InvokeAsync(StateHasChanged));
+
+        await InvokeAsync(StateHasChanged);
+    }
 
     public void Dispose()
     {
         KeyUpStore.Remove(shortcut => shortcut.Key.Contains(nameof(SafesListPage)));
-        watchers.ForEach(watcher => watcher.Deleted -= OnSafeChangedEvent);
-        watchers.Clear();
+        ViewModel.Dispose();
     }
 
     private async Task OnReserveSafesShortcut(ShortcutEntity shortcut)
@@ -173,6 +208,8 @@
 
         foreach (var safe in ViewModel.VirtualSafes)
         {
+            if (safe.Directory.Exists is false) continue;
+
             await LogBuilder
                     .WithDelegate(safe.Reservation.Patheds
                                         .Select(el => new Action(() => el.CopyToAsSub(safe.Path))))
@@ -244,8 +281,6 @@
         var result = await VirtualSafeRepo.RemoveAsync(safe);
 
         ViewModel.VirtualSafes = await VirtualSafeRepo.ToListAsync();
-
-        StateHasChanged();
 
         if (!result.IsSucceeded) await ViewModel.DeleteFailedModal.ShowAsync();
 
