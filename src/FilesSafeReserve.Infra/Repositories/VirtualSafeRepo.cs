@@ -26,6 +26,8 @@ public class VirtualSafeRepo(FsrDbContext dbContext) : IVirtualSafeRepo
             .Include(field => field.Details)
                 .ThenInclude(field => field.Logs)
                     .ThenInclude(field => field.Operations)
+            .Include(field => field.Details)
+                .ThenInclude(field => field.RemovableDrive)
             .Include(field => field.Reservation)
                 .ThenInclude(field => field.Files)
             .Include(field => field.Reservation)
@@ -39,6 +41,8 @@ public class VirtualSafeRepo(FsrDbContext dbContext) : IVirtualSafeRepo
             .Include(field => field.Details)
                 .ThenInclude(field => field.Logs)
                     .ThenInclude(field => field.Operations)
+            .Include(field => field.Details)
+                .ThenInclude(field => field.RemovableDrive)
             .Include(field => field.Reservation)
                 .ThenInclude(field => field.Files)
             .Include(field => field.Reservation)
@@ -52,6 +56,8 @@ public class VirtualSafeRepo(FsrDbContext dbContext) : IVirtualSafeRepo
             .Include(field => field.Details)
                 .ThenInclude(field => field.Logs)
                     .ThenInclude(field => field.Operations)
+            .Include(field => field.Details)
+                .ThenInclude(field => field.RemovableDrive)
             .Include(field => field.Reservation)
                 .ThenInclude(field => field.Files)
             .Include(field => field.Reservation)
@@ -61,15 +67,16 @@ public class VirtualSafeRepo(FsrDbContext dbContext) : IVirtualSafeRepo
 
     public List<VirtualSafeModel> ToList()
     {
-        return DbContext.VirtualSafes
+        return [.. DbContext.VirtualSafes
             .Include(field => field.Details)
                 .ThenInclude(field => field.Logs)
                     .ThenInclude(field => field.Operations)
+            .Include(field => field.Details)
+                .ThenInclude(field => field.RemovableDrive)
             .Include(field => field.Reservation)
                 .ThenInclude(field => field.Files)
             .Include(field => field.Reservation)
-                .ThenInclude(field => field.Directories)
-            .ToList();
+                .ThenInclude(field => field.Directories)];
     }
 }
 

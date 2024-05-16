@@ -78,7 +78,12 @@ public class SmartphoneService : ISmartphoneService
         var devices = MediaDevice.GetDevices();
         foreach (var device in devices)
         {
-            names.Add(device.FriendlyName);
+            device.Connect();
+
+            if (device.PowerSource is PowerSource.Battery)
+                names.Add(device.FriendlyName);
+
+            device.Disconnect();
         }
 
         return names;

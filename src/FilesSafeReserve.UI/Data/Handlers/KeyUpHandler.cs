@@ -1,5 +1,6 @@
 ﻿using FilesSafeReserve.App.Entities;
 using Microsoft.JSInterop;
+using static FilesSafeReserve.App.Watchers.DriveWatcher;
 
 namespace FilesSafeReserve.UI.Data.Handlers;
 
@@ -17,5 +18,16 @@ public static class KeyUpHandler
         KeyUpEvent.Invoke(shortcut);
 
         return Task.CompletedTask;
+    }
+
+    public static void Dispose()
+    {
+        if (KeyUpEvent is not null)
+        {
+            foreach (Delegate d in KeyUpEvent.GetInvocationList())
+            {
+                KeyUpEvent -= (KeyUpEventHandler)d;
+            }
+        }
     }
 }

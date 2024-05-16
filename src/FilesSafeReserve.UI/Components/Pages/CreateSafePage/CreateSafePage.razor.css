@@ -67,7 +67,16 @@
     align-items: center;
 }
 
+.alert-container {
+    width: 90%;
+    margin: 20px;
+}
+
 @media (max-width: 855px) {
+    .alert-container {
+        font-size: small;
+    }
+
     .danger-container {
         font-size: small;
     }

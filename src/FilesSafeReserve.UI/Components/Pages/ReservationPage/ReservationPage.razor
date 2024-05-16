@@ -97,10 +97,44 @@
                 <h4>@ViewModel.VirtualSafe.Name</h4>
             </div>
 
-            <div class="btns-container btns-container-grid">
-                <Button @onclick='() => FileOpenerService.Open(ViewModel.VirtualSafe.Directory)' Color="ButtonColor.Primary" Style="width: 120px"> Open </Button>
+            @if (ViewModel.VirtualSafe.Directory.Exists is false)
+            {
+                @if (ViewModel.VirtualSafe.Details.IsRemovable)
+                {
+                    @if (ViewModel.VirtualSafe.Details.RemovableDrive.Info.IsReady)
+                    {
+                        <div class="watchers-alert-container">
+                            <Alert Color="AlertColor.Danger"> <Icon Name="IconName.ExclamationTriangleFill" class="me-2"></Icon> Virtual safe directory does not exist in the file system. </Alert>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="watchers-alert-container">
+                            <Alert Color="AlertColor.Info"> <Icon Name="IconName.InfoCircleFill" class="me-2"></Icon> Please insert a removable drive '@ViewModel.VirtualSafe.Details.RemovableDrive.VolumeLabel' to fully manage the virtual safe. </Alert>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="watchers-alert-container">
+                        <Alert Color="AlertColor.Danger"> <Icon Name="IconName.ExclamationTriangleFill" class="me-2"></Icon> Virtual safe directory does not exist in the file system. </Alert>
+                    </div>
+                }
+            }
 
-                <Button @onclick='OnReserveSafeClick' Color="ButtonColor.Primary" Style="width: 120px"> Reserve </Button>
+            <div class="btns-container btns-container-grid">
+                @if (   ViewModel.VirtualSafe.Directory.Exists is false && !ViewModel.VirtualSafe.Details.IsRemovable
+                    ||  ViewModel.VirtualSafe.Directory.Exists is false && ViewModel.VirtualSafe.Details.IsRemovable && ViewModel.VirtualSafe.Details.RemovableDrive.Info.IsReady)
+                {
+                    <Button @onclick='() => ViewModel.VirtualSafe.Directory.Create()' Color="ButtonColor.Info"> Restore </Button>
+                }
+
+                @if (ViewModel.VirtualSafe.Directory.Exists)
+                {
+                    <Button @onclick='() => FileOpenerService.Open(ViewModel.VirtualSafe.Directory)' Color="ButtonColor.Primary" Style="width: 120px"> Open </Button>
+
+                    <Button @onclick='OnReserveSafeClick' Color="ButtonColor.Primary" Style="width: 120px"> Reserve </Button>
+                }
 
                 <Button onclick="history.back();" Color="ButtonColor.Secondary" Style="width: 120px"> Go Back </Button>
             </div>
@@ -138,7 +172,8 @@
                 <div class="reservation-elements-container">
                     @if (ViewModel.ItemsList.Count is not 0)
                     {
-                        @foreach (var item in ViewModel.ItemsList)
+                        @foreach (var item in ViewModel.ItemsList.OrderBy(item => item.Value.Type)
+                                                                 .ThenBy(item => item.Value.Name))
                         {
                             <div class="reservation-element-container">
                                 <div class="reservation-element-data gradient-background">
@@ -163,20 +198,30 @@
                                 <div class="reservation-element-btns">
                                     @if (item.Value.Type is ShyFsType.Directory)
                                     {
-                                        <Button Color="ButtonColor.Primary" @onclick='async () => OnReserveClick(item)'> <i class="bi bi-folder-symlink reservation-element-btn" /> </Button>
+                                        @if (ViewModel.VirtualSafe.Directory.Exists)
+                                        {
+                                            <Button Color="ButtonColor.Primary" @onclick='async () => OnReserveClick(item)'> <i class="bi bi-folder-symlink reservation-element-btn" /> </Button>
+                                        }
 
-                                        <Button Color="ButtonColor.Secondary" @onclick='() => FileOpenerService.Open(item.Value.ToShyDirectory().Info.Parent!.FullName)'> <i class="bi bi-folder2-open reservation-element-btn" /> </Button>
-
-                                        <Button Color="ButtonColor.Danger" @onclick='async () => await OnRemoveClick(item)'> <i class="bi bi-folder-x reservation-element-btn" /> </Button>
+                                        <Button Color="ButtonColor.Secondary" @onclick='() => FileOpenerService.Open( item.Value.ToShyDirectory().Info.Parent is null 
+                                                                                                                    ? item.Value.ToShyDirectory().Info.Root.ToString() 
+                                                                                                                    : item.Value.ToShyDirectory().Info.Parent!.FullName)'> 
+                                            <i class="bi bi-folder2-open reservation-element-btn" />
+                                        </Button>
                                     }
                                     else if (item.Value.Type is ShyFsType.File)
                                     {
-                                        <Button Color="ButtonColor.Primary" @onclick='async () => OnReserveClick(item)'> <i class="bi bi-file-earmark-arrow-up reservation-element-btn"/> </Button>
+                                        @if (ViewModel.VirtualSafe.Directory.Exists)
+                                        {
+                                            <Button Color="ButtonColor.Primary" @onclick='async () => OnReserveClick(item)'> <i class="bi bi-file-earmark-arrow-up reservation-element-btn" /> </Button>
+                                        }
 
-                                        <Button Color="ButtonColor.Secondary" @onclick='() => FileOpenerService.Open(item.Value.ToShyFile().Info.DirectoryName!)'> <i class="bi bi-folder2-open reservation-element-btn"/> </Button>
-
-                                        <Button Color="ButtonColor.Danger" @onclick='async () => await OnRemoveClick(item)'> <i class="bi bi-file-x reservation-element-btn"/> </Button>
+                                        <Button Color="ButtonColor.Secondary" @onclick='() => FileOpenerService.Open(item.Value.ToShyFile().Info.Directory!.FullName)'>
+                                            <i class="bi bi-folder2-open reservation-element-btn" />
+                                        </Button>
                                     }
+
+                                    <Button Color="ButtonColor.Danger" @onclick='async () => await OnRemoveClick(item)'> <i class="bi bi-folder-x reservation-element-btn" /> </Button>
                                 </div>
                             </div>
                         }
@@ -230,17 +275,88 @@
                 .WithName($"{nameof(ReservationPage)}_{nameof(OnReserveSafeShortcut)}")
                 .Add(OnReserveSafeShortcut);
         }
+
+        ViewModel.DriveWatcher = new()
+            {
+                Types = [DriveType.Removable],
+            };
+
+        ViewModel.DriveWatcher.DrivesChanged += async (ICollection<DriveInfo> drives) => await ResetFileSystemWatchers();
+
+        await ViewModel.DriveWatcher.EnsureStartedAsync();
+    }
+
+    public async Task ResetFileSystemWatchers()
+    {
+        if (ViewModel.VirtualSafe is null)
+        {
+            await ViewModel.NotFoundModal.ShowAsync();
+            return;
+        }
+
+        ViewModel.FileSystemWatchers.ForEach(watcher => watcher.Dispose());
+        ViewModel.FileSystemWatchers.Clear();
+
+        if (    !ViewModel.VirtualSafe.Details.IsRemovable
+            ||  ViewModel.VirtualSafe.Details.RemovableDrive.Info.IsReady)
+        {
+            ViewModel.FileSystemWatchers.Add(new()
+            {
+                Path = ViewModel.VirtualSafe.Directory.Info.Parent?.FullName is null
+                     ? ViewModel.VirtualSafe.Directory.Info.Root.FullName
+                     : ViewModel.VirtualSafe.Directory.Info.Parent!.FullName,
+                Filter = ViewModel.VirtualSafe.Directory.Name,
+                NotifyFilter = NotifyFilters.DirectoryName,
+                EnableRaisingEvents = true,
+            });
+
+            ViewModel.FileSystemWatchers.First().Deleted += async (sender, e) => await InvokeAsync(StateHasChanged);
+        }
+
+        ViewModel.FileSystemWatchers.AddRange(ViewModel.VirtualSafe.Reservation.Files
+                                         .Where(file => DriveInfo.GetDrives()
+                                                                 .Where(drive => drive.IsReady)
+                                                                 .Any(drive => file.Path.Contains(drive.Name)))
+                                         .Select(file => new FileSystemWatcher()
+                                             {
+                                                 Path = file.Info.DirectoryName!,
+                                                 Filter = file.Name,
+                                                 NotifyFilter = NotifyFilters.FileName,
+                                                 EnableRaisingEvents = true,
+                                             })
+        );
+
+        ViewModel.FileSystemWatchers.AddRange(ViewModel.VirtualSafe.Reservation.Directories
+                                         .Where(dir => DriveInfo.GetDrives()
+                                                                .Where(drive => drive.IsReady)
+                                                                .Any(drive => dir.Path.Contains(drive.Name)))
+                                         .Select(dir => new FileSystemWatcher()
+                                             {
+                                                 Path = dir.Info.Parent is null
+                                                      ? dir.Info.Root.ToString()
+                                                      : dir.Info.Parent.FullName,
+                                                 Filter = dir.Name,
+                                                 NotifyFilter = NotifyFilters.DirectoryName,
+                                                 EnableRaisingEvents = true,
+                                             })
+        );
+
+        ViewModel.FileSystemWatchers.ForEach(watcher => watcher.Deleted += async (sender, e) => await InvokeAsync(StateHasChanged));
+
+        await InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()
     {
-        KeyUpStore.Remove(shortcut => shortcut.Key.Contains(nameof(ReservationPage)));
+        KeyUpStore.Remove(shortcut => shortcut.Key.Contains(nameof(SafeDetailsPage)));
+        ViewModel.Dispose();
     }
 
     private Task OnOpenSafeShortcut(ShortcutEntity shortcut)
     {
         if (ViewModel.OpenSafeShortcut is null || ViewModel.VirtualSafe is null) return Task.CompletedTask;
         if (shortcut != ViewModel.OpenSafeShortcut) return Task.CompletedTask;
+        if (ViewModel.VirtualSafe.Directory.Exists is false) return Task.CompletedTask;
 
         FileOpenerService.Open(ViewModel.VirtualSafe.Directory);
 
@@ -251,6 +367,7 @@
     {
         if (ViewModel.ReserveSafeShortcut is null || ViewModel.VirtualSafe is null) return;
         if (shortcut != ViewModel.ReserveSafeShortcut) return;
+        if (ViewModel.VirtualSafe.Directory.Exists is false) return;
 
         await ViewModel.ReservationProgress.ShowAsync();
 
@@ -441,7 +558,15 @@
                     else if (item.Value.Type is ShyFsType.File)
                         result = await FileRepo.RemoveByIdAsync(item.Key);
                     else
+                    {
                         result = false;
+
+                        var dirResult = await DirectoryRepo.GetByPathAsync(item.Value.Path);
+                        if (dirResult.IsSucceeded) result = await DirectoryRepo.RemoveByIdAsync(item.Key);
+
+                        var fileResult = await FileRepo.GetByPathAsync(item.Value.Path);
+                        if (fileResult.IsSucceeded) result = await FileRepo.RemoveByIdAsync(item.Key);
+                    }
 
                     return result;
                 })
@@ -502,6 +627,8 @@
                 })
                 .BuildAsync();
 
+        await ResetFileSystemWatchers();
+
         ViewModel.ItemsList = await FilterPathedsAsync
         (
             ViewModel.VirtualSafe.Reservation.IdsPathedsPair,
@@ -549,6 +676,8 @@
                     ItemPath = result.FullPath
                 })
                 .BuildAsync();
+
+        await ResetFileSystemWatchers();
 
         ViewModel.ItemsList = await FilterPathedsAsync
         (

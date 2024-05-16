@@ -2,6 +2,8 @@
 using CommunityToolkit.Maui.Storage;
 using FilesSafeReserve.App.Builders.IBuilders;
 using FilesSafeReserve.App.Services.IServices;
+using FilesSafeReserve.App.Watchers;
+using FilesSafeReserve.App.Watchers.IWatchers;
 using FilesSafeReserve.Infra.Builders;
 using FilesSafeReserve.Infra.Configs;
 using FilesSafeReserve.Infra.DataBase;
@@ -63,6 +65,8 @@ public static class MauiProgram
         builder.Services.AddScoped<IKeyUpManager, KeyUpManager>();
 
         builder.Services.AddSingleton<KeyUpStore>();
+
+        builder.Services.AddSingleton<IDriveWatcher, DriveWatcher>();
 
         builder.Services.AddSingleton(FileSaver.Default);
 

@@ -1,5 +1,6 @@
 ﻿using FilesSafeReserve.App.Interfaces.Models;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FilesSafeReserve.App.Models;
 
@@ -38,6 +39,17 @@ public class VirtualSafeDetailsModel : IModelBase<Guid>
     /// The default value is an empty collection.
     /// </summary>
     public ICollection<LogModel> Logs { get; set; } = [];
+
+    /// <summary>
+    /// Gets whether the virtual safe is on a removable drive.
+    /// </summary>
+    [MemberNotNullWhen(returnValue: true, nameof(RemovableDrive))]
+    public bool IsRemovable { get => RemovableDrive is not null; }
+
+    /// <summary>
+    /// Gets or sets the removable drive of the virtual safe.
+    /// </summary>
+    public RemovableDriveModel? RemovableDrive { get; set; }
 
     /// <summary>
     /// Gets or sets the unique identifier of the associated safe.

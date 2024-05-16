@@ -7,6 +7,8 @@
 @inject IVirtualSafeRepo VirtualSafeRepo
 @inject NavigationManager Navigation
 
+@implements IDisposable
+
 <Modal @ref="ViewModel.SuccessModal" title="Creating Info" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
     <BodyTemplate>
         Virtual Safe was successfully created.<br>
@@ -47,6 +49,12 @@
                     <Button @onclick="OnPickClick" Color="ButtonColor.Secondary" Style="border-bottom-left-radius: 0px; border-top-left-radius: 0px;">Pick</Button>
                 </div>
             </div>
+            @if(ViewModel.IsRemovable)
+            {
+                <div class="alert-container">
+                    <Alert Color="AlertColor.Info"> <Icon Name="IconName.InfoCircleFill" class="me-2"></Icon> Your current path leads to removable drive. </Alert>
+                </div>
+            }
             <div class="btns-container btns-container-grid">
                 <Button Type="ButtonType.Submit" Color="ButtonColor.Success" Style="width: 100px"> Create </Button>
 
@@ -78,6 +86,21 @@
 
 @code
 {
+    protected override void OnInitialized()
+    {
+        ViewModel.EditContext.OnFieldChanged += OnFieldsChanged;
+    }
+
+    public void Dispose()
+    {
+        ViewModel.EditContext.OnFieldChanged -= OnFieldsChanged;
+    }
+
+    private void OnFieldsChanged(object? sender, FieldChangedEventArgs e)
+    {
+        CheckIfRemovable();
+    }
+
     private async Task OnPickClick()
     {
         var result = await FolderPicker.PickAsync(default);
@@ -85,6 +108,16 @@
         if (result.Folder is null) return;
 
         ViewModel.VirtualSafe.Path = result.Folder.Path;
+
+        CheckIfRemovable();
+    }
+
+    private void CheckIfRemovable()
+    {
+        if (DriveInfo.GetDrives()
+                     .Where(drive => drive.DriveType is DriveType.Removable)
+                     .Any(drive => ViewModel.VirtualSafe.Path.Contains(drive.Name))) ViewModel.IsRemovable = true;
+        else ViewModel.IsRemovable = false;
     }
 
     private async Task OnCreateClick()
@@ -94,11 +127,12 @@
                            .Count() is not 0)
         {
             await ViewModel.DuplicateModal.ShowAsync();
+            return;
         }
 
         Directory.CreateDirectory(ViewModel.VirtualSafe.Path);
 
-        await VirtualSafeRepo.AddAsync(new()
+        VirtualSafeModel safe = new()
         {
             Name = ViewModel.VirtualSafe.Name,
             Description = ViewModel.VirtualSafe.Description,
@@ -126,7 +160,20 @@
                 ]
             },
             Reservation = new()
-        });
+        };
+
+        if (ViewModel.IsRemovable)
+        {
+            DriveInfo driveInfo = new(safe.Directory.Info.Root.ToString());
+
+            safe.Details.RemovableDrive = new()
+            {
+                    Name = driveInfo.Name,
+                    VolumeLabel = driveInfo.VolumeLabel,
+            };
+        }
+
+        await VirtualSafeRepo.AddAsync(safe);
 
         await ViewModel.SuccessModal.ShowAsync();
     }

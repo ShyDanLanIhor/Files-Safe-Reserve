@@ -164,6 +164,27 @@
     margin-left: 5px;
 }
 
+.btns-container {
+    padding-top: 10px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 10px;
+    border-radius: 10px;
+    background: white;
+    margin-bottom: 20px;
+    max-width: 200px;
+}
+
+.btns-container-grid {
+    display: grid;
+    width: 90%;
+    grid-template-columns: repeat(auto-fit, 120px);
+    grid-column-gap: 30px;
+    grid-row-gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
 @media (max-width: 855px) {
     .virtual-safes-elements-container {
         font-size: small;

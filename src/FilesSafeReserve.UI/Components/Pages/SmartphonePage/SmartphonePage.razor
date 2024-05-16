@@ -11,6 +11,8 @@
 @inject ILogBuilder LogBuilder
 @inject ILogRepo LogRepo
 
+@implements IDisposable
+
 <Modal @ref="ViewModel.ConfirmReservation" title="Reservation confirmation" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
     <BodyTemplate>
         Are you sure you want to reserve files from phone '@ViewModel.SelectedSmartphoneName' to virtual safe '@ViewModel.SelectedVirtualSafe.Name'?
@@ -50,6 +52,15 @@
     </FooterTemplate>
 </Modal>
 
+<Modal @ref="ViewModel.SafeIsNotSelected" title="Reservation Progress" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
+    <BodyTemplate>
+        Please choose a virtual safe to reserve a smartphone.
+    </BodyTemplate>
+    <FooterTemplate>
+        <Button Color="ButtonColor.Secondary" @onclick='async () => await ViewModel.SafeIsNotSelected.HideAsync()'> Understood </Button>
+    </FooterTemplate>
+</Modal>
+
 <div class="main-container">
     <div class="header-container gradient-background">
         <h3>Smartphone Page</h3>
@@ -62,7 +73,7 @@
         <div class="virtual-safes-elements-container">
             @if (ViewModel.VirtualSafes.Count is not 0)
             {
-                @foreach (var safe in ViewModel.VirtualSafes)
+                @foreach (var safe in ViewModel.VirtualSafes.Where(safe => safe.Directory.Exists).OrderBy(safe => safe.Name))
                 {
                     <div class="virtual-safes-element-container">
                         <div class="virtual-safes-element-data">
@@ -135,7 +146,13 @@
                 <div class="alert-container">
                     <Alert Color="AlertColor.Info"> <Icon Name="IconName.InfoCircleFill" class="me-2"></Icon> Not a single item in connected smartphone was found. </Alert>
                 </div>
+
             }
+            <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%;">
+                <div class="btns-container btns-container-grid">
+                    <Button @onclick='OnReloadClick' Color="ButtonColor.Primary" Style="width: 120px"> Reload </Button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -150,10 +167,68 @@
         if (!result.IsSucceeded) return;
 
         ViewModel.SmartphonesNames = result.Value;
+
+        ViewModel.DriveWatcher = new()
+            {
+                Types = [DriveType.Removable],
+                VolumesLabels = ViewModel.VirtualSafes
+                                         .Where(safe => safe.Details.IsRemovable)
+                                         .Select(safe => safe.Details.RemovableDrive!.VolumeLabel),
+            };
+
+        ViewModel.DriveWatcher.DrivesChanged += async (ICollection<DriveInfo> drives) => await ResetFileSystemWatchers();
+
+        await ViewModel.DriveWatcher.EnsureStartedAsync();
+    }
+
+    public async Task ResetFileSystemWatchers()
+    {
+        ViewModel.FileSystemWatchers.ForEach(watcher => watcher.Dispose());
+        ViewModel.FileSystemWatchers.Clear();
+
+        ViewModel.FileSystemWatchers.AddRange(ViewModel.VirtualSafes
+                                    .Where(safe => !safe.Details.IsRemovable || safe.Details.RemovableDrive.Info.IsReady)
+                                    .Select(safe => new FileSystemWatcher()
+                                        {
+                                            Path = safe.Directory.Info.Parent?.FullName is null
+                                                         ? safe.Directory.Info.Root.FullName
+                                                         : safe.Directory.Info.Parent.FullName,
+                                            Filter = safe.Directory.Name,
+                                            NotifyFilter = NotifyFilters.DirectoryName,
+                                            EnableRaisingEvents = true,
+                                        })
+        );
+
+        ViewModel.FileSystemWatchers.ForEach(watcher => watcher.Deleted += async (sender, e) => await InvokeAsync(StateHasChanged));
+
+        ViewModel.SelectedVirtualSafe = null;
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        ViewModel.Dispose();
+    }
+
+    public async Task OnReloadClick()
+    {
+        ViewModel.VirtualSafes = await VirtualSafeRepo.ToListAsync();
+        var result = SmartphoneService.GetDevicesNames();
+
+        if (!result.IsSucceeded) return;
+
+        ViewModel.SmartphonesNames = result.Value;
     }
 
     private async Task OnConfirmClick()
     {
+        if (ViewModel.SelectedVirtualSafe is null)
+        {
+            await ViewModel.SafeIsNotSelected.ShowAsync();
+            return;
+        }
+
         await ViewModel.ConfirmReservation.HideAsync();
 
         await ViewModel.ReservationProgress.ShowAsync();

@@ -12,6 +12,8 @@
 @inject ILogBuilder LogBuilder
 @inject NavigationManager Navigation
 
+@implements IDisposable
+
 <Modal @ref="ViewModel.ConfirmCopying" title="Copying confirmation" UseStaticBackdrop="true" CloseOnEscape="false" ShowCloseButton="false">
     <BodyTemplate>
         Are you sure you want to copy virtual safe '@ViewModel.PrevVirtualSafe!.Name' to '@ViewModel.NewVirtualSafe.Path'?
@@ -115,42 +117,81 @@
                         <Button @onclick="OnPickClick" Color="ButtonColor.Secondary" Style="border-bottom-left-radius: 0px; border-top-left-radius: 0px;">Pick</Button>
                     </div>
                 </div>
-                <div class="copy-switches">
-                    <div class="copy-switch">
-                        <Switch @bind-Value="ViewModel.IsCopyOriginalSafeInnerContent" />
-                        <span>
-                            @if (ViewModel.IsCopyOriginalSafeInnerContent)
-                            {
-                                <span>Copy</span>
-                            }
-                            else
-                            {
-                                <span>Don't copy</span>
-                            }
-                            <span> original virtual safe inner content (files and folders).</span>
-                        </span>
+
+                @if (ViewModel.PrevVirtualSafe.Directory.Exists)
+                {
+                    <div class="copy-switches">
+                        <div class="copy-switch">
+                            <Switch @bind-Value="ViewModel.IsCopyOriginalSafeInnerContent" />
+                            <span>
+                                @if (ViewModel.IsCopyOriginalSafeInnerContent)
+                                {
+                                    <span>Copy</span>
+                                }
+                                else
+                                {
+                                    <span>Don't copy</span>
+                                }
+                                <span> original virtual safe inner content (files and folders).</span>
+                            </span>
+                        </div>
+                        <div class="copy-switch">
+                            <Switch @bind-Value="ViewModel.IsDeleteOriginalSafe" />
+                            <span>
+                                @if (ViewModel.IsDeleteOriginalSafe)
+                                {
+                                    <span>Delete</span>
+                                }
+                                else
+                                {
+                                    <span>Don't delete</span>
+                                }
+                                <span> original virtual safe after copying.</span>
+                            </span>
+                        </div>
                     </div>
-                    <div class="copy-switch">
-                        <Switch @bind-Value="ViewModel.IsDeleteOriginalSafe" />
-                        <span>
-                            @if (ViewModel.IsDeleteOriginalSafe)
-                            {
-                                <span>Delete</span>
-                            }
-                            else
-                            {
-                                <span>Don't delete</span>
-                            }
-                            <span> original virtual safe after copying.</span>
-                        </span>
+                }
+
+                @if (ViewModel.IsRemovable || !ViewModel.PrevVirtualSafe.Directory.Exists)
+                {
+                    <div class="alert-container">
+                        <Alert Color="AlertColor.Info">
+                            <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                <strong>Info!</strong>
+                                <div style="display: flex; flex-direction: column; align-items: start;">
+                                    @if (!ViewModel.PrevVirtualSafe.Directory.Exists)
+                                    {
+                                        @if (ViewModel.PrevVirtualSafe.Details.IsRemovable)
+                                        {
+                                            @if (ViewModel.PrevVirtualSafe.Details.RemovableDrive.Info.IsReady)
+                                            {
+                                                <span> <Icon Name="IconName.InfoCircleFill" class="me-2"></Icon> Virtual safe directory does not exist in the file system. </span>
+                                            }
+                                            else
+                                            {
+                                                <span> <Icon Name="IconName.InfoCircleFill" class="me-2"></Icon> Please insert a removable drive '@ViewModel.PrevVirtualSafe.Details.RemovableDrive.VolumeLabel' to fully manage the virtual safe. </span>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span> <Icon Name="IconName.InfoCircleFill" class="me-2"></Icon> Virtual safe directory does not exist in the file system. </span>
+                                        }
+                                    }
+                                    @if (ViewModel.IsRemovable)
+                                    {
+                                        <span><Icon Name="IconName.InfoCircleFill" class="me-2"></Icon> Your current path leads to removable drive.</span>
+                                    }
+                                </div>
+                            </div>
+                        </Alert>
                     </div>
-                </div>
+                }
+
                 <div class="btns-container btns-container-grid">
                     <Button Type="ButtonType.Submit" Color="ButtonColor.Success" Style="width: 100px"> Copy </Button>
 
                     <Button onclick="history.back();" Color="ButtonColor.Secondary" Style="width: 100px"> Go Back </Button>
                 </div>
-
                 @if (ViewModel.EditContext.Validate() is false)
                 {
                     <div style="width: 90%;">
@@ -182,12 +223,80 @@
         var result = await VirtualSafeRepo.GetByIdAsync(new Guid(Id));
 
         if (result.IsSucceeded) ViewModel.PrevVirtualSafe = result.Value;
-        else await ViewModel.NotFoundModal.ShowAsync();
+        else
+        {
+            await ViewModel.NotFoundModal.ShowAsync();
+            return;
+        }
+
+        ViewModel.EditContext.OnFieldChanged += OnFieldsChanged;
+
+        if (ViewModel.PrevVirtualSafe.Details.IsRemovable)
+        {
+            ViewModel.DriveWatcher = new()
+                {
+                    Types = [DriveType.Removable],
+                    VolumesLabels = [ViewModel.PrevVirtualSafe.Details.RemovableDrive.VolumeLabel],
+                };
+
+            ViewModel.DriveWatcher.DrivesChanged += async (ICollection<DriveInfo> drives) => await ResetFileSystemWatchers();
+
+            await ViewModel.DriveWatcher.EnsureStartedAsync();
+        }
+        else
+        {
+            await ResetFileSystemWatchers();
+        }
+    }
+
+    public async Task ResetFileSystemWatchers()
+    {
+        if (ViewModel.PrevVirtualSafe is null)
+        {
+            await ViewModel.NotFoundModal.ShowAsync();
+            return;
+        }
+
+        if (!ViewModel.PrevVirtualSafe.Details.IsRemovable
+            || ViewModel.PrevVirtualSafe.Details.RemovableDrive.Info.IsReady)
+        {
+            ViewModel.FileSystemWatcher.Dispose();
+
+            ViewModel.FileSystemWatcher = new()
+                {
+                    Path = ViewModel.PrevVirtualSafe.Directory.Info.Parent?.FullName is null
+                         ? ViewModel.PrevVirtualSafe.Directory.Info.Root.FullName
+                         : ViewModel.PrevVirtualSafe.Directory.Info.Parent!.FullName,
+                    Filter = ViewModel.PrevVirtualSafe.Directory.Name,
+                    NotifyFilter = NotifyFilters.DirectoryName,
+                    EnableRaisingEvents = true,
+                };
+
+            ViewModel.FileSystemWatcher.Deleted += async (sender, e) => await InvokeAsync(StateHasChanged);
+        }
+
+        if (!ViewModel.PrevVirtualSafe.Directory.Exists)
+        {
+            ViewModel.IsCopyOriginalSafeInnerContent = false;
+            ViewModel.IsDeleteOriginalSafe = false;
+        }
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        ViewModel.EditContext.OnFieldChanged -= OnFieldsChanged;
+        ViewModel.Dispose();
+    }
+
+    private void OnFieldsChanged(object? sender, FieldChangedEventArgs e)
+    {
+        CheckIfRemovable();
     }
 
     private async Task OnConfirmClick()
     {
-
         await ViewModel.ConfirmCopying.HideAsync();
 
         LogModel copyLog = new()
@@ -211,6 +320,7 @@
                            .Count() is not 0)
         {
             await ViewModel.DuplicateModal.ShowAsync();
+            return;
         }
 
         Directory.CreateDirectory(ViewModel.NewVirtualSafe.Path);
@@ -271,6 +381,7 @@
             catch (Exception)
             {
                 await ViewModel.CannotCopyContentModal.ShowAsync();
+                return;
             }
         }
 
@@ -285,7 +396,19 @@
             catch (Exception)
             {
                 await ViewModel.CannotDeletePrevSafeModal.ShowAsync();
+                return;
             }
+        }
+
+        if (ViewModel.IsRemovable)
+        {
+            DriveInfo driveInfo = new(newVirtualSafe.Directory.Info.Root.ToString());
+
+            newVirtualSafe.Details.RemovableDrive = new()
+            {
+                Name = driveInfo.Name,
+                VolumeLabel = driveInfo.VolumeLabel,
+            };
         }
 
         copyLog.Operations.First().IsSucceeded = true;
@@ -314,5 +437,17 @@
         if (result.Folder is null) return;
 
         ViewModel.NewVirtualSafe.Path = result.Folder.Path;
+
+        CheckIfRemovable();
+    }
+
+    private void CheckIfRemovable()
+    {
+        if (ViewModel.PrevVirtualSafe is null) return;
+
+        if (DriveInfo.GetDrives()
+                     .Where(drive => drive.DriveType is DriveType.Removable)
+                     .Any(drive => ViewModel.NewVirtualSafe.Path.Contains(drive.Name))) ViewModel.IsRemovable = true;
+        else ViewModel.IsRemovable = false;
     }
 }

@@ -1,4 +1,5 @@
-﻿using FilesSafeReserve.App.Models;
+﻿using FilesSafeReserve.App.Entities.Results.Basic;
+using FilesSafeReserve.App.Models;
 using FilesSafeReserve.Infra.DataBase;
 using FilesSafeReserve.Infra.Interfaces.Repositories;
 
@@ -12,5 +13,7 @@ public interface IDirectoryRepo :
     IRepoRemover<FsrDbContext, DirectoryModel, Guid>,
     IRepoRemoverById<FsrDbContext, DirectoryModel, Guid>
 {
+    public Task<ValueResult<DirectoryModel?>> GetByPathAsync(string path);
 
+    public ValueResult<DirectoryModel?> GetByPath(string path);
 }

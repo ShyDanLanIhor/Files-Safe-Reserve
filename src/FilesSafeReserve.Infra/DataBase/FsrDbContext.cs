@@ -54,6 +54,11 @@ public class FsrDbContext(DbContextOptions<FsrDbContext> options, IConfiguration
     public DbSet<DirectoryModel> Directories { get; set; }
 
     /// <summary>
+    /// Gets or sets the removable drives models DbSet.
+    /// </summary>
+    public DbSet<RemovableDriveModel> RemovableDrives { get; set; }
+
+    /// <summary>
     /// Gets or sets the shortcuts models DbSet.
     /// </summary>
     public DbSet<ShortcutModel> Shortcuts { get; set; }
@@ -102,7 +107,7 @@ public class FsrDbContext(DbContextOptions<FsrDbContext> options, IConfiguration
             {
                 Id = Guid.NewGuid(),
                 Type = ShortcutModel.Types.ReserveVirtualSafe,
-                KeyCode = 82,
+                KeyCode = 83,
                 KeyValue = "S",
                 AltPressed = true,
                 ControlPressed = false,
@@ -113,7 +118,7 @@ public class FsrDbContext(DbContextOptions<FsrDbContext> options, IConfiguration
             {
                 Id = Guid.NewGuid(),
                 Type = ShortcutModel.Types.ReserveVirtualSafes,
-                KeyCode = 82,
+                KeyCode = 83,
                 KeyValue = "S",
                 AltPressed = true,
                 ControlPressed = false,
