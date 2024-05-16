@@ -48,7 +48,7 @@ public class LogRepoTests
     /// Tests the asynchronous method ToListAsync to ensure it returns a list of LogModel objects.
     /// </summary>
     [Fact]
-    public async void ToListAsync_ReturnsListOfLogModels()
+    public async Task ToListAsync_ReturnsListOfLogModels()
     {
         // Arrange
         ILogRepo repo = new LogRepo(await GetDbContextAsync());
@@ -65,7 +65,7 @@ public class LogRepoTests
     /// Tests the asynchronous method GetByIdAsync to ensure it returns a LogModel object.
     /// </summary>
     [Fact]
-    public async void GetByIdAsync_ReturnsLogModel()
+    public async Task GetByIdAsync_ReturnsLogModel()
     {
         // Arrange
         ILogRepo repo = new LogRepo(await GetDbContextAsync());
@@ -83,7 +83,7 @@ public class LogRepoTests
     /// Tests the asynchronous method UpdateAsync to ensure it updates a LogModel object.
     /// </summary>
     [Fact]
-    public async void UpdateAsync_UpdatesLogModel()
+    public async Task UpdateAsync_UpdatesLogModel()
     {
         // Arrange
         ILogRepo repo = new LogRepo(await GetDbContextAsync());
@@ -105,7 +105,7 @@ public class LogRepoTests
     /// Tests the asynchronous method AddAsync to ensure it adds a LogModel object.
     /// </summary>
     [Fact]
-    public async void AddAsync_AddsLogModel()
+    public async Task AddAsync_AddsLogModel()
     {
         // Arrange
         ILogRepo repo = new LogRepo(await GetDbContextAsync());
@@ -124,7 +124,7 @@ public class LogRepoTests
     /// Tests the asynchronous method RemoveByIdAsync to ensure it removes a LogModel object by its Id.
     /// </summary>
     [Fact]
-    public async void RemoveByIdAsync_RemovesLogModel()
+    public async Task RemoveByIdAsync_RemovesLogModel()
     {
         // Arrange
         ILogRepo repo = new LogRepo(await GetDbContextAsync());
@@ -141,7 +141,7 @@ public class LogRepoTests
     /// Tests the asynchronous method RemoveAsync to ensure it removes a LogModel object.
     /// </summary>
     [Fact]
-    public async void RemoveAsync_RemovesLogModel()
+    public async Task RemoveAsync_RemovesLogModel()
     {
         // Arrange
         ILogRepo repo = new LogRepo(await GetDbContextAsync());

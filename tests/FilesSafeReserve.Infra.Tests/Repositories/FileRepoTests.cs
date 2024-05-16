@@ -48,7 +48,7 @@ public class FileRepoTests
     /// Tests the asynchronous method ToListAsync to ensure it returns a list of FileModel objects.
     /// </summary>
     [Fact]
-    public async void ToListAsync_ReturnsListOfFileModels()
+    public async Task ToListAsync_ReturnsListOfFileModels()
     {
         // Arrange
         IFileRepo repo = new FileRepo(await GetDbContextAsync());
@@ -65,7 +65,7 @@ public class FileRepoTests
     /// Tests the asynchronous method GetByIdAsync to ensure it returns a FileModel object.
     /// </summary>
     [Fact]
-    public async void GetByIdAsync_ReturnsFileModel()
+    public async Task GetByIdAsync_ReturnsFileModel()
     {
         // Arrange
         IFileRepo repo = new FileRepo(await GetDbContextAsync());
@@ -83,7 +83,7 @@ public class FileRepoTests
     /// Tests the asynchronous method UpdateAsync to ensure it updates a FileModel object.
     /// </summary>
     [Fact]
-    public async void UpdateAsync_UpdatesFileModel()
+    public async Task UpdateAsync_UpdatesFileModel()
     {
         // Arrange
         IFileRepo repo = new FileRepo(await GetDbContextAsync());
@@ -105,7 +105,7 @@ public class FileRepoTests
     /// Tests the asynchronous method AddAsync to ensure it adds a FileModel object.
     /// </summary>
     [Fact]
-    public async void AddAsync_AddsFileModel()
+    public async Task AddAsync_AddsFileModel()
     {
         // Arrange
         IFileRepo repo = new FileRepo(await GetDbContextAsync());
@@ -127,7 +127,7 @@ public class FileRepoTests
     /// Tests the asynchronous method RemoveByIdAsync to ensure it removes a FileModel object by its Id.
     /// </summary>
     [Fact]
-    public async void RemoveByIdAsync_RemovesFileModel()
+    public async Task RemoveByIdAsync_RemovesFileModel()
     {
         // Arrange
         IFileRepo repo = new FileRepo(await GetDbContextAsync());
@@ -144,7 +144,7 @@ public class FileRepoTests
     /// Tests the asynchronous method RemoveAsync to ensure it removes a FileModel object.
     /// </summary>
     [Fact]
-    public async void RemoveAsync_RemovesFileModel()
+    public async Task RemoveAsync_RemovesFileModel()
     {
         // Arrange
         IFileRepo repo = new FileRepo(await GetDbContextAsync());

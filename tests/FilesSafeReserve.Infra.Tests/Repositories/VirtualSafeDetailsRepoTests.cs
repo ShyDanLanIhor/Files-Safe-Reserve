@@ -48,7 +48,7 @@ public class VirtualSafeDetailsRepoTests
     /// Tests the asynchronous method ToListAsync to ensure it returns a list of VirtualSafeDetailsModel objects.
     /// </summary>
     [Fact]
-    public async void ToListAsync_ReturnsListOfVirtualSafeDetailsModels()
+    public async Task ToListAsync_ReturnsListOfVirtualSafeDetailsModels()
     {
         // Arrange
         IVirtualSafeDetailsRepo repo = new VirtualSafeDetailsRepo(await GetDbContextAsync());
@@ -65,7 +65,7 @@ public class VirtualSafeDetailsRepoTests
     /// Tests the asynchronous method GetByIdAsync to ensure it returns a VirtualSafeDetailsModel object.
     /// </summary>
     [Fact]
-    public async void GetByIdAsync_ReturnsVirtualSafeDetailsModel()
+    public async Task GetByIdAsync_ReturnsVirtualSafeDetailsModel()
     {
         // Arrange
         IVirtualSafeDetailsRepo repo = new VirtualSafeDetailsRepo(await GetDbContextAsync());
@@ -83,7 +83,7 @@ public class VirtualSafeDetailsRepoTests
     /// Tests the asynchronous method UpdateAsync to ensure it updates a VirtualSafeDetailsModel object.
     /// </summary>
     [Fact]
-    public async void UpdateAsync_UpdatesVirtualSafeDetailsModel()
+    public async Task UpdateAsync_UpdatesVirtualSafeDetailsModel()
     {
         // Arrange
         IVirtualSafeDetailsRepo repo = new VirtualSafeDetailsRepo(await GetDbContextAsync());
@@ -105,7 +105,7 @@ public class VirtualSafeDetailsRepoTests
     /// Tests the asynchronous method AddAsync to ensure it adds a VirtualSafeDetailsModel object.
     /// </summary>
     [Fact]
-    public async void AddAsync_AddsVirtualSafeDetailsModel()
+    public async Task AddAsync_AddsVirtualSafeDetailsModel()
     {
         // Arrange
         IVirtualSafeDetailsRepo repo = new VirtualSafeDetailsRepo(await GetDbContextAsync());
@@ -124,7 +124,7 @@ public class VirtualSafeDetailsRepoTests
     /// Tests the asynchronous method RemoveByIdAsync to ensure it removes a VirtualSafeDetailsModel object by its Id.
     /// </summary>
     [Fact]
-    public async void RemoveByIdAsync_RemovesVirtualSafeDetailsModel()
+    public async Task RemoveByIdAsync_RemovesVirtualSafeDetailsModel()
     {
         // Arrange
         IVirtualSafeDetailsRepo repo = new VirtualSafeDetailsRepo(await GetDbContextAsync());
@@ -141,7 +141,7 @@ public class VirtualSafeDetailsRepoTests
     /// Tests the asynchronous method RemoveAsync to ensure it removes a VirtualSafeDetailsModel object.
     /// </summary>
     [Fact]
-    public async void RemoveAsync_RemovesVirtualSafeDetailsModel()
+    public async Task RemoveAsync_RemovesVirtualSafeDetailsModel()
     {
         // Arrange
         IVirtualSafeDetailsRepo repo = new VirtualSafeDetailsRepo(await GetDbContextAsync());

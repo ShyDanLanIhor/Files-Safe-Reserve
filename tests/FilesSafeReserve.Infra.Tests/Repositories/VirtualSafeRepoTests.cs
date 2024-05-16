@@ -48,7 +48,7 @@ public class VirtualSafeRepoTests
     /// Tests the ToListAsync method of the VirtualSafeRepo class.
     /// </summary>
     [Fact]
-    public async void ToListAsync_ReturnsListOfVirtualSafeModels()
+    public async Task ToListAsync_ReturnsListOfVirtualSafeModels()
     {
         // Arrange
         IVirtualSafeRepo repo = new VirtualSafeRepo(await GetDbContextAsync());
@@ -65,7 +65,7 @@ public class VirtualSafeRepoTests
     /// Tests the GetByIdAsync method of the VirtualSafeRepo class.
     /// </summary>
     [Fact]
-    public async void GetByIdAsync_ReturnsVirtualSafeModel()
+    public async Task GetByIdAsync_ReturnsVirtualSafeModel()
     {
         // Arrange
         IVirtualSafeRepo repo = new VirtualSafeRepo(await GetDbContextAsync());
@@ -83,7 +83,7 @@ public class VirtualSafeRepoTests
     /// Tests the UpdateAsync method of the VirtualSafeRepo class.
     /// </summary>
     [Fact]
-    public async void UpdateAsync_UpdatesVirtualSafeModel()
+    public async Task UpdateAsync_UpdatesVirtualSafeModel()
     {
         // Arrange
         IVirtualSafeRepo repo = new VirtualSafeRepo(await GetDbContextAsync());
@@ -107,7 +107,7 @@ public class VirtualSafeRepoTests
     /// Tests the AddAsync method of the VirtualSafeRepo class.
     /// </summary>
     [Fact]
-    public async void AddAsync_AddsVirtualSafeModel()
+    public async Task AddAsync_AddsVirtualSafeModel()
     {
         // Arrange
         IVirtualSafeRepo repo = new VirtualSafeRepo(await GetDbContextAsync());
@@ -132,7 +132,7 @@ public class VirtualSafeRepoTests
     /// Tests the RemoveByIdAsync method of the VirtualSafeRepo class.
     /// </summary>
     [Fact]
-    public async void RemoveByIdAsync_RemovesVirtualSafeModel()
+    public async Task RemoveByIdAsync_RemovesVirtualSafeModel()
     {
         // Arrange
         IVirtualSafeRepo repo = new VirtualSafeRepo(await GetDbContextAsync());
@@ -149,7 +149,7 @@ public class VirtualSafeRepoTests
     /// Tests the RemoveAsync method of the VirtualSafeRepo class.
     /// </summary>
     [Fact]
-    public async void RemoveAsync_RemovesVirtualSafeModel()
+    public async Task RemoveAsync_RemovesVirtualSafeModel()
     {
         // Arrange
         IVirtualSafeRepo repo = new VirtualSafeRepo(await GetDbContextAsync());

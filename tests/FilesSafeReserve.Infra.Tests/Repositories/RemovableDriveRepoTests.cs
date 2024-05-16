@@ -1,16 +1,16 @@
 ﻿using FilesSafeReserve.App.Models;
 using FilesSafeReserve.Infra.DataBase;
-using FilesSafeReserve.Infra.Repositories;
 using FilesSafeReserve.Infra.Repositories.IRepositories;
+using FilesSafeReserve.Infra.Repositories;
 using FilesSafeReserve.Infra.Tests.Factories;
 using FluentAssertions;
 
 namespace FilesSafeReserve.Infra.Tests.Repositories;
 
 /// <summary>
-/// Tests for LogOperationRepo class.
+/// Tests for RemovableDriveRepo class.
 /// </summary>
-public class LogOperationRepoTests
+public class RemovableDriveRepoTests
 {
     /// <summary>
     /// Asynchronously retrieves a new instance of the FsrDbContext.
@@ -45,30 +45,30 @@ public class LogOperationRepoTests
     }
 
     /// <summary>
-    /// Tests the asynchronous method ToListAsync to ensure it returns a list of LogOperationModel objects.
+    /// Tests the asynchronous method ToListAsync to ensure it returns a list of RemovableDriveModel objects.
     /// </summary>
     [Fact]
-    public async Task ToListAsync_ReturnsListOfLogOperationModels()
+    public async Task ToListAsync_ReturnsListOfRemovableDriveModels()
     {
         // Arrange
-        ILogOperationRepo repo = new LogOperationRepo(await GetDbContextAsync());
+        IRemovableDriveRepo repo = new RemovableDriveRepo(await GetDbContextAsync());
 
         // Act
         var models = await repo.ToListAsync();
 
         // Assert
         models.Should().NotBeNull();
-        models.Should().BeOfType<List<LogOperationModel>>();
+        models.Should().BeOfType<List<RemovableDriveModel>>();
     }
 
     /// <summary>
-    /// Tests the asynchronous method GetByIdAsync to ensure it returns a LogOperationModel object.
+    /// Tests the asynchronous method GetByIdAsync to ensure it returns a RemovableDriveModel object.
     /// </summary>
     [Fact]
-    public async Task GetByIdAsync_ReturnsLogOperationModel()
+    public async Task GetByIdAsync_ReturnsRemovableDriveModel()
     {
         // Arrange
-        ILogOperationRepo repo = new LogOperationRepo(await GetDbContextAsync());
+        IRemovableDriveRepo repo = new RemovableDriveRepo(await GetDbContextAsync());
         var models = await repo.ToListAsync();
 
         // Act
@@ -80,18 +80,18 @@ public class LogOperationRepoTests
     }
 
     /// <summary>
-    /// Tests the asynchronous method UpdateAsync to ensure it updates a LogOperationModel object.
+    /// Tests the asynchronous method UpdateAsync to ensure it updates a RemovableDriveModel object.
     /// </summary>
     [Fact]
-    public async Task UpdateAsync_UpdatesLogOperationModel()
+    public async Task UpdateAsync_UpdatesRemovableDriveModel()
     {
         // Arrange
-        ILogOperationRepo repo = new LogOperationRepo(await GetDbContextAsync());
+        IRemovableDriveRepo repo = new RemovableDriveRepo(await GetDbContextAsync());
         var models = await repo.ToListAsync();
 
         var modelToChange = models.First();
-        modelToChange.Type = LogOperationModel.Types.AddToReservation;
-        modelToChange.ItemPath = "Changed";
+        modelToChange.Name = @"Changed";
+        modelToChange.VolumeLabel = @"Changed";
 
         // Act
         await repo.UpdateAsync(modelToChange);
@@ -103,14 +103,18 @@ public class LogOperationRepoTests
     }
 
     /// <summary>
-    /// Tests the asynchronous method AddAsync to ensure it adds a LogOperationModel object.
+    /// Tests the asynchronous method AddAsync to ensure it adds a RemovableDriveModel object.
     /// </summary>
     [Fact]
-    public async Task AddAsync_AddsLogOperationModel()
+    public async Task AddAsync_AddsRemovableDriveModel()
     {
         // Arrange
-        ILogOperationRepo repo = new LogOperationRepo(await GetDbContextAsync());
-        LogOperationModel modelToAdd = new();
+        IRemovableDriveRepo repo = new RemovableDriveRepo(await GetDbContextAsync());
+        RemovableDriveModel modelToAdd = new()
+        {
+            Name = @"Changed",
+            VolumeLabel = @"Changed"
+        };
 
         // Act
         await repo.AddAsync(modelToAdd);
@@ -122,13 +126,13 @@ public class LogOperationRepoTests
     }
 
     /// <summary>
-    /// Tests the asynchronous method RemoveByIdAsync to ensure it removes a LogOperationModel object by its Id.
+    /// Tests the asynchronous method RemoveByIdAsync to ensure it removes a RemovableDriveModel object by its Id.
     /// </summary>
     [Fact]
-    public async Task RemoveByIdAsync_RemovesLogOperationModel()
+    public async Task RemoveByIdAsync_RemovesRemovableDriveModel()
     {
         // Arrange
-        ILogOperationRepo repo = new LogOperationRepo(await GetDbContextAsync());
+        IRemovableDriveRepo repo = new RemovableDriveRepo(await GetDbContextAsync());
         var firstModelIdToRemove = (await repo.ToListAsync()).First().Id;
 
         // Act
@@ -139,13 +143,13 @@ public class LogOperationRepoTests
     }
 
     /// <summary>
-    /// Tests the asynchronous method RemoveAsync to ensure it removes a LogOperationModel object.
+    /// Tests the asynchronous method RemoveAsync to ensure it removes a RemovableDriveModel object.
     /// </summary>
     [Fact]
-    public async Task RemoveAsync_RemovesLogOperationModel()
+    public async Task RemoveAsync_RemovesRemovableDriveModel()
     {
         // Arrange
-        ILogOperationRepo repo = new LogOperationRepo(await GetDbContextAsync());
+        IRemovableDriveRepo repo = new RemovableDriveRepo(await GetDbContextAsync());
         var modelToRemove = (await repo.ToListAsync()).First();
 
         // Act
@@ -156,30 +160,30 @@ public class LogOperationRepoTests
     }
 
     /// <summary>
-    /// Tests the synchronous method ToList to ensure it returns a list of LogOperationModel objects.
+    /// Tests the synchronous method ToList to ensure it returns a list of RemovableDriveModel objects.
     /// </summary>
     [Fact]
-    public void ToList_ReturnsListOfLogOperationModels()
+    public void ToList_ReturnsListOfRemovableDriveModels()
     {
         // Arrange
-        ILogOperationRepo repo = new LogOperationRepo(GetDbContext());
+        IRemovableDriveRepo repo = new RemovableDriveRepo(GetDbContext());
 
         // Act
         var models = repo.ToList();
 
         // Assert
         models.Should().NotBeNull();
-        models.Should().BeOfType<List<LogOperationModel>>();
+        models.Should().BeOfType<List<RemovableDriveModel>>();
     }
 
     /// <summary>
-    /// Tests the synchronous method GetById to ensure it returns a LogOperationModel object.
+    /// Tests the synchronous method GetById to ensure it returns a RemovableDriveModel object.
     /// </summary>
     [Fact]
-    public void GetById_ReturnsLogOperationModel()
+    public void GetById_ReturnsRemovableDriveModel()
     {
         // Arrange
-        ILogOperationRepo repo = new LogOperationRepo(GetDbContext());
+        IRemovableDriveRepo repo = new RemovableDriveRepo(GetDbContext());
         var models = repo.ToList();
 
         // Act
@@ -191,18 +195,18 @@ public class LogOperationRepoTests
     }
 
     /// <summary>
-    /// Tests the synchronous method Update to ensure it updates a LogOperationModel object.
+    /// Tests the synchronous method Update to ensure it updates a RemovableDriveModel object.
     /// </summary>
     [Fact]
-    public void Update_UpdatesLogOperationModel()
+    public void Update_UpdatesRemovableDriveModel()
     {
         // Arrange
-        ILogOperationRepo repo = new LogOperationRepo(GetDbContext());
+        IRemovableDriveRepo repo = new RemovableDriveRepo(GetDbContext());
         var models = repo.ToList();
 
         var modelToChange = models.First();
-        modelToChange.Type = LogOperationModel.Types.AddToReservation;
-        modelToChange.ItemPath = "Changed";
+        modelToChange.Name = @"Changed";
+        modelToChange.VolumeLabel = @"Changed";
 
         // Act
         repo.Update(modelToChange);
@@ -214,14 +218,18 @@ public class LogOperationRepoTests
     }
 
     /// <summary>
-    /// Tests the synchronous method Add to ensure it adds a LogOperationModel object.
+    /// Tests the synchronous method Add to ensure it adds a RemovableDriveModel object.
     /// </summary>
     [Fact]
-    public void Add_AddsLogOperationModel()
+    public void Add_AddsRemovableDriveModel()
     {
         // Arrange
-        ILogOperationRepo repo = new LogOperationRepo(GetDbContext());
-        LogOperationModel modelToAdd = new();
+        IRemovableDriveRepo repo = new RemovableDriveRepo(GetDbContext());
+        RemovableDriveModel modelToAdd = new()
+        {
+            Name = @"Changed",
+            VolumeLabel = @"Changed"
+        };
 
         // Act
         repo.Add(modelToAdd);
@@ -233,13 +241,13 @@ public class LogOperationRepoTests
     }
 
     /// <summary>
-    /// Tests the synchronous method RemoveById to ensure it removes a LogOperationModel object by its Id.
+    /// Tests the synchronous method RemoveById to ensure it removes a RemovableDriveModel object by its Id.
     /// </summary>
     [Fact]
-    public void RemoveById_RemovesLogOperationModel()
+    public void RemoveById_RemovesRemovableDriveModel()
     {
         // Arrange
-        ILogOperationRepo repo = new LogOperationRepo(GetDbContext());
+        IRemovableDriveRepo repo = new RemovableDriveRepo(GetDbContext());
         var firstModelIdToRemove = repo.ToList().First().Id;
 
         // Act
@@ -250,13 +258,13 @@ public class LogOperationRepoTests
     }
 
     /// <summary>
-    /// Tests the synchronous method Remove to ensure it removes a LogOperationModel object.
+    /// Tests the synchronous method Remove to ensure it removes a RemovableDriveModel object.
     /// </summary>
     [Fact]
-    public void Remove_RemovesLogOperationModel()
+    public void Remove_RemovesRemovableDriveModel()
     {
         // Arrange
-        ILogOperationRepo repo = new LogOperationRepo(GetDbContext());
+        IRemovableDriveRepo repo = new RemovableDriveRepo(GetDbContext());
         var modelToRemove = repo.ToList().First();
 
         // Act

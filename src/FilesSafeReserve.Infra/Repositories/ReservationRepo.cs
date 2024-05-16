@@ -15,10 +15,6 @@ public class ReservationRepo(FsrDbContext dbContext) : IReservationRepo
         return await DbContext.Reservations
             .Include(field => field.Safe)
                 .ThenInclude(field => field.Details)
-                    .ThenInclude(field => field.Logs)
-                        .ThenInclude(field => field.Operations)
-            .Include(field => field.Safe)
-                .ThenInclude(field => field.Details)
                     .ThenInclude(field => field.RemovableDrive)
             .Include(field => field.Files)
             .Include(field => field.Directories)
@@ -28,10 +24,6 @@ public class ReservationRepo(FsrDbContext dbContext) : IReservationRepo
     public ValueResult<ReservationModel?> GetById(Guid id)
     {
         return DbContext.Reservations
-            .Include(field => field.Safe)
-                .ThenInclude(field => field.Details)
-                    .ThenInclude(field => field.Logs)
-                        .ThenInclude(field => field.Operations)
             .Include(field => field.Safe)
                 .ThenInclude(field => field.Details)
                     .ThenInclude(field => field.RemovableDrive)
@@ -45,10 +37,6 @@ public class ReservationRepo(FsrDbContext dbContext) : IReservationRepo
         return await DbContext.Reservations
             .Include(field => field.Safe)
                 .ThenInclude(field => field.Details)
-                    .ThenInclude(field => field.Logs)
-                        .ThenInclude(field => field.Operations)
-            .Include(field => field.Safe)
-                .ThenInclude(field => field.Details)
                     .ThenInclude(field => field.RemovableDrive)
             .Include(field => field.Files)
             .Include(field => field.Directories)
@@ -58,10 +46,6 @@ public class ReservationRepo(FsrDbContext dbContext) : IReservationRepo
     public List<ReservationModel> ToList()
     {
         return [.. DbContext.Reservations
-            .Include(field => field.Safe)
-                .ThenInclude(field => field.Details)
-                    .ThenInclude(field => field.Logs)
-                        .ThenInclude(field => field.Operations)
             .Include(field => field.Safe)
                 .ThenInclude(field => field.Details)
                     .ThenInclude(field => field.RemovableDrive)
